@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/GymMate.iml" filepath="$PROJECT_DIR$/GymMate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library_instagram/library_instagram.iml" filepath="$PROJECT_DIR$/library_instagram/library_instagram.iml" />
+    </modules>
+  </component>
+</project>

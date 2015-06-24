@@ -16,7 +16,8 @@ public class LoginActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
 
-        if (!InstagramOauth.getsInstance().getSession().isActive())
+        //        if (!InstagramOauth.getsInstance().getSession().isActive())
+        if (true)
         {
             //log in
             setContentView(R.layout.activity_login);
@@ -27,27 +28,27 @@ public class LoginActivity extends BaseActivity
         }
     }
 
-    private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener()
-    {
-        @Override
-        public void onSuccess(InstagramUser user)
-        {
-            finish();
-
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
-        }
-
-        @Override
-        public void onError(String error)
-        {
-            showToast(error);
-        }
-
-        @Override
-        public void onCancel()
-        {
-            showToast("OK. Maybe later?");
-
-        }
-    };
+    //    private Instagram.InstagramAuthListener mAuthListener = new Instagram.InstagramAuthListener()
+    //    {
+    //        @Override
+    //        public void onSuccess(InstagramUser user)
+    //        {
+    //            finish();
+    //
+    //            startActivity(new Intent(MainActivity.this, MainActivity.class));
+    //        }
+    //
+    //        @Override
+    //        public void onError(String error)
+    //        {
+    //            showToast(error);
+    //        }
+    //
+    //        @Override
+    //        public void onCancel()
+    //        {
+    //            showToast("OK. Maybe later?");
+    //
+    //        }
+    //    };
 }

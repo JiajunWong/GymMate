@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main StumbleUpon color  -->
+
+    <!-- These are the same as the action bar colors, but it's better to keep them separated in case we decide to change it -->
+    <color name="primary_color">#255178</color>
+    <color name="primary_color_dark">#E8563E</color>
+
+    <!-- Transparency -->
+    <color name="transparency_100">#FF000000</color>
+    <color name="transparency_95">#F2000000</color>
+    <color name="transparency_90">#E6000000</color>
+    <color name="transparency_85">#D9000000</color>
+    <color name="transparency_80">#CC000000</color>
+    <color name="transparency_75">#BF000000</color>
+    <color name="transparency_70">#B3000000</color>
+    <color name="transparency_65">#A6000000</color>
+    <color name="transparency_60">#99000000</color>
+    <color name="transparency_55">#8C000000</color>
+    <color name="transparency_50">#80000000</color>
+    <color name="transparency_45">#73000000</color>
+    <color name="transparency_40">#66000000</color>
+    <color name="transparency_35">#59000000</color>
+    <color name="transparency_30">#4D000000</color>
+    <color name="transparency_25">#40000000</color>
+    <color name="transparency_20">#33000000</color>
+    <color name="transparency_15">#26000000</color>
+    <color name="transparency_10">#1A000000</color>
+    <color name="transparency_05">#0D000000</color>
+    <color name="transparency_00">#00000000</color>
+</resources>

@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate;
+package com.jwang.android.gymmate.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

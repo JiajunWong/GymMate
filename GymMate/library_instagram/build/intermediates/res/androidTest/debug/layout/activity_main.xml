@@ -13,4 +13,4 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
 
-</RelativeLayout><!-- From: file:/Users/jiajunwang/AndroidStudioProjects/GymMateAndroid/GymMate/library_instagram/src/main/res/layout/activity_main.xml --><!-- From: file:/Users/jiajunwang/AndroidStudioProjects/GymMateAndroid/GymMate/library_instagram/build/intermediates/bundles/debug/res/layout/activity_main.xml -->
+</RelativeLayout><!-- From: file:/Users/jwang/Udacity/GymMateAndroid/GymMate/library_instagram/src/main/res/layout/activity_main.xml --><!-- From: file:/Users/jwang/Udacity/GymMateAndroid/GymMate/library_instagram/build/intermediates/bundles/debug/res/layout/activity_main.xml -->

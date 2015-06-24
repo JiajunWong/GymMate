@@ -5,7 +5,7 @@
 
     <!-- These are the same as the action bar colors, but it's better to keep them separated in case we decide to change it -->
     <color name="primary_color">#255178</color>
-    <color name="primary_color_dark">#E8563E</color>
+    <color name="primary_color_dark">#396000</color>
 
     <!-- Transparency -->
     <color name="transparency_100">#FF000000</color>

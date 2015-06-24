@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class MainNavigationActivity extends BaseActivity
             if (!TextUtils.isEmpty(mInstagramUser.accessToken))
             {
                 mUserAccessTokenTextView.setText(mInstagramUser.accessToken);
+                Log.e("jiajun", mInstagramUser.accessToken);
             }
 
             if (!TextUtils.isEmpty(mInstagramUser.profilPicture))

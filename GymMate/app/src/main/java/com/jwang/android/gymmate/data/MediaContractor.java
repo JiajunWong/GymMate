@@ -61,5 +61,30 @@ public class MediaContractor
     public static final class MediaEntry implements BaseColumns
     {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MEDIA).build();
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MEDIA;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MEDIA;
+
+        public static final String TABLE_NAME = "media";
+
+        //Schema
+        //TODO: will support comment and likes in future.
+        public static final String COLUMN_TAGS = "tags";
+        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_LOCATION_LATITUDE = "location_latitude";
+        public static final String COLUMN_LOCATION_LONGITUDE = "location_longitude";
+        public static final String COLUMN_CREATE_TIME = "create_time";
+        public static final String COLUMN_LINK = "link";
+        public static final String COLUMN_MEDIA_LOW = "media_low";
+        public static final String COLUMN_MEDIA_THUMBNAIL = "media_thumbnail";
+        public static final String COLUMN_MEDIA_HIGH = "media_high";
+        public static final String COLUMN_MEDIA_OWNER_ID = "owner_id";
+
+        public static Uri buildMediaUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+
     }
 }

@@ -1,9 +1,12 @@
 package com.jwang.android.gymmate.util;
 
+import android.util.Log;
+
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -15,6 +18,26 @@ import java.util.ArrayList;
 public class JsonParseUtil
 {
     private static final String TAG = JsonParseUtil.class.getSimpleName();
+
+    private static boolean isResultSuccess(JSONObject jsonObject)
+    {
+        try
+        {
+            if (jsonObject.has("meta"))
+            {
+                JSONObject requestCodeJsonObject = jsonObject.getJSONObject("meta");
+                if (requestCodeJsonObject.has("code") && jsonObject.getInt("code") == 200)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static ArrayList<ModelMedia> parseMediaSearchByLocationJsonResult(String jsonString)
     {
@@ -37,7 +60,7 @@ public class JsonParseUtil
             if (mediaJsonObject.has("data"))
             {
                 JSONArray mediaDataArray = mediaJsonObject.getJSONArray("data");
-                ModelMedia modelMedia = null;
+                ModelMedia modelMedia;
                 for (int i = 0; i < mediaDataArray.length(); i++)
                 {
                     modelMedia = new ModelMedia();
@@ -56,7 +79,7 @@ public class JsonParseUtil
                         modelMedia.setType(mediaObject.getString("type"));
                     }
 
-                    if (mediaObject.has("location")) //location
+                    if (mediaObject.has("location") && !mediaObject.getString("location").equals("null")) //location
                     {
                         JSONObject locationJsonArray = mediaObject.getJSONObject("location");
                         if (locationJsonArray.has("latitude"))
@@ -146,7 +169,8 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-            return medias;
+            Log.e(TAG, e.getMessage());
         }
+        return medias;
     }
 }

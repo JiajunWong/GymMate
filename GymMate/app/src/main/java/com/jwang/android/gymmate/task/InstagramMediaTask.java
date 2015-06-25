@@ -4,15 +4,20 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
+import com.jwang.android.gymmate.util.JsonParseUtil;
+
+import java.util.ArrayList;
 
 /**
  * @author Jiajun Wang on 6/24/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class InstagramPopularTask extends AsyncTask<String, Void, String>
+public class InstagramMediaTask extends
+        AsyncTask<String, Void, ArrayList<ModelMedia>>
 {
-    private static final String TAG = InstagramPopularTask.class.getSimpleName();
+    private static final String TAG = InstagramMediaTask.class.getSimpleName();
     private OnFetchFinishedListener mOnFetchFinishedListener = OnFetchFinishedListener.NO_OP;
 
     public void setOnFetchFinishedListener(OnFetchFinishedListener listener)
@@ -21,7 +26,7 @@ public class InstagramPopularTask extends AsyncTask<String, Void, String>
     }
 
     @Override
-    protected String doInBackground(String... params)
+    protected ArrayList<ModelMedia> doInBackground(String... params)
     {
         if (TextUtils.isEmpty(params[0]))
         {
@@ -30,20 +35,20 @@ public class InstagramPopularTask extends AsyncTask<String, Void, String>
         String accessToken = params[0];
 
         String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.549696&lng=-122.314780&access_token=" + accessToken, TAG);
-        return popularJsonStr;
+        return JsonParseUtil.parseMediaSearchByLocationJsonResult(popularJsonStr);
     }
 
     @Override
-    protected void onPostExecute(String s)
+    protected void onPostExecute(ArrayList<ModelMedia> medias)
     {
-        super.onPostExecute(s);
-        if (TextUtils.isEmpty(s))
+        super.onPostExecute(medias);
+        if (medias != null && medias.size() > 0)
         {
-            mOnFetchFinishedListener.onFailed();
+            mOnFetchFinishedListener.onSuccess(medias);
         }
         else
         {
-            mOnFetchFinishedListener.onSuccess(s);
+            mOnFetchFinishedListener.onFailed();
         }
     }
 }

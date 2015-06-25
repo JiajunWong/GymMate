@@ -2,15 +2,21 @@ package com.jwang.android.gymmate.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.adapter.MediaAdapter;
+import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.task.InstagramMediaTask;
+import com.jwang.android.gymmate.util.InstagramOauth;
 import com.squareup.picasso.Picasso;
 
 import net.londatiga.android.instagram.InstagramUser;
+
+import java.util.ArrayList;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -20,7 +26,8 @@ public class MainNavigationActivity extends BaseActivity
 {
     private ImageView mUserAvatarImageView;
     private TextView mUserNameTextView;
-    private TextView mUserAccessTokenTextView;
+    private ListView mListView;
+    private MediaAdapter mMediaAdapter;
 
     private InstagramOauth mInstagramOauth;
     private InstagramUser mInstagramUser;
@@ -33,7 +40,9 @@ public class MainNavigationActivity extends BaseActivity
 
         mUserAvatarImageView = (ImageView) findViewById(R.id.user_avatar);
         mUserNameTextView = (TextView) findViewById(R.id.user_name);
-        mUserAccessTokenTextView = (TextView) findViewById(R.id.user_access_token);
+        mListView = (ListView) findViewById(R.id.lv_medias);
+        mMediaAdapter = new MediaAdapter(this);
+        mListView.setAdapter(mMediaAdapter);
 
         mInstagramOauth = InstagramOauth.getsInstance(this);
         mInstagramUser = mInstagramOauth.getSession().getUser();
@@ -45,16 +54,32 @@ public class MainNavigationActivity extends BaseActivity
                 mUserNameTextView.setText(mInstagramUser.fullName);
             }
 
-            if (!TextUtils.isEmpty(mInstagramUser.accessToken))
-            {
-                mUserAccessTokenTextView.setText(mInstagramUser.accessToken);
-                Log.e("jiajun", mInstagramUser.accessToken);
-            }
-
             if (!TextUtils.isEmpty(mInstagramUser.profilPicture))
             {
                 Picasso.with(this).load(mInstagramUser.profilPicture).fit().into(mUserAvatarImageView);
             }
         }
+
+        InstagramMediaTask instagramMediaTask = new InstagramMediaTask();
+        instagramMediaTask.setOnFetchFinishedListener(mOnFetchFinishedListener);
+        instagramMediaTask.execute(mInstagramOauth.getSession().getAccessToken());
     }
+
+    private OnFetchFinishedListener mOnFetchFinishedListener = new OnFetchFinishedListener()
+    {
+        @Override
+        public void onSuccess(ArrayList<ModelMedia> medias)
+        {
+            if (medias != null && medias.size() > 0)
+            {
+                mMediaAdapter.setModelMedias(medias);
+                mMediaAdapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onFailed()
+        {
+        }
+    };
 }

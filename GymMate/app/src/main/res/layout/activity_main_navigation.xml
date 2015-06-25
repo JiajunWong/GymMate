@@ -4,22 +4,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/user_avatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp" />
-
-    <TextView
-        android:id="@+id/user_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        android:fontFamily="sans-serif" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/user_access_token"
+        <ImageView
+            android:id="@+id/user_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif"
+            android:textAppearance="@android:style/TextAppearance.Medium" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_medias"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        android:fontFamily="sans-serif" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

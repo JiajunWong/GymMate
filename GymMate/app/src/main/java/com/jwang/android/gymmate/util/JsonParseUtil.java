@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.util;
 
 import android.util.Log;
 
+import com.jwang.android.gymmate.model.ModelFaceBookLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 
@@ -19,31 +20,44 @@ public class JsonParseUtil
 {
     private static final String TAG = JsonParseUtil.class.getSimpleName();
 
-    private static boolean isResultSuccess(JSONObject jsonObject)
+    public static ModelFaceBookLocation parseGetFaceBookLocationByGeoResultJson(String jsonString)
     {
+        ModelFaceBookLocation modelFaceBookLocation = new ModelFaceBookLocation();
+        JSONObject respondJsonObject;
         try
         {
-            if (jsonObject.has("meta"))
+            respondJsonObject = new JSONObject(jsonString);
+            if (respondJsonObject.has("data"))
             {
-                JSONObject requestCodeJsonObject = jsonObject.getJSONObject("meta");
-                if (requestCodeJsonObject.has("code") && jsonObject.getInt("code") == 200)
+                JSONArray locationJsonArray = respondJsonObject.getJSONArray("data");
+                // for now, we only need the first result.
+                // for (int i = 0; i < locationJsonArray.length(); i++)
+                if (locationJsonArray.length() > 0)
                 {
-                    return true;
+                    JSONObject locationJsonObject = locationJsonArray.getJSONObject(0);
+                    if (locationJsonObject.has("name"))
+                    {
+                        modelFaceBookLocation.setName(locationJsonObject.getString("name"));
+                    }
+                    if (locationJsonObject.has("id"))
+                    {
+                        modelFaceBookLocation.setId(locationJsonObject.getString("id"));
+                    }
                 }
             }
         }
-        catch (JSONException e)
+        catch (Exception e)
         {
-            e.printStackTrace();
+
         }
-        return false;
+        return modelFaceBookLocation;
     }
 
-    public static ArrayList<ModelMedia> parseMediaSearchByLocationJsonResult(String jsonString)
+    public static ArrayList<ModelMedia> parseGetMediaByLocationResultJson(String jsonString)
     {
         ArrayList<ModelMedia> medias = new ArrayList<>();
 
-        JSONObject mediaJsonObject = null;
+        JSONObject mediaJsonObject;
         try
         {
             mediaJsonObject = new JSONObject(jsonString);

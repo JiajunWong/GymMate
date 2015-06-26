@@ -2,12 +2,11 @@ package com.jwang.android.gymmate.util;
 
 import android.util.Log;
 
-import com.jwang.android.gymmate.model.ModelFaceBookLocation;
+import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,9 +19,9 @@ public class JsonParseUtil
 {
     private static final String TAG = JsonParseUtil.class.getSimpleName();
 
-    public static ModelFaceBookLocation parseGetFaceBookLocationByGeoResultJson(String jsonString)
+    public static ModelLocation parseGetFaceBookLocationByGeoResultJson(String jsonString)
     {
-        ModelFaceBookLocation modelFaceBookLocation = new ModelFaceBookLocation();
+        ModelLocation modelLocation = new ModelLocation();
         JSONObject respondJsonObject;
         try
         {
@@ -37,11 +36,11 @@ public class JsonParseUtil
                     JSONObject locationJsonObject = locationJsonArray.getJSONObject(0);
                     if (locationJsonObject.has("name"))
                     {
-                        modelFaceBookLocation.setName(locationJsonObject.getString("name"));
+                        modelLocation.setName(locationJsonObject.getString("name"));
                     }
                     if (locationJsonObject.has("id"))
                     {
-                        modelFaceBookLocation.setId(locationJsonObject.getString("id"));
+                        modelLocation.setId(locationJsonObject.getString("id"));
                     }
                 }
             }
@@ -50,7 +49,40 @@ public class JsonParseUtil
         {
 
         }
-        return modelFaceBookLocation;
+        return modelLocation;
+    }
+
+    public static ModelLocation parseGetInstagramLocationByFaceBookIdJson(String jsonString)
+    {
+        ModelLocation modelLocation = new ModelLocation();
+        JSONObject respondJsonObject;
+        try
+        {
+            respondJsonObject = new JSONObject(jsonString);
+            if (respondJsonObject.has("data"))
+            {
+                JSONArray locationJsonArray = respondJsonObject.getJSONArray("data");
+                // for now, we only need the first result.
+                // for (int i = 0; i < locationJsonArray.length(); i++)
+                if (locationJsonArray.length() > 0)
+                {
+                    JSONObject locationJsonObject = locationJsonArray.getJSONObject(0);
+                    if (locationJsonObject.has("name"))
+                    {
+                        modelLocation.setName(locationJsonObject.getString("name"));
+                    }
+                    if (locationJsonObject.has("id"))
+                    {
+                        modelLocation.setId(locationJsonObject.getString("id"));
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+        return modelLocation;
     }
 
     public static ArrayList<ModelMedia> parseGetMediaByLocationResultJson(String jsonString)

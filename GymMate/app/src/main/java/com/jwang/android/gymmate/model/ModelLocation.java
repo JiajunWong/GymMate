@@ -7,6 +7,8 @@ public class ModelLocation extends ModelBase
 {
     private String mName;
     private String mId;
+    private String mLocationLong;
+    private String mLocationLat;
 
     public String getName()
     {
@@ -26,5 +28,25 @@ public class ModelLocation extends ModelBase
     public void setId(String id)
     {
         this.mId = id;
+    }
+
+    public String getLocationLat()
+    {
+        return mLocationLat;
+    }
+
+    public void setLocationLat(String locationLat)
+    {
+        this.mLocationLat = locationLat;
+    }
+
+    public String getLocationLong()
+    {
+        return mLocationLong;
+    }
+
+    public void setLocationLong(String locationLong)
+    {
+        this.mLocationLong = locationLong;
     }
 }

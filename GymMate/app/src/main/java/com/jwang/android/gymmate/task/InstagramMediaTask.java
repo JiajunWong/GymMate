@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
@@ -43,9 +44,42 @@ public class InstagramMediaTask extends
 
         final ArrayList<ModelMedia> arrayList = new ArrayList<>();
 
+        SyncHttpClient googleSyncHttpClient = new SyncHttpClient();
+        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=37.7814460,-122.3921540&radius=1000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
+            {
+                ArrayList<ModelLocation> locations = JsonParseUtil.parseGetGeoLocationByGoogleApiJson(new String(responseBody));
+                for (ModelLocation location : locations)
+                {
+                    fetchData(location.getLocationLat(), location.getLocationLong(), arrayList);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error)
+            {
+            }
+        });
+
+        //use facebook api get location ids
+        //        String facebookLocation = HttpRequestUtil.startHttpRequest("https://graph.facebook.com/search?type=place&center=37.549696,-122.314780&distance=100&access_token=425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b&expires_in=5184000", TAG);
+        //        String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(facebookLocation).getId();
+
+        String accessToken = params[0];
+        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.7814460&lng=-122.3921540&distance=3000&access_token=" + accessToken, TAG);
+        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.549696&lng=-122.314780&distance=3000&access_token=" + accessToken, TAG);
+        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/popular?access_token=" + accessToken, TAG);
+        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + "1572489" + "/media/recent?access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", TAG);
+        return arrayList;
+    }
+
+    private void fetchData(String lat, String lng, final ArrayList<ModelMedia> arrayList)
+    {
         RequestParams facebookRequestParams = new RequestParams();
         facebookRequestParams.put("type", "place");
-        facebookRequestParams.put("center", "37.549696,-122.314780");
+        facebookRequestParams.put("center", lat + "," + lng);
         facebookRequestParams.put("distance", "100");
         facebookRequestParams.put("access_token", "425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b");
         facebookRequestParams.put("expires_in", "5184000");
@@ -85,17 +119,6 @@ public class InstagramMediaTask extends
 
             }
         });
-
-        //use facebook api get location ids
-        //        String facebookLocation = HttpRequestUtil.startHttpRequest("https://graph.facebook.com/search?type=place&center=37.549696,-122.314780&distance=100&access_token=425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b&expires_in=5184000", TAG);
-        //        String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(facebookLocation).getId();
-
-        String accessToken = params[0];
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.7814460&lng=-122.3921540&distance=3000&access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.549696&lng=-122.314780&distance=3000&access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/popular?access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + "1572489" + "/media/recent?access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", TAG);
-        return arrayList;
     }
 
     @Override

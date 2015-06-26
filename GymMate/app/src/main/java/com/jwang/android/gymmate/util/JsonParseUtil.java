@@ -19,6 +19,53 @@ public class JsonParseUtil
 {
     private static final String TAG = JsonParseUtil.class.getSimpleName();
 
+    public static ArrayList<ModelLocation> parseGetGeoLocationByGoogleApiJson(String jsonString)
+    {
+        ArrayList<ModelLocation> locations = new ArrayList<>();
+        JSONObject respondJsonObject;
+        try
+        {
+            respondJsonObject = new JSONObject(jsonString);
+            if (respondJsonObject.has("results"))
+            {
+                if (respondJsonObject.get("results") == null)
+                {
+                    return locations;
+                }
+                ModelLocation modelLocation;
+                JSONArray locationJsonArray = respondJsonObject.getJSONArray("results");
+                for (int i = 0; i < locationJsonArray.length(); i++)
+                {
+                    modelLocation = new ModelLocation();
+                    JSONObject locationJsonObject = locationJsonArray.getJSONObject(i);
+                    if (locationJsonObject.has("name"))
+                    {
+                        modelLocation.setName(locationJsonObject.getString("name"));
+                    }
+                    if (locationJsonObject.has("geometry"))
+                    {
+                        JSONObject geometryJsonObject = locationJsonObject.getJSONObject("geometry");
+                        if (geometryJsonObject.has("location"))
+                        {
+                            modelLocation.setLocationLat(geometryJsonObject.getJSONObject("location").getString("lat"));
+                            modelLocation.setLocationLong(geometryJsonObject.getJSONObject("location").getString("lng"));
+                        }
+                    }
+                    locations.add(modelLocation);
+                    if (i == 3)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+        return locations;
+    }
+
     public static ModelLocation parseGetFaceBookLocationByGeoResultJson(String jsonString)
     {
         ModelLocation modelLocation = new ModelLocation();
@@ -47,7 +94,7 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-
+            Log.e(TAG, e.getMessage());
         }
         return modelLocation;
     }
@@ -80,7 +127,7 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-
+            Log.e(TAG, e.getMessage());
         }
         return modelLocation;
     }

@@ -4,13 +4,14 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.text.format.Time;
 
 /**
  * @author Jiajun Wang on 6/24/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class MediaContractor
+public class MediaContract
 {
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.  A convenient string to use for the
@@ -85,6 +86,35 @@ public class MediaContractor
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static Uri buildMediaWithLocation(String locationSetting, String lat, String lng)
+        {
+            return CONTENT_URI.buildUpon().appendPath(locationSetting).appendQueryParameter(COLUMN_LOCATION_LATITUDE, lat).appendQueryParameter(COLUMN_LOCATION_LONGITUDE, lng).build();
+        }
 
+        public static float getLatFromUri(Uri uri)
+        {
+            String lat = uri.getQueryParameter(COLUMN_LOCATION_LATITUDE);
+            if (!TextUtils.isEmpty(lat))
+            {
+                return Float.valueOf(lat);
+            }
+            else
+            {
+                return Float.POSITIVE_INFINITY;
+            }
+        }
+
+        public static float getLongFromUri(Uri uri)
+        {
+            String lat = uri.getQueryParameter(COLUMN_LOCATION_LONGITUDE);
+            if (!TextUtils.isEmpty(lat))
+            {
+                return Float.valueOf(lat);
+            }
+            else
+            {
+                return Float.POSITIVE_INFINITY;
+            }
+        }
     }
 }

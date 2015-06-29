@@ -21,6 +21,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainNavigationActivity" />
+
+        <provider
+            android:name=".data.MediaProvider"
+            android:authorities="com.jwang.android.gymmate" />
     </application>
 
 </manifest>

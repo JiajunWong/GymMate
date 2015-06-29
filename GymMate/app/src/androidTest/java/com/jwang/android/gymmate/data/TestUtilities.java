@@ -56,6 +56,7 @@ public class TestUtilities extends AndroidTestCase
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_THUMBNAIL, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s150x150/e15/11337199_1040192862665131_775189267_n.jpg");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_HIGH, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11337199_1040192862665131_775189267_n.jpg");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID, 1525713147);
+        mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID, "1018286205637308431_1525713147");
         return mediaValues;
     }
 

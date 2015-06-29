@@ -53,6 +53,13 @@ public class MediaContract
         public static final String COLUMN_FULL_NAME = "full_name";
         public static final String COLUMN_PROFILE_PICTURE = "profile_picture";
 
+        //index
+        public static final int INDEX_COLUMN_ID = 0;
+        public static final int INDEX_COLUMN_INSTAGRAM_ID = 1;
+        public static final int INDEX_COLUMN_USERNAME = 2;
+        public static final int INDEX_COLUMN_FULL_NAME = 3;
+        public static final int INDEX_COLUMN_PROFILE_PICTURE = 4;
+
         public static Uri buildUserUri(long id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -80,6 +87,21 @@ public class MediaContract
         public static final String COLUMN_MEDIA_THUMBNAIL = "media_thumbnail";
         public static final String COLUMN_MEDIA_HIGH = "media_high";
         public static final String COLUMN_MEDIA_OWNER_ID = "owner_id";
+        public static final String COLUMN_MEDIA_INSTAGRAM_ID = "instagram_id";
+
+        //index
+        public static final int INDEX_COLUMN_ID = 0;
+        public static final int INDEX_COLUMN_TAGS = 1;
+        public static final int INDEX_COLUMN_TYPE = 2;
+        public static final int INDEX_COLUMN_LOCATION_LATITUDE = 3;
+        public static final int INDEX_COLUMN_COLUMN_LOCATION_LONGITUDE = 4;
+        public static final int INDEX_COLUMN_CREATE_TIME = 5;
+        public static final int INDEX_COLUMN_LINK = 6;
+        public static final int INDEX_COLUMN_MEDIA_LOW = 7;
+        public static final int INDEX_COLUMN_MEDIA_THUMBNAIL = 8;
+        public static final int INDEX_COLUMN_MEDIA_HIGH = 9;
+        public static final int INDEX_COLUMN_MEDIA_OWNER_ID = 10;
+        public static final int INDEX_COLUMN_MEDIA_INSTAGRAM_ID = 11;
 
         public static Uri buildMediaUri(long id)
         {

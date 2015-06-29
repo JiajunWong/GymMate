@@ -1,28 +1,55 @@
 package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.data.MediaContract;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * @author Jiajun Wang on 6/25/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class MediaAdapter extends BaseAdapter
+public class MediaAdapter extends CursorAdapter
 {
-    private Context mContext;
-    private ArrayList<ModelMedia> mModelMedias = new ArrayList<>();
+
+    public MediaAdapter(Context context, Cursor c, int flags)
+    {
+        super(context, c, flags);
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent)
+    {
+        int layoutId = R.layout.list_item_media;
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        view.setTag(viewHolder);
+
+        return view;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor)
+    {
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        int profile_image_index = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
+        Picasso.with(context).load(cursor.getString(profile_image_index)).into(viewHolder.mOwnerProfileImage);
+
+        int username_index = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
+        viewHolder.mOwnerUserName.setText(cursor.getString(username_index));
+
+        int media_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_LOW);
+        Picasso.with(context).load(cursor.getString(media_index)).into(viewHolder.mMediaImage);
+    }
 
     public static class ViewHolder
     {
@@ -38,54 +65,4 @@ public class MediaAdapter extends BaseAdapter
         }
     }
 
-    public MediaAdapter(Context context)
-    {
-        mContext = context;
-    }
-
-    public void setModelMedias(ArrayList<ModelMedia> arrayList)
-    {
-        mModelMedias = arrayList;
-    }
-
-    @Override
-    public int getCount()
-    {
-        return mModelMedias.size();
-    }
-
-    @Override
-    public Object getItem(int position)
-    {
-        return mModelMedias.get(position);
-    }
-
-    @Override
-    public long getItemId(int position)
-    {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-        View v = convertView;
-        ViewHolder viewHolder;
-        if (convertView == null)
-        {
-            LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.list_item_media, null);
-            viewHolder = new ViewHolder(v);
-            v.setTag(viewHolder);
-        }
-        else
-        {
-            viewHolder = (ViewHolder) v.getTag();
-        }
-
-        Picasso.with(mContext).load(mModelMedias.get(position).getImageHighRes()).into(viewHolder.mMediaImage);
-        Picasso.with(mContext).load(mModelMedias.get(position).getOwner().getProfilePicture()).into(viewHolder.mOwnerProfileImage);
-        viewHolder.mOwnerUserName.setText(mModelMedias.get(position).getOwner().getUserName());
-        return v;
-    }
 }

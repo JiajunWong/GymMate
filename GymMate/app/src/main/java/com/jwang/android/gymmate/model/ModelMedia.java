@@ -11,6 +11,7 @@ public class ModelMedia
     public static final String MEDIA_TYPE_IMAGE = "image";
     public static final String MEDIA_TYPE_VIDEO = "video";
 
+    private String mInstagramId;
     private ArrayList<String> mTags;
     private String mType;
     private String mLocationLong;
@@ -31,6 +32,30 @@ public class ModelMedia
     public ModelMedia()
     {
         mTags = new ArrayList<>();
+    }
+
+    public String getTagString()
+    {
+        if (mTags == null || mTags.size() == 0)
+        {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String s : mTags)
+        {
+            sb.append(s).append(", ");
+        }
+        return sb.toString().substring(0, sb.length() - 1);
+    }
+
+    public String getInstagramId()
+    {
+        return mInstagramId;
+    }
+
+    public void setInstagramId(String instagramId)
+    {
+        this.mInstagramId = instagramId;
     }
 
     public String getVideoLowBandwidth()

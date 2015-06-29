@@ -1,22 +1,23 @@
 package com.jwang.android.gymmate.task;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -27,11 +28,11 @@ public class InstagramMediaTask extends
         AsyncTask<String, Void, ArrayList<ModelMedia>>
 {
     private static final String TAG = InstagramMediaTask.class.getSimpleName();
-    private OnFetchFinishedListener mOnFetchFinishedListener = OnFetchFinishedListener.NO_OP;
+    private Context mContext;
 
-    public void setOnFetchFinishedListener(OnFetchFinishedListener listener)
+    public InstagramMediaTask(Context context)
     {
-        mOnFetchFinishedListener = listener;
+        mContext = context;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class InstagramMediaTask extends
         final ArrayList<ModelMedia> arrayList = new ArrayList<>();
 
         SyncHttpClient googleSyncHttpClient = new SyncHttpClient();
-        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=37.7814460,-122.3921540&radius=1000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
+        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + AppConfig.TEST_GYM_LAT + "," + AppConfig.TEST_GYM_LONG + "&radius=5000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
         {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
@@ -124,14 +125,60 @@ public class InstagramMediaTask extends
     @Override
     protected void onPostExecute(ArrayList<ModelMedia> medias)
     {
-        super.onPostExecute(medias);
-        if (medias != null && medias.size() > 0)
+        addUserValues(medias);
+        addMediaValues(medias);
+    }
+
+    private void addUserValues(ArrayList<ModelMedia> medias)
+    {
+        Cursor userCursor;
+        for (ModelMedia modelMedia : medias)
         {
-            mOnFetchFinishedListener.onSuccess(medias);
+            userCursor = mContext.getContentResolver().query(MediaContract.UserEntry.CONTENT_URI, new String[] { MediaContract.UserEntry.COLUMN_INSTAGRAM_ID }, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelMedia.getOwner().getInstagramId()) }, null);
+            if (userCursor.moveToFirst())
+            {
+                userCursor.close();
+            }
+            else
+            {
+                ContentValues userContentValues = new ContentValues();
+                userContentValues.put(MediaContract.UserEntry.COLUMN_INSTAGRAM_ID, modelMedia.getOwner().getInstagramId());
+                userContentValues.put(MediaContract.UserEntry.COLUMN_USERNAME, modelMedia.getOwner().getUserName());
+                userContentValues.put(MediaContract.UserEntry.COLUMN_FULL_NAME, modelMedia.getOwner().getFullName());
+                userContentValues.put(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE, modelMedia.getOwner().getProfilePicture());
+
+                mContext.getContentResolver().insert(MediaContract.UserEntry.CONTENT_URI, userContentValues);
+            }
         }
-        else
+    }
+
+    private void addMediaValues(ArrayList<ModelMedia> medias)
+    {
+        Cursor mediaCursor;
+        for (ModelMedia modelMedia : medias)
         {
-            mOnFetchFinishedListener.onFailed();
+            mediaCursor = mContext.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
+            if (mediaCursor.moveToFirst())
+            {
+                mediaCursor.close();
+            }
+            else
+            {
+                ContentValues mediaContentValues = new ContentValues();
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TAGS, modelMedia.getTagString());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TYPE, modelMedia.getType());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE, modelMedia.getLocationLat());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, modelMedia.getLocationLong());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, modelMedia.getCreateTime());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LINK, modelMedia.getLink());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_LOW, modelMedia.getImageLowRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_THUMBNAIL, modelMedia.getImageThumbnail());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_HIGH, modelMedia.getVideoStandardRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID, modelMedia.getOwner().getInstagramId());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID, modelMedia.getInstagramId());
+
+                mContext.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
+            }
         }
     }
 }

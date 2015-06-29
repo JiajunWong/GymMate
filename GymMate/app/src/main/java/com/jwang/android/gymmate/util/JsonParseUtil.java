@@ -230,6 +230,11 @@ public class JsonParseUtil
                         }
                     }
 
+                    if (mediaObject.has("id"))
+                    {
+                        modelMedia.setInstagramId(mediaObject.getString("id"));
+                    }
+
                     if (mediaObject.has("user"))
                     {
                         ModelUser owner = new ModelUser();

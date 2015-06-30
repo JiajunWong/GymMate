@@ -12,4 +12,17 @@
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
     </style>
 
+    <style name="CardView.ListView" parent="CardView">
+        <item name="cardCornerRadius">4dp</item>
+    </style>
+
+    <style name="InstagramLikeTextStyle">
+        <item name="android:textColor">@color/text_like_blue</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
+    </style>
+
+    <style name="InstagramUserNameTextStyle" parent="InstagramLikeTextStyle">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

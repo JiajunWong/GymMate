@@ -171,11 +171,14 @@ public class InstagramMediaTask extends
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, modelMedia.getLocationLong());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, modelMedia.getCreateTime());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LINK, modelMedia.getLink());
-                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_LOW, modelMedia.getImageLowRes());
-                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_THUMBNAIL, modelMedia.getImageThumbnail());
-                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_HIGH, modelMedia.getVideoStandardRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW, modelMedia.getImageLowRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_THUMBNAIL, modelMedia.getImageThumbnail());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD, modelMedia.getImageHighRes());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID, modelMedia.getOwner().getInstagramId());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID, modelMedia.getInstagramId());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH, modelMedia.getVideoLowBandwidth());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES, modelMedia.getVideoStandardRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES, modelMedia.getVideoLowRes());
 
                 mContext.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
             }

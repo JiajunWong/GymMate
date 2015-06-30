@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import com.squareup.picasso.Picasso;
  */
 public class MediaAdapter extends CursorAdapter
 {
-
     public MediaAdapter(Context context, Cursor c, int flags)
     {
         super(context, c, flags);
@@ -47,8 +47,16 @@ public class MediaAdapter extends CursorAdapter
         int username_index = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
         viewHolder.mOwnerUserName.setText(cursor.getString(username_index));
 
-        int media_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_LOW);
-        Picasso.with(context).load(cursor.getString(media_index)).into(viewHolder.mMediaImage);
+        int media_high_res_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
+        int media_low_res_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
+        if (!TextUtils.isEmpty(cursor.getString(media_high_res_index)))
+        {
+            Picasso.with(context).load(cursor.getString(media_high_res_index)).into(viewHolder.mMediaImage);
+        }
+        else
+        {
+            Picasso.with(context).load(cursor.getString(media_low_res_index)).into(viewHolder.mMediaImage);
+        }
     }
 
     public static class ViewHolder

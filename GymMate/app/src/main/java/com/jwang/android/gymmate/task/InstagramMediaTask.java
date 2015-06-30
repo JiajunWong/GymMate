@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -45,12 +47,13 @@ public class InstagramMediaTask extends
         final ArrayList<ModelMedia> arrayList = new ArrayList<>();
 
         SyncHttpClient googleSyncHttpClient = new SyncHttpClient();
-        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + params[1] + "," + params[2] + "&radius=5000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
+        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + params[1] + "," + params[2] + "&radius=" + AppConfig.RADIUS_FROM_DESTINATION * 100 + "&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
         {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
             {
                 ArrayList<ModelLocation> locations = JsonParseUtil.parseGetGeoLocationByGoogleApiJson(new String(responseBody));
+                Log.w(TAG, "***Get " + locations.size() + " Locations from Google.");
                 for (ModelLocation location : locations)
                 {
                     fetchData(location.getLocationLat(), location.getLocationLong(), arrayList);
@@ -63,15 +66,7 @@ public class InstagramMediaTask extends
             }
         });
 
-        //use facebook api get location ids
-        //        String facebookLocation = HttpRequestUtil.startHttpRequest("https://graph.facebook.com/search?type=place&center=37.549696,-122.314780&distance=100&access_token=425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b&expires_in=5184000", TAG);
-        //        String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(facebookLocation).getId();
-
         String accessToken = params[0];
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.7814460&lng=-122.3921540&distance=3000&access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/search?lat=37.549696&lng=-122.314780&distance=3000&access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/media/popular?access_token=" + accessToken, TAG);
-        //        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + "1572489" + "/media/recent?access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", TAG);
         return arrayList;
     }
 
@@ -90,6 +85,7 @@ public class InstagramMediaTask extends
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
             {
                 String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(new String(responseBody)).getId();
+                Log.w(TAG, "***FaceBook Id is " + facebookLocationId);
                 SyncHttpClient getInstagramSyncHttpClient = new SyncHttpClient();
                 getInstagramSyncHttpClient.get("https://api.instagram.com/v1/locations/search?facebook_places_id=" + facebookLocationId + "&access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", new AsyncHttpResponseHandler()
                 {
@@ -97,11 +93,16 @@ public class InstagramMediaTask extends
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
                     {
                         String instagramLocationId = JsonParseUtil.parseGetInstagramLocationByFaceBookIdJson(new String(responseBody)).getId();
-                        String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", TAG);
-                        ArrayList<ModelMedia> modelMedias = JsonParseUtil.parseGetMediaByLocationResultJson(popularJsonStr);
-                        for (ModelMedia modelMedia : modelMedias)
+                        Log.w(TAG, "***Instagram Id is " + instagramLocationId);
+                        if (!TextUtils.isEmpty(instagramLocationId))
                         {
-                            arrayList.add(modelMedia);
+                            String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=588218898.e23a1c4.ee9e21e827144eadacbd607ced01603e", TAG);
+                            ArrayList<ModelMedia> modelMedias = JsonParseUtil.parseGetMediaByLocationResultJson(popularJsonStr);
+                            Log.w(TAG, "***Get " + modelMedias.size() + " from Instagram.");
+                            for (ModelMedia modelMedia : modelMedias)
+                            {
+                                arrayList.add(modelMedia);
+                            }
                         }
                     }
 

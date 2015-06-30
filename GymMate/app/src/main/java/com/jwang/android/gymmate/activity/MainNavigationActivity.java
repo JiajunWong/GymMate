@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
@@ -17,7 +14,6 @@ import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.task.InstagramMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
-import com.squareup.picasso.Picasso;
 
 import net.londatiga.android.instagram.InstagramUser;
 

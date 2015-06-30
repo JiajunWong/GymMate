@@ -85,5 +85,4 @@ public class MediaAdapter extends CursorAdapter
             mCaptionText = (TextView) view.findViewById(R.id.caption_text);
         }
     }
-
 }

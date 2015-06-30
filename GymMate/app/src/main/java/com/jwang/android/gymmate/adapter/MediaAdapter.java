@@ -57,12 +57,24 @@ public class MediaAdapter extends CursorAdapter
         {
             Picasso.with(context).load(cursor.getString(media_low_res_index)).into(viewHolder.mMediaImage);
         }
+
+        int caption_text_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT);
+        if (!TextUtils.isEmpty(cursor.getString(caption_text_index)))
+        {
+            viewHolder.mCaptionText.setVisibility(View.VISIBLE);
+            viewHolder.mCaptionText.setText(cursor.getString(caption_text_index));
+        }
+        else
+        {
+            viewHolder.mCaptionText.setVisibility(View.GONE);
+        }
     }
 
     public static class ViewHolder
     {
         public final RoundedImageView mOwnerProfileImage;
         public final TextView mOwnerUserName;
+        public final TextView mCaptionText;
         public final ImageView mMediaImage;
 
         public ViewHolder(View view)
@@ -70,6 +82,7 @@ public class MediaAdapter extends CursorAdapter
             mOwnerProfileImage = (RoundedImageView) view.findViewById(R.id.owner_profile_image);
             mOwnerUserName = (TextView) view.findViewById(R.id.owner_username);
             mMediaImage = (ImageView) view.findViewById(R.id.media_image);
+            mCaptionText = (TextView) view.findViewById(R.id.caption_text);
         }
     }
 

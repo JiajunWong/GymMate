@@ -230,6 +230,15 @@ public class JsonParseUtil
                         }
                     }
 
+                    if (mediaObject.has("caption"))
+                    {
+                        JSONObject captionJsonObject = mediaObject.getJSONObject("caption");
+                        if (captionJsonObject != null && captionJsonObject.has("text"))
+                        {
+                            modelMedia.setCaptionText(captionJsonObject.getString("text"));
+                        }
+                    }
+
                     if (mediaObject.has("id"))
                     {
                         modelMedia.setInstagramId(mediaObject.getString("id"));

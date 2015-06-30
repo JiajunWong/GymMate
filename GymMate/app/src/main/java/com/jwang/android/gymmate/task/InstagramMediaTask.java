@@ -179,6 +179,7 @@ public class InstagramMediaTask extends
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH, modelMedia.getVideoLowBandwidth());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES, modelMedia.getVideoStandardRes());
                 mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES, modelMedia.getVideoLowRes());
+                mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT, modelMedia.getCaptionText());
 
                 mContext.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
             }

@@ -12,7 +12,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "media.db";
 
     public MediaDBHelper(Context context)
@@ -48,7 +48,8 @@ public class MediaDBHelper extends SQLiteOpenHelper
                 MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES + " TEXT, " +
-                MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES + " TEXT" +
+                MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES + " TEXT, " +
+                MediaContract.MediaEntry.COLUMN_CAPTION_TEXT + " TEXT" +
                 " );";
         Log.d(TAG, "SQL Statement: "+SQL_CREATE_MEDIA_TABLE);
 

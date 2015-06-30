@@ -27,6 +27,8 @@ public class ModelMedia
     private String mVideoStandardRes;
     private String mVideoLowRes;
 
+    private String mCaptionText;
+
     private ModelUser mOwner;
 
     public ModelMedia()
@@ -46,6 +48,16 @@ public class ModelMedia
             sb.append(s).append(", ");
         }
         return sb.toString().substring(0, sb.length() - 1);
+    }
+
+    public String getCaptionText()
+    {
+        return mCaptionText;
+    }
+
+    public void setCaptionText(String captionText)
+    {
+        this.mCaptionText = captionText;
     }
 
     public String getInstagramId()

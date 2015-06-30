@@ -84,6 +84,7 @@ public class MediaContract
         public static final String COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH = "media_video_low_bandwidth";
         public static final String COLUMN_MEDIA_VIDEO_STANDARD_RES = "media_video_standard";
         public static final String COLUMN_MEDIA_VIDEO_LOW_RES = "media_video_low";
+        public static final String COLUMN_CAPTION_TEXT = "caption_text";
 
         public static Uri buildMediaUri(long id)
         {

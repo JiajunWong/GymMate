@@ -32,8 +32,6 @@ public class MainNavigationActivity extends BaseActivity implements
     private static final int MEDIA_LOADER = 0;
     private int mPosition = ListView.INVALID_POSITION;
 
-    private ImageView mUserAvatarImageView;
-    private TextView mUserNameTextView;
     private ListView mListView;
     private MediaAdapter mMediaAdapter;
 
@@ -46,27 +44,12 @@ public class MainNavigationActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_navigation);
 
-        mUserAvatarImageView = (ImageView) findViewById(R.id.user_avatar);
-        mUserNameTextView = (TextView) findViewById(R.id.user_name);
         mListView = (ListView) findViewById(R.id.lv_medias);
         mMediaAdapter = new MediaAdapter(this, null, 0);
         mListView.setAdapter(mMediaAdapter);
 
         mInstagramOauth = InstagramOauth.getsInstance(this);
         mInstagramUser = mInstagramOauth.getSession().getUser();
-
-        if (mInstagramUser != null)
-        {
-            if (!TextUtils.isEmpty(mInstagramUser.username))
-            {
-                mUserNameTextView.setText(mInstagramUser.fullName);
-            }
-
-            if (!TextUtils.isEmpty(mInstagramUser.profilPicture))
-            {
-                Picasso.with(this).load(mInstagramUser.profilPicture).fit().into(mUserAvatarImageView);
-            }
-        }
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways

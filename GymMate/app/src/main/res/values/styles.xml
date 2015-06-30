@@ -14,6 +14,7 @@
 
     <style name="CardView.ListView" parent="CardView">
         <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">1dp</item>
     </style>
 
     <style name="InstagramLikeTextStyle">

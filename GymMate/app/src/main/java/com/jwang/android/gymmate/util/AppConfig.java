@@ -6,8 +6,8 @@ package com.jwang.android.gymmate.util;
 public class AppConfig
 {
     //San mateo 24 fitness center
-    public static final String TEST_GYM_LAT = "37.549696";
-    public static final String TEST_GYM_LONG = "-122.314780";
+    //    public static final String TEST_GYM_LAT = "37.549696";
+    //    public static final String TEST_GYM_LONG = "-122.314780";
 
     public static final String LOCATION = "location";
     public static final double RADIUS_SPHERE = 6371.01;

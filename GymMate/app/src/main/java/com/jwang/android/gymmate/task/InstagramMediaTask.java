@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -38,7 +37,7 @@ public class InstagramMediaTask extends
     @Override
     protected ArrayList<ModelMedia> doInBackground(String... params)
     {
-        if (TextUtils.isEmpty(params[0]))
+        if (params.length < 3 && TextUtils.isEmpty(params[0]) || TextUtils.isEmpty(params[1]) || TextUtils.isEmpty(params[2]))
         {
             return null;
         }
@@ -46,7 +45,7 @@ public class InstagramMediaTask extends
         final ArrayList<ModelMedia> arrayList = new ArrayList<>();
 
         SyncHttpClient googleSyncHttpClient = new SyncHttpClient();
-        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + AppConfig.TEST_GYM_LAT + "," + AppConfig.TEST_GYM_LONG + "&radius=5000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
+        googleSyncHttpClient.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + params[1] + "," + params[2] + "&radius=5000&key=AIzaSyCxzHIfkpQKoHWxHBkeEX-7UcBTq_ykikE&types=gym&language=en", new AsyncHttpResponseHandler()
         {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)

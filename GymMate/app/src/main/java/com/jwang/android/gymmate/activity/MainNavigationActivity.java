@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.activity;
 import android.os.Bundle;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -15,6 +16,7 @@ public class MainNavigationActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_navigation);
+        MediaSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

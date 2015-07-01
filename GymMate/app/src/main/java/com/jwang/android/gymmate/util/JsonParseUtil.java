@@ -1,7 +1,11 @@
 package com.jwang.android.gymmate.util;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
+import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
@@ -132,7 +136,7 @@ public class JsonParseUtil
         return modelLocation;
     }
 
-    public static ArrayList<ModelMedia> parseGetMediaByLocationResultJson(String jsonString)
+    public static ArrayList<ModelMedia> parseGetMediaByLocationResultJson(Context context, String jsonString)
     {
         ArrayList<ModelMedia> medias = new ArrayList<>();
 
@@ -269,6 +273,8 @@ public class JsonParseUtil
                     }
 
                     medias.add(modelMedia);
+                    addMediaValues(context, modelMedia);
+                    addUserValues(context, modelMedia);
                 }
             }
 
@@ -279,5 +285,49 @@ public class JsonParseUtil
             Log.e(TAG, e.getMessage());
         }
         return medias;
+    }
+
+    private static void addUserValues(Context context, ModelMedia modelMedia)
+    {
+
+        Cursor userCursor = context.getContentResolver().query(MediaContract.UserEntry.CONTENT_URI, new String[] { MediaContract.UserEntry.COLUMN_INSTAGRAM_ID }, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelMedia.getOwner().getInstagramId()) }, null);
+        if (!userCursor.moveToFirst())
+        {
+            ContentValues userContentValues = new ContentValues();
+            userContentValues.put(MediaContract.UserEntry.COLUMN_INSTAGRAM_ID, modelMedia.getOwner().getInstagramId());
+            userContentValues.put(MediaContract.UserEntry.COLUMN_USERNAME, modelMedia.getOwner().getUserName());
+            userContentValues.put(MediaContract.UserEntry.COLUMN_FULL_NAME, modelMedia.getOwner().getFullName());
+            userContentValues.put(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE, modelMedia.getOwner().getProfilePicture());
+
+            context.getContentResolver().insert(MediaContract.UserEntry.CONTENT_URI, userContentValues);
+        }
+        userCursor.close();
+    }
+
+    private static void addMediaValues(Context context, ModelMedia modelMedia)
+    {
+        Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
+        if (!mediaCursor.moveToFirst())
+        {
+            ContentValues mediaContentValues = new ContentValues();
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TAGS, modelMedia.getTagString());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TYPE, modelMedia.getType());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE, modelMedia.getLocationLat());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, modelMedia.getLocationLong());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, modelMedia.getCreateTime());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LINK, modelMedia.getLink());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW, modelMedia.getImageLowRes());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_THUMBNAIL, modelMedia.getImageThumbnail());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD, modelMedia.getImageHighRes());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID, modelMedia.getOwner().getInstagramId());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID, modelMedia.getInstagramId());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH, modelMedia.getVideoLowBandwidth());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES, modelMedia.getVideoStandardRes());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES, modelMedia.getVideoLowRes());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT, modelMedia.getCaptionText());
+
+            context.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
+        }
+        mediaCursor.close();
     }
 }

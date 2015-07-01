@@ -16,9 +16,7 @@ import android.widget.ListView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.task.InstagramMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
-import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.util.LocationUtil;
 
 /**
@@ -30,7 +28,6 @@ public class MediaListFragment extends BaseFragment implements
 {
     private ListView mListView;
     private MediaAdapter mMediaAdapter;
-    private Location mLocation;
 
     private static final String SELECTED_KEY = "selected_position";
     private int mPosition = ListView.INVALID_POSITION;
@@ -60,9 +57,6 @@ public class MediaListFragment extends BaseFragment implements
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
-        mLocation = LocationUtil.getCurrentLocation(getActivity());
-        InstagramMediaTask instagramMediaTask = new InstagramMediaTask(getActivity());
-        instagramMediaTask.execute(InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken(), Double.toString(mLocation.getLatitude()), Double.toString(mLocation.getLongitude()));
         return rootView;
     }
 
@@ -97,7 +91,8 @@ public class MediaListFragment extends BaseFragment implements
 
         // Sort order:  Ascending, by date.
         String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
-        Uri uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, Double.toString(mLocation.getLatitude()), Double.toString(mLocation.getLongitude()));
+        Location location = LocationUtil.getCurrentLocation(getActivity());
+        Uri uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
         return new CursorLoader(getActivity(), uri, null, null, null, sortOrder);
     }
 

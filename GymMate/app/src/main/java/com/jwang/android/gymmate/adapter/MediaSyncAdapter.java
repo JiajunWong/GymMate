@@ -63,7 +63,7 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
         //make a google api call to get gym locations
         RequestParams googleRequestParams = new RequestParams();
         googleRequestParams.put("location", location.getLatitude() + "," + location.getLongitude());
-        googleRequestParams.put("radius", AppConfig.RADIUS_FROM_DESTINATION * 100);
+        googleRequestParams.put("radius", AppConfig.RADIUS_FROM_DESTINATION * 1000);
         googleRequestParams.put("key", AppConfig.GOOGLE_ACCESS_TOKEN);
         googleRequestParams.put("types", "gym");
         googleRequestParams.put("language", "en");

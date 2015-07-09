@@ -10,14 +10,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
+import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.LocationUtil;
@@ -30,6 +33,7 @@ public class MediaListFragment extends BaseFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
     private StaggeredGridView mListView;
+    private SwipeRefreshLayout swipeContainer;
     private MediaAdapter mMediaAdapter;
 
     private static final String SELECTED_KEY = "selected_position";
@@ -48,6 +52,10 @@ public class MediaListFragment extends BaseFragment implements
         View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
         mListView = (StaggeredGridView) rootView.findViewById(R.id.lv_medias);
         mListView.setAdapter(mMediaAdapter);
+        mListView.setOnScrollListener(mOnScrollListener);
+        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(mOnRefreshListener);
+        swipeContainer.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light);
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways
@@ -62,6 +70,37 @@ public class MediaListFragment extends BaseFragment implements
         }
         return rootView;
     }
+
+    SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener()
+    {
+        @Override
+        public void onRefresh()
+        {
+            MediaSyncAdapter.syncImmediately(getActivity());
+            swipeContainer.setRefreshing(false);
+        }
+    };
+
+    AbsListView.OnScrollListener mOnScrollListener = new AbsListView.OnScrollListener()
+    {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState)
+        {
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+        {
+            if (firstVisibleItem == 0)
+            {
+                swipeContainer.setEnabled(true);
+            }
+            else
+            {
+                swipeContainer.setEnabled(false);
+            }
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)

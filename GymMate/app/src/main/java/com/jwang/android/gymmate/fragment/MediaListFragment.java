@@ -1,5 +1,7 @@
 package com.jwang.android.gymmate.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
@@ -26,7 +29,7 @@ import com.jwang.android.gymmate.util.LocationUtil;
 public class MediaListFragment extends BaseFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
-    private ListView mListView;
+    private StaggeredGridView mListView;
     private MediaAdapter mMediaAdapter;
 
     private static final String SELECTED_KEY = "selected_position";
@@ -43,7 +46,7 @@ public class MediaListFragment extends BaseFragment implements
     {
         mMediaAdapter = new MediaAdapter(getActivity(), null, 0);
         View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
-        mListView = (ListView) rootView.findViewById(R.id.lv_medias);
+        mListView = (StaggeredGridView) rootView.findViewById(R.id.lv_medias);
         mListView.setAdapter(mMediaAdapter);
 
         // If there's instance state, mine it for useful information.
@@ -92,7 +95,18 @@ public class MediaListFragment extends BaseFragment implements
         // Sort order:  Ascending, by date.
         String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
         Location location = LocationUtil.getCurrentLocation(getActivity());
-        Uri uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+        Uri uri;
+        if (location == null)
+        {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(AppConfig.LOCATION, Context.MODE_PRIVATE);
+            String lng = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LONG, "0");
+            String lat = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LAT, "0");
+            uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, lat, lng);
+        }
+        else
+        {
+            uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+        }
         return new CursorLoader(getActivity(), uri, null, null, null, sortOrder);
     }
 

@@ -51,9 +51,9 @@ public class MediaListFragment extends BaseFragment implements
         mMediaAdapter = new MediaAdapter(getActivity(), null, 0);
         View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
         mListView = (StaggeredGridView) rootView.findViewById(R.id.lv_medias);
+        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
         mListView.setAdapter(mMediaAdapter);
         mListView.setOnScrollListener(mOnScrollListener);
-        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(mOnRefreshListener);
         swipeContainer.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light);
 

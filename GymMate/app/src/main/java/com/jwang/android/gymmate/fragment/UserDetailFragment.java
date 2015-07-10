@@ -7,12 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -22,6 +25,13 @@ import java.util.ArrayList;
 public class UserDetailFragment extends BaseFragment
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
+
+    private TextView mUserNameTextView;
+    private TextView mUserRealNameTextView;
+    private TextView mPostsCountTextView;
+    private TextView mFollowersCountTextView;
+    private TextView mFollowingCountTextView;
+    private ImageView mUserAvatarImageView;
 
     public static UserDetailFragment newInstance(String userId)
     {
@@ -42,7 +52,6 @@ public class UserDetailFragment extends BaseFragment
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        fetchUserInfo();
     }
 
     @Nullable
@@ -50,6 +59,14 @@ public class UserDetailFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
+        mUserAvatarImageView = (ImageView) rootView.findViewById(R.id.user_photo);
+        mUserNameTextView = (TextView) rootView.findViewById(R.id.username);
+        mUserRealNameTextView = (TextView) rootView.findViewById(R.id.user_real_name);
+        mPostsCountTextView = (TextView) rootView.findViewById(R.id.post_count);
+        mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
+        mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
+
+        fetchUserInfo();
         return rootView;
     }
 
@@ -82,6 +99,21 @@ public class UserDetailFragment extends BaseFragment
 
             if (modelUser != null)
             {
+                if (!TextUtils.isEmpty(modelUser.getProfilePicture()))
+                {
+                    Picasso.with(getActivity()).load(modelUser.getProfilePicture()).into(mUserAvatarImageView);
+                }
+                if (!TextUtils.isEmpty(modelUser.getUserName()))
+                {
+                    mUserNameTextView.setText(modelUser.getUserName());
+                }
+                if (!TextUtils.isEmpty(modelUser.getFullName()))
+                {
+                    mUserRealNameTextView.setText(modelUser.getFullName());
+                }
+                mPostsCountTextView.setText(modelUser.getMediaCount() + "");
+                mFollowingCountTextView.setText(modelUser.getFollowsCount() + "");
+                mFollowersCountTextView.setText(modelUser.getFollowedByCount() + "");
             }
         }
     };

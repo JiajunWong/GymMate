@@ -113,6 +113,19 @@ public class JsonParseUtil
             if (respondJsonObject.has("data"))
             {
                 JSONObject dataJsonObject = respondJsonObject.getJSONObject("data");
+
+                if (dataJsonObject.has("username"))
+                {
+                    modelUser.setUserName(dataJsonObject.getString("username"));
+                }
+                if (dataJsonObject.has("full_name"))
+                {
+                    modelUser.setFullName(dataJsonObject.getString("full_name"));
+                }
+                if (dataJsonObject.has("profile_picture"))
+                {
+                    modelUser.setProfilePicture(dataJsonObject.getString("profile_picture"));
+                }
                 if (dataJsonObject.has("id"))
                 {
                     modelUser.setInstagramId(dataJsonObject.getLong("id"));
@@ -274,7 +287,7 @@ public class JsonParseUtil
                         }
                     }
 
-                    if (mediaObject.has("caption"))
+                    if (mediaObject.has("caption") && !mediaObject.get("caption").equals("null"))
                     {
                         JSONObject captionJsonObject = mediaObject.getJSONObject("caption");
                         if (captionJsonObject != null && captionJsonObject.has("text"))

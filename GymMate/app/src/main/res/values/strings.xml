@@ -5,6 +5,11 @@
     <!-- Log in -->
     <string name="log_in">Log In</string>
 
+    <!-- User Detail Page-->
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="posts">Posts</string>
+
     <!-- SyncAdapter related -->
     <string name="sync_account_type" translatable="false">gymmate.android.jwang.com</string>
     <string name="content_authority" translatable="false">com.jwang.android.gymmate</string>

@@ -131,7 +131,12 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View
+    <com.etsy.android.grid.StaggeredGridView
+        android:id="@+id/list_item_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        app:column_count_landscape="3"
+        app:column_count_portrait="3"
+        app:item_margin="2dp" />
 </LinearLayout>

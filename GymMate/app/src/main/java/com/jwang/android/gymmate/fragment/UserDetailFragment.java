@@ -2,12 +2,14 @@ package com.jwang.android.gymmate.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
@@ -19,12 +21,28 @@ import java.util.ArrayList;
  */
 public class UserDetailFragment extends BaseFragment
 {
-    private TextView mFollowersTextView;
-    private TextView mFollowingTextView;
-    private TextView mPostsTextView;
+    private static final String TAG = UserDetailFragment.class.getSimpleName();
+
+    public static UserDetailFragment newInstance(String userId)
+    {
+        UserDetailFragment userDetailFragment = new UserDetailFragment();
+
+        Bundle args = new Bundle();
+        args.putString(UserDetailActivity.KEY_USER_ID, userId);
+        userDetailFragment.setArguments(args);
+
+        return userDetailFragment;
+    }
 
     public UserDetailFragment()
     {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        fetchUserInfo();
     }
 
     @Nullable
@@ -32,27 +50,39 @@ public class UserDetailFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
-        mFollowersTextView = (TextView) rootView.findViewById(R.id.user_followers);
-        mFollowingTextView = (TextView) rootView.findViewById(R.id.user_followings);
-        mPostsTextView = (TextView) rootView.findViewById(R.id.user_posts);
-
         return rootView;
     }
 
-    public void setResultWrapper(FetchUserProfileTask.ResultWrapper resultWrapper)
+    private void fetchUserInfo()
     {
-        if (resultWrapper == null)
+        String userId = getArguments().getString(UserDetailActivity.KEY_USER_ID);
+        if (TextUtils.isEmpty(userId))
         {
-            return;
+            Log.e(TAG, "fetchUserInfo: the user id is null!");
+            getActivity().finish();
         }
-        ModelUser modelUser = resultWrapper.mModelUser;
-        ArrayList<ModelMedia> medias = resultWrapper.modelMediaArrayList;
+        Log.d(TAG, "fetchUserInfo: User id is " + userId);
 
-        if (modelUser != null)
-        {
-            mFollowingTextView.setText(modelUser.getFollowsCount() + "");
-            mFollowersTextView.setText(modelUser.getFollowedByCount()+ "");
-            mPostsTextView.setText(modelUser.getMediaCount()+ "");
-        }
+        FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
+        fetchUserProfileTask.setOnFetchUserDetailFinishListener(mOnFetchUserDetailFinishListener);
+        fetchUserProfileTask.execute(userId);
     }
+
+    private FetchUserProfileTask.OnFetchUserDetailFinishListener mOnFetchUserDetailFinishListener = new FetchUserProfileTask.OnFetchUserDetailFinishListener()
+    {
+        @Override
+        public void onFinished(FetchUserProfileTask.ResultWrapper resultWrapper)
+        {
+            if (resultWrapper == null)
+            {
+                return;
+            }
+            ModelUser modelUser = resultWrapper.mModelUser;
+            ArrayList<ModelMedia> medias = resultWrapper.modelMediaArrayList;
+
+            if (modelUser != null)
+            {
+            }
+        }
+    };
 }

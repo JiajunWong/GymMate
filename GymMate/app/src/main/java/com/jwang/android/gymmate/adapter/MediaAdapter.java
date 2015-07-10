@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.model.ModelMedia;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -22,9 +23,13 @@ import com.squareup.picasso.Picasso;
  */
 public class MediaAdapter extends CursorAdapter implements View.OnClickListener
 {
+    public static final String TAG = MediaAdapter.class.getSimpleName();
+    private Context mContext;
+
     public MediaAdapter(Context context, Cursor c, int flags)
     {
         super(context, c, flags);
+        mContext = context;
     }
 
     @Override
@@ -72,6 +77,12 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         {
             viewHolder.mCaptionText.setVisibility(View.GONE);
         }
+
+        //set media id and owner id;
+        int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
+        viewHolder.mMediaId = cursor.getString(media_id_index);
+        int owner_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID);
+        viewHolder.mOwnerId = cursor.getString(owner_id_index);
     }
 
     @Override
@@ -81,7 +92,15 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         {
             case R.id.owner_profile_image:
             case R.id.owner_username:
-
+                ViewHolder viewHolder = (ViewHolder) view.getTag();
+                if (!TextUtils.isEmpty(viewHolder.mOwnerId))
+                {
+                    UserDetailActivity.startActivity(mContext, viewHolder.mOwnerId);
+                }
+                else
+                {
+                    Log.e(TAG, "Owner Id is Null!!");
+                }
                 break;
         }
     }
@@ -92,7 +111,8 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         public final TextView mOwnerUserName;
         public final TextView mCaptionText;
         public final ImageView mMediaImage;
-        public ModelMedia mModelMedia;
+        public String mMediaId;
+        public String mOwnerId;
 
         public ViewHolder(View view)
         {

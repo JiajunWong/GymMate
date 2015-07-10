@@ -9,13 +9,15 @@ import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 
 public class GymMateMediaSyncService extends Service
 {
+    private static final String TAG = GymMateMediaSyncService.class.getSimpleName();
+
     private static final Object sSyncAdapterLock = new Object();
     private static MediaSyncAdapter sMediaSyncAdapter = null;
 
     @Override
     public void onCreate()
     {
-        Log.d("SunshineSyncService", "onCreate - SunshineSyncService");
+        Log.d(TAG, "onCreate - GymMateMediaSyncService");
         synchronized (sSyncAdapterLock)
         {
             if (sMediaSyncAdapter == null)

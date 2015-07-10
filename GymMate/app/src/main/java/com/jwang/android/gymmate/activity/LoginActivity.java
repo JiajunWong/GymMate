@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.util.LocationUtil;
@@ -61,6 +62,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
                 SharedPreferences sharedPreferences = getSharedPreferences(AppConfig.LOCATION, Context.MODE_PRIVATE);
                 sharedPreferences.edit().putString(LocationUtil.KEY_LOCATION_LAT, Double.toString(location.getLatitude())).apply();
                 sharedPreferences.edit().putString(LocationUtil.KEY_LOCATION_LONG, Double.toString(location.getLongitude())).apply();
+                MediaSyncAdapter.syncImmediately(getApplicationContext());
             }
 
             @Override

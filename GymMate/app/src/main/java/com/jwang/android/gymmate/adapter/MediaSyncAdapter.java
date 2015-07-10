@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -52,17 +51,15 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
     {
         Log.d(TAG, "onPerformSync");
 
-        Location location = LocationUtil.getCurrentLocation(getContext());
-        final ArrayList<ModelMedia> arrayList = new ArrayList<>();
-
-        fetchLocationsFromGoogle(location);
+        String[] locations = LocationUtil.getCurrentLocation(getContext());
+        fetchLocationsFromGoogle(locations);
     }
 
-    private void fetchLocationsFromGoogle(Location location)
+    private void fetchLocationsFromGoogle(String[] location)
     {
         //make a google api call to get gym locations
         RequestParams googleRequestParams = new RequestParams();
-        googleRequestParams.put("location", location.getLatitude() + "," + location.getLongitude());
+        googleRequestParams.put("location", location[1] + "," + location[0]);
         googleRequestParams.put("radius", AppConfig.RADIUS_FROM_DESTINATION * 1000);
         googleRequestParams.put("key", AppConfig.GOOGLE_ACCESS_TOKEN);
         googleRequestParams.put("types", "gym");
@@ -169,6 +166,7 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_FORCE, true);
         ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.content_authority), bundle);
     }
 

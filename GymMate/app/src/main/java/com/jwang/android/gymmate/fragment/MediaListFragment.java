@@ -1,9 +1,6 @@
 package com.jwang.android.gymmate.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,8 +45,8 @@ public class MediaListFragment extends BaseFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        mMediaAdapter = new MediaAdapter(getActivity(), null, 0);
         View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
+        mMediaAdapter = new MediaAdapter(getActivity(), null, 0);
         mListView = (StaggeredGridView) rootView.findViewById(R.id.lv_medias);
         swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
         mListView.setAdapter(mMediaAdapter);
@@ -76,10 +73,16 @@ public class MediaListFragment extends BaseFragment implements
         @Override
         public void onRefresh()
         {
-            MediaSyncAdapter.syncImmediately(getActivity());
+            refreshData();
             swipeContainer.setRefreshing(false);
         }
     };
+
+    public void refreshData()
+    {
+        MediaSyncAdapter.syncImmediately(getActivity());
+        getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
+    }
 
     AbsListView.OnScrollListener mOnScrollListener = new AbsListView.OnScrollListener()
     {
@@ -131,21 +134,9 @@ public class MediaListFragment extends BaseFragment implements
         // To only show current and future dates, filter the query to return weather only for
         // dates after or including today.
 
-        // Sort order:  Ascending, by date.
         String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
-        Location location = LocationUtil.getCurrentLocation(getActivity());
-        Uri uri;
-        if (location == null)
-        {
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(AppConfig.LOCATION, Context.MODE_PRIVATE);
-            String lng = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LONG, "0");
-            String lat = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LAT, "0");
-            uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, lat, lng);
-        }
-        else
-        {
-            uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
-        }
+        String[] locations = LocationUtil.getCurrentLocation(getActivity());
+        Uri uri = MediaContract.MediaEntry.buildMediaWithLocation(AppConfig.LOCATION, locations[1], locations[0]);;
         return new CursorLoader(getActivity(), uri, null, null, null, sortOrder);
     }
 

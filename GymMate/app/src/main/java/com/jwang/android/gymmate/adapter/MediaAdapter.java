@@ -39,10 +39,8 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
-        viewHolder.mOwnerProfileImage.setOnClickListener(this);
-        viewHolder.mOwnerUserName.setOnClickListener(this);
-        viewHolder.mOwnerProfileImage.setTag(viewHolder);
-        viewHolder.mOwnerUserName.setTag(viewHolder);
+        viewHolder.mUserInfoRootView.setOnClickListener(this);
+        viewHolder.mUserInfoRootView.setTag(viewHolder);
         return view;
     }
 
@@ -90,8 +88,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
     {
         switch (view.getId())
         {
-            case R.id.owner_profile_image:
-            case R.id.owner_username:
+            case R.id.root_user_info:
                 ViewHolder viewHolder = (ViewHolder) view.getTag();
                 if (!TextUtils.isEmpty(viewHolder.mOwnerId))
                 {
@@ -111,6 +108,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         public final TextView mOwnerUserName;
         public final TextView mCaptionText;
         public final ImageView mMediaImage;
+        public final View mUserInfoRootView;
         public String mMediaId;
         public String mOwnerId;
 
@@ -120,6 +118,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
             mOwnerUserName = (TextView) view.findViewById(R.id.owner_username);
             mMediaImage = (ImageView) view.findViewById(R.id.media_image);
             mCaptionText = (TextView) view.findViewById(R.id.caption_text);
+            mUserInfoRootView = view.findViewById(R.id.root_user_info);
         }
     }
 }

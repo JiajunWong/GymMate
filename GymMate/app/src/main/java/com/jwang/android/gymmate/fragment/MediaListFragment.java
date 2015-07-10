@@ -45,6 +45,7 @@ public class MediaListFragment extends BaseFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        MediaSyncAdapter.syncImmediately(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
         mMediaAdapter = new MediaAdapter(getActivity(), null, 0);
         mListView = (StaggeredGridView) rootView.findViewById(R.id.lv_medias);

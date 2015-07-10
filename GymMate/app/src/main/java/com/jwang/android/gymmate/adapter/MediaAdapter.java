@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.model.ModelMedia;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -19,7 +20,7 @@ import com.squareup.picasso.Picasso;
  * @author Jiajun Wang on 6/25/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class MediaAdapter extends CursorAdapter
+public class MediaAdapter extends CursorAdapter implements View.OnClickListener
 {
     public MediaAdapter(Context context, Cursor c, int flags)
     {
@@ -33,7 +34,10 @@ public class MediaAdapter extends CursorAdapter
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
-
+        viewHolder.mOwnerProfileImage.setOnClickListener(this);
+        viewHolder.mOwnerUserName.setOnClickListener(this);
+        viewHolder.mOwnerProfileImage.setTag(viewHolder);
+        viewHolder.mOwnerUserName.setTag(viewHolder);
         return view;
     }
 
@@ -70,12 +74,25 @@ public class MediaAdapter extends CursorAdapter
         }
     }
 
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.owner_profile_image:
+            case R.id.owner_username:
+
+                break;
+        }
+    }
+
     public static class ViewHolder
     {
         public final RoundedImageView mOwnerProfileImage;
         public final TextView mOwnerUserName;
         public final TextView mCaptionText;
         public final ImageView mMediaImage;
+        public ModelMedia mModelMedia;
 
         public ViewHolder(View view)
         {

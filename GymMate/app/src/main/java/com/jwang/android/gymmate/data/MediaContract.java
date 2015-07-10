@@ -25,6 +25,7 @@ public class MediaContract
 
     public static final String PATH_USER = "user";
     public static final String PATH_MEDIA = "media";
+    public static final String PATH_USER_INFO = "user_info";
 
     // To make it easy to query for the exact date, we normalize all dates that go into
     // the database to the start of the the Julian day at UTC.
@@ -52,6 +53,9 @@ public class MediaContract
         public static final String COLUMN_USERNAME = "username";
         public static final String COLUMN_FULL_NAME = "full_name";
         public static final String COLUMN_PROFILE_PICTURE = "profile_picture";
+        public static final String COLUMN_MEDIA_COUNT = "media_count";
+        public static final String COLUMN_FOLLOWED_BY_COUNT = "followed_by_count";
+        public static final String COLUMN_FOLLOW_COUNT = "follow_count";
 
         public static Uri buildUserUri(long id)
         {

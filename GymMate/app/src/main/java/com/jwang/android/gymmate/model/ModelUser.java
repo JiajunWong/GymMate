@@ -10,6 +10,9 @@ public class ModelUser extends ModelBase
     private String mUserName;
     private String mProfilePicture;
     private String mFullName;
+    private int mMediaCount;
+    private int mFollowedByCount;
+    private int mFollowsCount;
 
     public ModelUser()
     {
@@ -61,5 +64,35 @@ public class ModelUser extends ModelBase
     public void setUserName(String userName)
     {
         this.mUserName = userName;
+    }
+
+    public int getFollowedByCount()
+    {
+        return mFollowedByCount;
+    }
+
+    public void setFollowedByCount(int followedByCount)
+    {
+        this.mFollowedByCount = followedByCount;
+    }
+
+    public int getFollowsCount()
+    {
+        return mFollowsCount;
+    }
+
+    public void setFollowsCount(int followsCount)
+    {
+        this.mFollowsCount = followsCount;
+    }
+
+    public int getMediaCount()
+    {
+        return mMediaCount;
+    }
+
+    public void setMediaCount(int mediaCount)
+    {
+        this.mMediaCount = mediaCount;
     }
 }

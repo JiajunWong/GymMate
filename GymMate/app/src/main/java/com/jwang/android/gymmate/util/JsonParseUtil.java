@@ -103,6 +103,46 @@ public class JsonParseUtil
         return modelLocation;
     }
 
+    public static ModelUser parseUserInfoJson(Context context, String jsonString)
+    {
+        ModelUser modelUser = new ModelUser();
+        JSONObject respondJsonObject;
+        try
+        {
+            respondJsonObject = new JSONObject(jsonString);
+            if (respondJsonObject.has("data"))
+            {
+                JSONObject dataJsonObject = respondJsonObject.getJSONObject("data");
+                if (dataJsonObject.has("id"))
+                {
+                    modelUser.setInstagramId(dataJsonObject.getLong("id"));
+                }
+                if (dataJsonObject.has("counts"))
+                {
+                    JSONObject countsJsonObject = dataJsonObject.getJSONObject("counts");
+                    if (countsJsonObject.has("media"))
+                    {
+                        modelUser.setMediaCount(countsJsonObject.getInt("media"));
+                    }
+                    if (countsJsonObject.has("followed_by"))
+                    {
+                        modelUser.setFollowedByCount(countsJsonObject.getInt("followed_by"));
+                    }
+                    if (countsJsonObject.has("follows"))
+                    {
+                        modelUser.setFollowsCount(countsJsonObject.getInt("follows"));
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+        updateUserValues(context, modelUser);
+        return modelUser;
+    }
+
     public static ModelLocation parseGetInstagramLocationByFaceBookIdJson(String jsonString)
     {
         ModelLocation modelLocation = new ModelLocation();
@@ -302,6 +342,16 @@ public class JsonParseUtil
             context.getContentResolver().insert(MediaContract.UserEntry.CONTENT_URI, userContentValues);
         }
         userCursor.close();
+    }
+
+    private static void updateUserValues(Context context, ModelUser modelUser)
+    {
+        ContentValues userInfoContentValues = new ContentValues();
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_MEDIA_COUNT, modelUser.getMediaCount());
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT, modelUser.getFollowedByCount());
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT, modelUser.getFollowsCount());
+
+        context.getContentResolver().update(MediaContract.UserEntry.CONTENT_URI, userInfoContentValues, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelUser.getInstagramId()) });
     }
 
     private static void addMediaValues(Context context, ModelMedia modelMedia)

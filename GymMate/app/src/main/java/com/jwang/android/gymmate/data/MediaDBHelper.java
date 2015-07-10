@@ -12,7 +12,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "media.db";
 
     public MediaDBHelper(Context context)
@@ -29,7 +29,10 @@ public class MediaDBHelper extends SQLiteOpenHelper
                 MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " BIGINT UNIQUE NOT NULL, " +
                 MediaContract.UserEntry.COLUMN_USERNAME + " TEXT NOT NULL, " +
                 MediaContract.UserEntry.COLUMN_FULL_NAME + " TEXT NOT NULL, " +
-                MediaContract.UserEntry.COLUMN_PROFILE_PICTURE+ " TEXT NOT NULL " +
+                MediaContract.UserEntry.COLUMN_PROFILE_PICTURE+ " TEXT NOT NULL, " +
+                MediaContract.UserEntry.COLUMN_MEDIA_COUNT+ " INTEGER, " +
+                MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT+ " INTEGER, " +
+                MediaContract.UserEntry.COLUMN_FOLLOW_COUNT+ " INTEGER" +
                 " );";
         Log.d(TAG, "SQL Statement: "+SQL_CREATE_USER_TABLE);
 

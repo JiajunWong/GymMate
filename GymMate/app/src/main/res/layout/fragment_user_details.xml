@@ -5,19 +5,19 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/followers"
+        android:id="@+id/user_followers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Medium" />
 
     <TextView
-        android:id="@+id/followings"
+        android:id="@+id/user_followings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Medium" />
 
     <TextView
-        android:id="@+id/posts"
+        android:id="@+id/user_posts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Medium" />

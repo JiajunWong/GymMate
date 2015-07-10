@@ -19,7 +19,6 @@ import java.util.ArrayList;
  */
 public class UserDetailFragment extends BaseFragment
 {
-    private String mUserId;
     private TextView mFollowersTextView;
     private TextView mFollowingTextView;
     private TextView mPostsTextView;
@@ -33,9 +32,9 @@ public class UserDetailFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
-        mFollowersTextView = (TextView) rootView.findViewById(R.id.followers);
-        mFollowingTextView = (TextView) rootView.findViewById(R.id.followings);
-        mPostsTextView = (TextView) rootView.findViewById(R.id.posts);
+        mFollowersTextView = (TextView) rootView.findViewById(R.id.user_followers);
+        mFollowingTextView = (TextView) rootView.findViewById(R.id.user_followings);
+        mPostsTextView = (TextView) rootView.findViewById(R.id.user_posts);
 
         return rootView;
     }
@@ -51,9 +50,9 @@ public class UserDetailFragment extends BaseFragment
 
         if (modelUser != null)
         {
-            mFollowingTextView.setText(modelUser.getFollowsCount());
-            mFollowersTextView.setText(modelUser.getFollowedByCount());
-            mPostsTextView.setText(modelUser.getMediaCount());
+            mFollowingTextView.setText(modelUser.getFollowsCount() + "");
+            mFollowersTextView.setText(modelUser.getFollowedByCount()+ "");
+            mPostsTextView.setText(modelUser.getMediaCount()+ "");
         }
     }
 }

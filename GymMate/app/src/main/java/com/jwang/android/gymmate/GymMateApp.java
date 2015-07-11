@@ -2,6 +2,8 @@ package com.jwang.android.gymmate;
 
 import android.app.Application;
 import android.content.Context;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by jiajunwang on 6/23/15.
@@ -34,6 +36,7 @@ public class GymMateApp extends Application
     public void onCreate()
     {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         mContext = getApplicationContext();
     }
 }

@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
+import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
@@ -32,6 +34,9 @@ public class UserDetailFragment extends BaseFragment
     private TextView mFollowersCountTextView;
     private TextView mFollowingCountTextView;
     private ImageView mUserAvatarImageView;
+    private StaggeredGridView mStaggeredGridView;
+
+    private UserMediaAdapter mUserMediaAdapter;
 
     public static UserDetailFragment newInstance(String userId)
     {
@@ -65,6 +70,7 @@ public class UserDetailFragment extends BaseFragment
         mPostsCountTextView = (TextView) rootView.findViewById(R.id.post_count);
         mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
+        mStaggeredGridView = (StaggeredGridView) rootView.findViewById(R.id.list_item_view);
 
         fetchUserInfo();
         return rootView;
@@ -114,6 +120,12 @@ public class UserDetailFragment extends BaseFragment
                 mPostsCountTextView.setText(modelUser.getMediaCount() + "");
                 mFollowingCountTextView.setText(modelUser.getFollowsCount() + "");
                 mFollowersCountTextView.setText(modelUser.getFollowedByCount() + "");
+            }
+
+            if (medias != null)
+            {
+                mUserMediaAdapter = new UserMediaAdapter(getActivity(), medias);
+                mStaggeredGridView.setAdapter(mUserMediaAdapter);
             }
         }
     };

@@ -28,6 +28,8 @@
                 android:layout_marginRight="@dimen/horizontal_margin"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
+                android:src="?attr/colorPrimaryDark"
+                android:transitionName="@string/transition_name_media"
                 app:riv_border_color="@android:color/white"
                 app:riv_border_width="2dp"
                 app:riv_corner_radius="50dp" />
@@ -74,6 +76,7 @@
                     android:id="@+id/post_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="-"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 
@@ -96,6 +99,7 @@
                     android:id="@+id/follower_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="-"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 
@@ -118,6 +122,7 @@
                     android:id="@+id/following_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="-"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 

@@ -28,6 +28,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:scaleType="centerCrop"
+                android:transitionName="@string/transition_name_media"
                 app:riv_corner_radius="30dp" />
 
             <TextView

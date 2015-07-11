@@ -7,6 +7,8 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.text.format.Time;
 
+import com.jwang.android.gymmate.util.AppConfig;
+
 /**
  * @author Jiajun Wang on 6/24/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
@@ -60,6 +62,16 @@ public class MediaContract
         public static Uri buildUserUri(long id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildUserWithInstagramId(String id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(AppConfig.USER).appendQueryParameter(COLUMN_INSTAGRAM_ID, id).build();
+        }
+
+        public static String getInstagramIdFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_INSTAGRAM_ID);
         }
     }
 

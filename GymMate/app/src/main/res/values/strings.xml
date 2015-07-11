@@ -10,6 +10,8 @@
     <string name="followers">Followers</string>
     <string name="posts">Posts</string>
 
+    <string name="transition_name_media" translatable="false">mediaTransition</string>
+
     <!-- SyncAdapter related -->
     <string name="sync_account_type" translatable="false">gymmate.android.jwang.com</string>
     <string name="content_authority" translatable="false">com.jwang.android.gymmate</string>

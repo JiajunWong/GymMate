@@ -10,6 +10,7 @@ public class AppConfig
     //    public static final String TEST_GYM_LONG = "-122.314780";
 
     public static final String LOCATION = "location";
+    public static final String USER = "user";
     public static final double RADIUS_SPHERE = 6371.01;
     public static final double RADIUS_FROM_DESTINATION = 10;
 

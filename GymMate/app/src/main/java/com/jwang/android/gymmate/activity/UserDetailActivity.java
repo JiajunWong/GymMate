@@ -1,11 +1,15 @@
 package com.jwang.android.gymmate.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.fragment.UserDetailFragment;
@@ -20,11 +24,22 @@ public class UserDetailActivity extends BaseActivity
 
     private UserDetailFragment mUserDetailFragment;
 
-    public static void startActivity(Context context, String userId)
+    public static void startActivity(Context context, View view, String userId)
     {
         Intent intent = new Intent(context, UserDetailActivity.class);
         intent.putExtra(KEY_USER_ID, userId);
-        context.startActivity(intent);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, view, context.getString(R.string.transition_name_media));
+        // Check if we're running on Android 5.0 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            // Call some material design APIs here
+            context.startActivity(intent, options.toBundle());
+        }
+        else
+        {
+            // Implement this feature without material design
+            context.startActivity(intent);
+        }
     }
 
     @Override

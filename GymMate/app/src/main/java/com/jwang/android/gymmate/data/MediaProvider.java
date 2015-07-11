@@ -24,6 +24,7 @@ public class MediaProvider extends ContentProvider
     static final int MEDIA = 100;
     static final int MEDIA_WITH_LOCATION = 101;
     static final int USER = 300;
+    static final int USER_WITH_INSTAGRAM_ID = 301;
 
     private static final SQLiteQueryBuilder sWeatherByIdQueryBuilder;
 
@@ -60,6 +61,17 @@ public class MediaProvider extends ContentProvider
         return sWeatherByIdQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
+    private static final String sInstagramIdSelection = MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?";
+
+    private Cursor getUserByInstagramId(Uri uri, String[] projection, String sortOrder)
+    {
+        String id = MediaContract.UserEntry.getInstagramIdFromUri(uri);
+        String selection = sInstagramIdSelection;
+        String[] selectionArgs = { id };
+
+        return mOpenHelper.getReadableDatabase().query(MediaContract.UserEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+    }
+
     private String[] getArgs(float lat, float lng)
     {
         String[] selectionArgs = new String[4];
@@ -94,6 +106,9 @@ public class MediaProvider extends ContentProvider
             case MEDIA_WITH_LOCATION:
                 retCursor = getMediaByLatitudeAndLongitude(uri, projection, sortOrder);
                 break;
+            case USER_WITH_INSTAGRAM_ID:
+                retCursor = getUserByInstagramId(uri, projection, sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -115,6 +130,8 @@ public class MediaProvider extends ContentProvider
                 return MediaContract.MediaEntry.CONTENT_TYPE;
             case USER:
                 return MediaContract.UserEntry.CONTENT_TYPE;
+            case USER_WITH_INSTAGRAM_ID:
+                return MediaContract.UserEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -255,6 +272,7 @@ public class MediaProvider extends ContentProvider
         matcher.addURI(authority, MediaContract.PATH_MEDIA, MEDIA);
         matcher.addURI(authority, MediaContract.PATH_USER, USER);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*", MEDIA_WITH_LOCATION);
+        matcher.addURI(authority, MediaContract.PATH_USER + "/*", USER_WITH_INSTAGRAM_ID);
         return matcher;
     }
 

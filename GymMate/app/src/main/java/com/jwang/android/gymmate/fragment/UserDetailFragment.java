@@ -1,7 +1,12 @@
 package com.jwang.android.gymmate.fragment;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +19,7 @@ import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
+import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.model.ModelUser;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
@@ -24,9 +30,12 @@ import java.util.ArrayList;
 /**
  * Created by jiajunwang on 7/2/15.
  */
-public class UserDetailFragment extends BaseFragment
+public class UserDetailFragment extends BaseFragment implements
+        LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
+
+    private String mUserId;
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -37,6 +46,8 @@ public class UserDetailFragment extends BaseFragment
     private StaggeredGridView mStaggeredGridView;
 
     private UserMediaAdapter mUserMediaAdapter;
+
+    private static final int USER_NEAR_LOADER = 0;
 
     public static UserDetailFragment newInstance(String userId)
     {
@@ -63,6 +74,7 @@ public class UserDetailFragment extends BaseFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        mUserId = getArguments().getString(UserDetailActivity.KEY_USER_ID);
         View rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
         mUserAvatarImageView = (ImageView) rootView.findViewById(R.id.user_photo);
         mUserNameTextView = (TextView) rootView.findViewById(R.id.username);
@@ -78,17 +90,16 @@ public class UserDetailFragment extends BaseFragment
 
     private void fetchUserInfo()
     {
-        String userId = getArguments().getString(UserDetailActivity.KEY_USER_ID);
-        if (TextUtils.isEmpty(userId))
+        if (TextUtils.isEmpty(mUserId))
         {
             Log.e(TAG, "fetchUserInfo: the user id is null!");
             getActivity().finish();
         }
-        Log.d(TAG, "fetchUserInfo: User id is " + userId);
+        Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
         FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
         fetchUserProfileTask.setOnFetchUserDetailFinishListener(mOnFetchUserDetailFinishListener);
-        fetchUserProfileTask.execute(userId);
+        fetchUserProfileTask.execute(mUserId);
     }
 
     private FetchUserProfileTask.OnFetchUserDetailFinishListener mOnFetchUserDetailFinishListener = new FetchUserProfileTask.OnFetchUserDetailFinishListener()
@@ -100,27 +111,7 @@ public class UserDetailFragment extends BaseFragment
             {
                 return;
             }
-            ModelUser modelUser = resultWrapper.mModelUser;
             ArrayList<ModelMedia> medias = resultWrapper.modelMediaArrayList;
-
-            if (modelUser != null)
-            {
-                if (!TextUtils.isEmpty(modelUser.getProfilePicture()))
-                {
-                    Picasso.with(getActivity()).load(modelUser.getProfilePicture()).into(mUserAvatarImageView);
-                }
-                if (!TextUtils.isEmpty(modelUser.getUserName()))
-                {
-                    mUserNameTextView.setText(modelUser.getUserName());
-                }
-                if (!TextUtils.isEmpty(modelUser.getFullName()))
-                {
-                    mUserRealNameTextView.setText(modelUser.getFullName());
-                }
-                mPostsCountTextView.setText(modelUser.getMediaCount() + "");
-                mFollowingCountTextView.setText(modelUser.getFollowsCount() + "");
-                mFollowersCountTextView.setText(modelUser.getFollowedByCount() + "");
-            }
 
             if (medias != null)
             {
@@ -129,4 +120,74 @@ public class UserDetailFragment extends BaseFragment
             }
         }
     };
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        getLoaderManager().initLoader(USER_NEAR_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args)
+    {
+        Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
+        return new CursorLoader(getActivity(), uri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    {
+        if (data.moveToFirst())
+        {
+            int index_profile_image = data.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
+            String profileImageUrl = data.getString(index_profile_image);
+
+            if (!TextUtils.isEmpty(profileImageUrl))
+            {
+                Picasso.with(getActivity()).load(profileImageUrl).into(mUserAvatarImageView);
+            }
+
+            int index_username = data.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
+            String username = data.getString(index_username);
+            if (!TextUtils.isEmpty(username))
+            {
+                mUserNameTextView.setText(username);
+            }
+
+            int index_user_full_name = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FULL_NAME);
+            String fullName = data.getString(index_user_full_name);
+            if (!TextUtils.isEmpty(fullName))
+            {
+                mUserRealNameTextView.setText(fullName);
+            }
+
+            int index_post_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_MEDIA_COUNT);
+            String mediaCount = data.getString(index_post_count);
+            if (!TextUtils.isEmpty(mediaCount))
+            {
+                mPostsCountTextView.setText(mediaCount);
+            }
+
+            int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);
+            String followsCount = data.getString(index_follows_count);
+            if (!TextUtils.isEmpty(followsCount))
+            {
+                mFollowingCountTextView.setText(followsCount);
+            }
+
+            int index_follow_by_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT);
+            String followByCount = data.getString(index_follow_by_count);
+            if (!TextUtils.isEmpty(followByCount))
+            {
+                mFollowersCountTextView.setText(followByCount);
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+
+    }
 }

@@ -92,7 +92,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
                 ViewHolder viewHolder = (ViewHolder) view.getTag();
                 if (!TextUtils.isEmpty(viewHolder.mOwnerId))
                 {
-                    UserDetailActivity.startActivity(mContext, viewHolder.mOwnerId);
+                    UserDetailActivity.startActivity(mContext, viewHolder.mOwnerProfileImage, viewHolder.mOwnerId);
                 }
                 else
                 {

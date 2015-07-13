@@ -39,7 +39,7 @@ public class UserDetailFragment extends BaseFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
-    private static final long ANIM_DURATION = 500;
+    private static final long ANIM_DURATION = 200;
 
     private String mUserId;
 
@@ -211,7 +211,7 @@ public class UserDetailFragment extends BaseFragment implements
     private void setupWindowAnimations()
     {
         setupEnterAnimations();
-        //        setupExitAnimations();
+        setupExitAnimations();
     }
 
     private void setupEnterAnimations()

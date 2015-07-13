@@ -1,5 +1,6 @@
 package com.jwang.android.gymmate.activity;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -7,12 +8,15 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
@@ -33,11 +37,22 @@ public class MediaDetailActivity extends BaseActivity implements
     private String mMediaLink;
     private ImageView mMediaImageView;
 
-    public static void startActivity(Context context, String id)
+    public static void startActivity(Context context, View view, String id)
     {
         Intent intent = new Intent(context, MediaDetailActivity.class);
         intent.putExtra(KEY_MEDIA_ID, id);
-        context.startActivity(intent);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, view, context.getString(R.string.transition_name_media));
+        // Check if we're running on Android 5.0 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            // Call some material design APIs here
+            context.startActivity(intent, options.toBundle());
+        }
+        else
+        {
+            // Implement this feature without material design
+            context.startActivity(intent);
+        }
     }
 
     @Override

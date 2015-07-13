@@ -30,7 +30,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="?attr/colorPrimaryDark"
-                android:transitionName="@string/transition_name_media"
+                android:transitionName="@string/transition_name_user"
                 app:riv_border_color="@android:color/white"
                 app:riv_border_width="2dp"
                 app:riv_corner_radius="50dp" />

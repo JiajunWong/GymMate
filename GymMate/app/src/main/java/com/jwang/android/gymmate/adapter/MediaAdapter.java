@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -41,6 +42,8 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
         view.setTag(viewHolder);
         viewHolder.mUserInfoRootView.setOnClickListener(this);
         viewHolder.mUserInfoRootView.setTag(viewHolder);
+        viewHolder.mMediaImage.setOnClickListener(this);
+        viewHolder.mMediaImage.setTag(viewHolder);
         return view;
     }
 
@@ -86,10 +89,10 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
     @Override
     public void onClick(View view)
     {
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
         switch (view.getId())
         {
             case R.id.root_user_info:
-                ViewHolder viewHolder = (ViewHolder) view.getTag();
                 if (!TextUtils.isEmpty(viewHolder.mOwnerId))
                 {
                     UserDetailActivity.startActivity(mContext, viewHolder.mOwnerProfileImage, viewHolder.mOwnerId);
@@ -99,6 +102,11 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
                     Log.e(TAG, "Owner Id is Null!!");
                 }
                 break;
+            case R.id.media_image:
+                if (!TextUtils.isEmpty(viewHolder.mMediaId))
+                {
+                    MediaDetailActivity.startActivity(mContext, viewHolder.mMediaImage, viewHolder.mMediaId);
+                }
         }
     }
 

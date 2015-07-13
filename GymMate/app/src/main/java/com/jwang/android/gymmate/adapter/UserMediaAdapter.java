@@ -69,7 +69,7 @@ public class UserMediaAdapter extends CursorAdapter implements
                 ViewHolder viewHolder = (ViewHolder) v.getTag();
                 if (!TextUtils.isEmpty(viewHolder.mMediaId))
                 {
-                    MediaDetailActivity.startActivity(mContext, viewHolder.mMediaId);
+                    MediaDetailActivity.startActivity(mContext, viewHolder.mImageView, viewHolder.mMediaId);
                 }
                 break;
         }

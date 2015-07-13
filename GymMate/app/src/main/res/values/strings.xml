@@ -13,6 +13,8 @@
     <!-- Media detail page -->
     <string name="action_share">Share</string>
 
+    <!-- Animation transition-->
+    <string name="transition_name_user" translatable="false">mediaTransition</string>
     <string name="transition_name_media" translatable="false">mediaTransition</string>
 
     <!-- SyncAdapter related -->

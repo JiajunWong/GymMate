@@ -51,7 +51,7 @@ public class MediaContract
         public static final String TABLE_NAME = "user";
 
         //Schema
-        public static final String COLUMN_INSTAGRAM_ID = "instagram_id";
+        public static final String COLUMN_INSTAGRAM_ID = "user_instagram_id";
         public static final String COLUMN_USERNAME = "username";
         public static final String COLUMN_FULL_NAME = "full_name";
         public static final String COLUMN_PROFILE_PICTURE = "profile_picture";
@@ -93,7 +93,7 @@ public class MediaContract
         public static final String COLUMN_CREATE_TIME = "create_time";
         public static final String COLUMN_LINK = "link";
         public static final String COLUMN_MEDIA_OWNER_ID = "owner_id";
-        public static final String COLUMN_MEDIA_INSTAGRAM_ID = "instagram_id";
+        public static final String COLUMN_MEDIA_INSTAGRAM_ID = "media_instagram_id";
         public static final String COLUMN_MEDIA_IMAGE_LOW = "media_image_low";
         public static final String COLUMN_MEDIA_IMAGE_THUMBNAIL = "media_image_thumbnail";
         public static final String COLUMN_MEDIA_IMAGE_STANDARD = "media_image_standard";

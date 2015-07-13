@@ -16,26 +16,19 @@ import java.util.ArrayList;
 /**
  * Created by jiajunwang on 7/2/15.
  */
-public class FetchUserProfileTask extends
-        AsyncTask<String, Void, FetchUserProfileTask.ResultWrapper>
+public class FetchUserProfileTask extends AsyncTask<String, Void, Void>
 {
     private static final String TAG = FetchUserProfileTask.class.getSimpleName();
 
     private Context mContext;
-    private OnFetchUserDetailFinishListener mOnFetchUserDetailFinishListener = OnFetchUserDetailFinishListener.NO_OP;
 
     public FetchUserProfileTask(Context context)
     {
         mContext = context;
     }
 
-    public void setOnFetchUserDetailFinishListener(OnFetchUserDetailFinishListener listener)
-    {
-        mOnFetchUserDetailFinishListener = listener;
-    }
-
     @Override
-    protected ResultWrapper doInBackground(String... params)
+    protected Void doInBackground(String... params)
     {
         if (params.length < 0 || TextUtils.isEmpty(params[0]))
         {
@@ -49,41 +42,8 @@ public class FetchUserProfileTask extends
         //TODO: get more pics
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
         String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
-        ArrayList<ModelMedia> medias = JsonParseUtil.parseGetMediaByLocationResultJson(mContext, mediaResponse);
-        ModelUser modelUser = JsonParseUtil.parseUserInfoJson(mContext, infoResponse);
-        ResultWrapper resultWrapper = new ResultWrapper(modelUser, medias);
-        return resultWrapper;
-    }
-
-    @Override
-    protected void onPostExecute(ResultWrapper resultWrapper)
-    {
-        super.onPostExecute(resultWrapper);
-        mOnFetchUserDetailFinishListener.onFinished(resultWrapper);
-    }
-
-    public class ResultWrapper
-    {
-        public ModelUser mModelUser;
-        public ArrayList<ModelMedia> modelMediaArrayList;
-
-        public ResultWrapper(ModelUser modelUser, ArrayList<ModelMedia> arrayList)
-        {
-            mModelUser = modelUser;
-            modelMediaArrayList = arrayList;
-        }
-    }
-
-    public interface OnFetchUserDetailFinishListener
-    {
-        public static final OnFetchUserDetailFinishListener NO_OP = new OnFetchUserDetailFinishListener()
-        {
-            @Override
-            public void onFinished(ResultWrapper resultWrapper)
-            {
-            }
-        };
-
-        public void onFinished(ResultWrapper resultWrapper);
+        JsonParseUtil.parseGetMediaByLocationResultJson(mContext, mediaResponse);
+        JsonParseUtil.parseUserInfoJson(mContext, infoResponse);
+        return null;
     }
 }

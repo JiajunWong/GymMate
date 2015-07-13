@@ -23,6 +23,7 @@ public class MediaProvider extends ContentProvider
 
     static final int MEDIA = 100;
     static final int MEDIA_WITH_LOCATION = 101;
+    static final int MEDIA_WITH_OWNER_ID = 102;
     static final int USER = 300;
     static final int USER_WITH_INSTAGRAM_ID = 301;
 
@@ -72,6 +73,17 @@ public class MediaProvider extends ContentProvider
         return mOpenHelper.getReadableDatabase().query(MediaContract.UserEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
+    private static final String sOwnerSelection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ?";
+
+    private Cursor getMediaByOwnerId(Uri uri, String[] projection, String sortOrder)
+    {
+        String id = MediaContract.MediaEntry.getOwnerIdFromUri(uri);
+        String selection = sOwnerSelection;
+        String[] selectionArgs = { id };
+
+        return mOpenHelper.getReadableDatabase().query(MediaContract.MediaEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+    }
+
     private String[] getArgs(float lat, float lng)
     {
         String[] selectionArgs = new String[4];
@@ -109,6 +121,9 @@ public class MediaProvider extends ContentProvider
             case USER_WITH_INSTAGRAM_ID:
                 retCursor = getUserByInstagramId(uri, projection, sortOrder);
                 break;
+            case MEDIA_WITH_OWNER_ID:
+                retCursor = getMediaByOwnerId(uri, projection, sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -124,6 +139,7 @@ public class MediaProvider extends ContentProvider
 
         switch (match)
         {
+            case MEDIA_WITH_OWNER_ID:
             case MEDIA_WITH_LOCATION:
                 return MediaContract.MediaEntry.CONTENT_TYPE;
             case MEDIA:
@@ -272,6 +288,7 @@ public class MediaProvider extends ContentProvider
         matcher.addURI(authority, MediaContract.PATH_MEDIA, MEDIA);
         matcher.addURI(authority, MediaContract.PATH_USER, USER);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*", MEDIA_WITH_LOCATION);
+        matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*", MEDIA_WITH_OWNER_ID);
         matcher.addURI(authority, MediaContract.PATH_USER + "/*", USER_WITH_INSTAGRAM_ID);
         return matcher;
     }

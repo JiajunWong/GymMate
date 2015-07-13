@@ -1,67 +1,55 @@
 package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.data.MediaContract;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 /**
- * Created by jiajunwang on 7/10/15.
+ * Created by jiajunwang on 7/12/15.
  */
-public class UserMediaAdapter extends BaseAdapter
+public class UserMediaAdapter extends CursorAdapter
 {
     private Context mContext;
-    private ArrayList<ModelMedia> mModelMedias = new ArrayList<>();
 
-    public UserMediaAdapter(Context context, ArrayList<ModelMedia> arrayList)
+    public UserMediaAdapter(Context context, Cursor c, int flags)
     {
+        super(context, c, flags);
         mContext = context;
-        mModelMedias = arrayList;
     }
 
     @Override
-    public int getCount()
+    public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-        return mModelMedias.size();
+        int layoutId = R.layout.list_item_user_media_grid;
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        view.setTag(viewHolder);
+        return view;
     }
 
     @Override
-    public Object getItem(int i)
+    public void bindView(View view, Context context, Cursor cursor)
     {
-        return mModelMedias.get(i);
-    }
-
-    @Override
-    public long getItemId(int i)
-    {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup)
-    {
-        ViewHolder viewHolder;
-        if (view == null)
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        int image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
+        if (TextUtils.isEmpty(cursor.getString(image_index)))
         {
-            view = LayoutInflater.from(mContext).inflate(R.layout.list_item_user_media_grid, viewGroup, false);
-            viewHolder = new ViewHolder(view);
-            view.setTag(viewHolder);
+            Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
         }
         else
         {
-            viewHolder = (ViewHolder) view.getTag();
+            image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
+            Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
         }
-
-        Picasso.with(mContext).load(mModelMedias.get(i).getImageHighRes()).into(viewHolder.mImageView);
-        return view;
     }
 
     public class ViewHolder

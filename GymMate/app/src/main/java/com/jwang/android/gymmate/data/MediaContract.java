@@ -112,6 +112,16 @@ public class MediaContract
             return CONTENT_URI.buildUpon().appendPath(locationSetting).appendQueryParameter(COLUMN_LOCATION_LATITUDE, lat).appendQueryParameter(COLUMN_LOCATION_LONGITUDE, lng).build();
         }
 
+        public static Uri buildMediaWithOwnerId(String id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(AppConfig.MEDIA).appendPath(AppConfig.USER).appendQueryParameter(COLUMN_MEDIA_OWNER_ID, id).build();
+        }
+
+        public static String getOwnerIdFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_MEDIA_OWNER_ID);
+        }
+
         public static float getLatFromUri(Uri uri)
         {
             String lat = uri.getQueryParameter(COLUMN_LOCATION_LATITUDE);

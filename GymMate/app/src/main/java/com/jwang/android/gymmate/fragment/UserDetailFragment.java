@@ -2,7 +2,6 @@ package com.jwang.android.gymmate.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -24,10 +23,10 @@ import android.widget.TextView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
+import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.model.ModelUser;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.squareup.picasso.Picasso;
 
@@ -93,6 +92,8 @@ public class UserDetailFragment extends BaseFragment implements
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
         mStaggeredGridView = (StaggeredGridView) rootView.findViewById(R.id.list_item_view);
         mBgView = rootView.findViewById(R.id.container);
+        mUserMediaAdapter = new UserMediaAdapter(getActivity(), null, 0);
+        mStaggeredGridView.setAdapter(mUserMediaAdapter);
 
         setupWindowAnimations();
 
@@ -110,103 +111,107 @@ public class UserDetailFragment extends BaseFragment implements
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
         FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
-        fetchUserProfileTask.setOnFetchUserDetailFinishListener(mOnFetchUserDetailFinishListener);
         fetchUserProfileTask.execute(mUserId);
     }
-
-    private FetchUserProfileTask.OnFetchUserDetailFinishListener mOnFetchUserDetailFinishListener = new FetchUserProfileTask.OnFetchUserDetailFinishListener()
-    {
-        @Override
-        public void onFinished(FetchUserProfileTask.ResultWrapper resultWrapper)
-        {
-            if (resultWrapper == null)
-            {
-                return;
-            }
-            ArrayList<ModelMedia> medias = resultWrapper.modelMediaArrayList;
-
-            if (medias != null)
-            {
-                mUserMediaAdapter = new UserMediaAdapter(getActivity(), medias);
-                mStaggeredGridView.setAdapter(mUserMediaAdapter);
-            }
-        }
-    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         getLoaderManager().initLoader(USER_NEAR_LOADER, null, this);
+        getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
-        Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
-        return new CursorLoader(getActivity(), uri, null, null, null, null);
+        switch (id)
+        {
+            case USER_NEAR_LOADER:
+                Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
+                return new CursorLoader(getActivity(), uri, null, null, null, null);
+            case MEDIA_NEAR_LOADER:
+                Uri uri1 = MediaContract.MediaEntry.buildMediaWithOwnerId(mUserId);
+                return new CursorLoader(getActivity(), uri1, null, null, null, null);
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data)
     {
-        if (data.moveToFirst())
+        switch (loader.getId())
         {
-            int index_profile_image = data.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
-            String profileImageUrl = data.getString(index_profile_image);
+            case USER_NEAR_LOADER:
+                if (data.moveToFirst())
+                {
+                    int index_profile_image = data.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
+                    String profileImageUrl = data.getString(index_profile_image);
 
-            if (!TextUtils.isEmpty(profileImageUrl))
-            {
-                Picasso.with(getActivity()).load(profileImageUrl).into(mUserAvatarImageView);
-            }
+                    if (!TextUtils.isEmpty(profileImageUrl))
+                    {
+                        Picasso.with(getActivity()).load(profileImageUrl).into(mUserAvatarImageView);
+                    }
 
-            int index_username = data.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
-            String username = data.getString(index_username);
-            if (!TextUtils.isEmpty(username))
-            {
-                mUserNameTextView.setText(username);
-            }
+                    int index_username = data.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
+                    String username = data.getString(index_username);
+                    if (!TextUtils.isEmpty(username))
+                    {
+                        mUserNameTextView.setText(username);
+                    }
 
-            int index_user_full_name = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FULL_NAME);
-            String fullName = data.getString(index_user_full_name);
-            if (!TextUtils.isEmpty(fullName))
-            {
-                mUserRealNameTextView.setText(fullName);
-            }
+                    int index_user_full_name = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FULL_NAME);
+                    String fullName = data.getString(index_user_full_name);
+                    if (!TextUtils.isEmpty(fullName))
+                    {
+                        mUserRealNameTextView.setText(fullName);
+                    }
 
-            int index_post_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_MEDIA_COUNT);
-            String mediaCount = data.getString(index_post_count);
-            if (!TextUtils.isEmpty(mediaCount))
-            {
-                mPostsCountTextView.setText(mediaCount);
-            }
+                    int index_post_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_MEDIA_COUNT);
+                    String mediaCount = data.getString(index_post_count);
+                    if (!TextUtils.isEmpty(mediaCount))
+                    {
+                        mPostsCountTextView.setText(mediaCount);
+                    }
 
-            int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);
-            String followsCount = data.getString(index_follows_count);
-            if (!TextUtils.isEmpty(followsCount))
-            {
-                mFollowingCountTextView.setText(followsCount);
-            }
+                    int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);
+                    String followsCount = data.getString(index_follows_count);
+                    if (!TextUtils.isEmpty(followsCount))
+                    {
+                        mFollowingCountTextView.setText(followsCount);
+                    }
 
-            int index_follow_by_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT);
-            String followByCount = data.getString(index_follow_by_count);
-            if (!TextUtils.isEmpty(followByCount))
-            {
-                mFollowersCountTextView.setText(followByCount);
-            }
+                    int index_follow_by_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT);
+                    String followByCount = data.getString(index_follow_by_count);
+                    if (!TextUtils.isEmpty(followByCount))
+                    {
+                        mFollowersCountTextView.setText(followByCount);
+                    }
+                }
+                break;
+            case MEDIA_NEAR_LOADER:
+                mUserMediaAdapter.swapCursor(data);
+                break;
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader)
     {
-
+        switch (loader.getId())
+        {
+            case MEDIA_NEAR_LOADER:
+                mUserMediaAdapter.swapCursor(null);
+                break;
+        }
     }
 
     private void setupWindowAnimations()
     {
         setupEnterAnimations();
-//        setupExitAnimations();
+        //        setupExitAnimations();
     }
 
     private void setupEnterAnimations()

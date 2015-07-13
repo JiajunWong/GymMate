@@ -11,6 +11,7 @@ public class AppConfig
 
     public static final String LOCATION = "location";
     public static final String USER = "user";
+    public static final String MEDIA = "media";
     public static final double RADIUS_SPHERE = 6371.01;
     public static final double RADIUS_FROM_DESTINATION = 10;
 

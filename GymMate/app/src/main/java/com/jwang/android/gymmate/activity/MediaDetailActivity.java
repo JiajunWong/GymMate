@@ -95,7 +95,7 @@ public class MediaDetailActivity extends BaseActivity implements
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mMediaLink);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mMediaLink + " " + getString(R.string.app_hash_tag));
         return shareIntent;
     }
 
@@ -109,9 +109,8 @@ public class MediaDetailActivity extends BaseActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
-        String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
         Uri uri = MediaContract.MediaEntry.buildMediaWithInstagramId(mMediaId);
-        return new CursorLoader(this, uri, null, null, null, sortOrder);
+        return new CursorLoader(this, uri, null, null, null, null);
     }
 
     @Override

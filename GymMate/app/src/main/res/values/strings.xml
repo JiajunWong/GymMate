@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">GymMate</string>
     <string name="action_settings">Settings</string>
+    <string name="app_hash_tag" translatable="false">#GymMateApp</string>
 
     <!-- Log in -->
     <string name="log_in">Log In</string>

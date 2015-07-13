@@ -41,20 +41,22 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="#ffffff"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    app:customFont="Roboto-Regular.ttf" />
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/user_real_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:textColor="#bbbbbb"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    app:customFont="Roboto-Regular.ttf" />
 
             </LinearLayout>
         </LinearLayout>
@@ -73,20 +75,22 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/post_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="#ffffff"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:customFont="Roboto-Regular.ttf" />
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/posts"
                     android:textColor="#ffffff"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    app:customFont="Roboto-Regular.ttf" />
             </LinearLayout>
 
             <LinearLayout
@@ -96,20 +100,22 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/follower_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="#ffffff"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:customFont="Roboto-Regular.ttf" />
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/followers"
                     android:textColor="#ffffff"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    app:customFont="Roboto-Regular.ttf" />
             </LinearLayout>
 
             <LinearLayout
@@ -119,20 +125,22 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/following_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="#ffffff"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:customFont="Roboto-Regular.ttf" />
 
-                <TextView
+                <com.jwang.android.gymmate.view.CustomizableTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/following"
                     android:textColor="#ffffff"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    app:customFont="Roboto-Regular.ttf" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

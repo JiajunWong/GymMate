@@ -53,7 +53,7 @@ public class MediaListFragment extends BaseFragment implements
         mListView.setAdapter(mMediaAdapter);
         mListView.setOnScrollListener(mOnScrollListener);
         swipeContainer.setOnRefreshListener(mOnRefreshListener);
-        swipeContainer.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light);
+        swipeContainer.setColorSchemeResources(R.color.holo_red_light, R.color.holo_blue_bright, R.color.holo_green_light, R.color.holo_orange_light);
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways

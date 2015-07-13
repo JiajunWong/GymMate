@@ -2,12 +2,9 @@ package com.jwang.android.gymmate.activity;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.jwang.android.gymmate.R;
 
@@ -17,9 +14,9 @@ public abstract class BaseActivity extends AppCompatActivity
     protected ActionBar mActionBar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void setContentView(int layoutResID)
     {
-        super.onCreate(savedInstanceState);
+        super.setContentView(layoutResID);
         setupActionBar();
     }
 
@@ -32,7 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity
             setSupportActionBar(mToolbar);
 
             mActionBar = getSupportActionBar();
-            mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setHomeButtonEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
 
@@ -53,5 +49,17 @@ public abstract class BaseActivity extends AppCompatActivity
             mActionBar = getSupportActionBar();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return false;
     }
 }

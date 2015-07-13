@@ -10,6 +10,9 @@
     <string name="followers">Followers</string>
     <string name="posts">Posts</string>
 
+    <!-- Media detail page -->
+    <string name="action_share">Share</string>
+
     <string name="transition_name_media" translatable="false">mediaTransition</string>
 
     <!-- SyncAdapter related -->

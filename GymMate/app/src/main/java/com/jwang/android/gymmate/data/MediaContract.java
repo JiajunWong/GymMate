@@ -117,6 +117,16 @@ public class MediaContract
             return CONTENT_URI.buildUpon().appendPath(AppConfig.MEDIA).appendPath(AppConfig.USER).appendQueryParameter(COLUMN_MEDIA_OWNER_ID, id).build();
         }
 
+        public static Uri buildMediaWithInstagramId(String id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(AppConfig.LOCATION).appendPath(AppConfig.USER).appendPath(AppConfig.MEDIA).appendQueryParameter(COLUMN_MEDIA_INSTAGRAM_ID, id).build();
+        }
+
+        public static String getInstagramIdFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_MEDIA_INSTAGRAM_ID);
+        }
+
         public static String getOwnerIdFromUri(Uri uri)
         {
             return uri.getQueryParameter(COLUMN_MEDIA_OWNER_ID);

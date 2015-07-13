@@ -23,14 +23,10 @@ import android.widget.TextView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
-import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -131,8 +127,9 @@ public class UserDetailFragment extends BaseFragment implements
                 Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             case MEDIA_NEAR_LOADER:
+                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
                 Uri uri1 = MediaContract.MediaEntry.buildMediaWithOwnerId(mUserId);
-                return new CursorLoader(getActivity(), uri1, null, null, null, null);
+                return new CursorLoader(getActivity(), uri1, null, null, null, sortOrder);
             default:
                 return null;
         }

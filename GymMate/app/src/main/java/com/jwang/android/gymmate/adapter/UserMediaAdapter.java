@@ -10,13 +10,15 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.squareup.picasso.Picasso;
 
 /**
  * Created by jiajunwang on 7/12/15.
  */
-public class UserMediaAdapter extends CursorAdapter
+public class UserMediaAdapter extends CursorAdapter implements
+        View.OnClickListener
 {
     private Context mContext;
 
@@ -33,6 +35,8 @@ public class UserMediaAdapter extends CursorAdapter
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
+        viewHolder.mImageView.setOnClickListener(this);
+        viewHolder.mImageView.setTag(viewHolder);
         return view;
     }
 
@@ -50,11 +54,31 @@ public class UserMediaAdapter extends CursorAdapter
             image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
             Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
         }
+
+        //set media id and owner id;
+        int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
+        viewHolder.mMediaId = cursor.getString(media_id_index);
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.user_media:
+                ViewHolder viewHolder = (ViewHolder) v.getTag();
+                if (!TextUtils.isEmpty(viewHolder.mMediaId))
+                {
+                    MediaDetailActivity.startActivity(mContext, viewHolder.mMediaId);
+                }
+                break;
+        }
     }
 
     public class ViewHolder
     {
         public ImageView mImageView;
+        public String mMediaId;
 
         public ViewHolder(View v)
         {

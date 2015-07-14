@@ -1,31 +1,27 @@
 package com.jwang.android.gymmate.fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
+import com.jwang.android.gymmate.util.AnimationUtil;
+import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -45,7 +41,7 @@ public class UserDetailFragment extends BaseFragment implements
     private TextView mFollowersCountTextView;
     private TextView mFollowingCountTextView;
     private ImageView mUserAvatarImageView;
-    private StaggeredGridView mStaggeredGridView;
+    private HeaderGridView mStaggeredGridView;
     private View mBgView;
 
     private UserMediaAdapter mUserMediaAdapter;
@@ -86,12 +82,12 @@ public class UserDetailFragment extends BaseFragment implements
         mPostsCountTextView = (TextView) rootView.findViewById(R.id.post_count);
         mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
-        mStaggeredGridView = (StaggeredGridView) rootView.findViewById(R.id.list_item_view);
+        mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
         mBgView = rootView.findViewById(R.id.container);
         mUserMediaAdapter = new UserMediaAdapter(getActivity(), null, 0);
         mStaggeredGridView.setAdapter(mUserMediaAdapter);
 
-        setupWindowAnimations();
+        AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
 
         fetchUserInfo();
         return rootView;
@@ -202,126 +198,6 @@ public class UserDetailFragment extends BaseFragment implements
             case MEDIA_NEAR_LOADER:
                 mUserMediaAdapter.swapCursor(null);
                 break;
-        }
-    }
-
-    private void setupWindowAnimations()
-    {
-        setupEnterAnimations();
-        setupExitAnimations();
-    }
-
-    private void setupEnterAnimations()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            Transition enterTransition = getActivity().getWindow().getSharedElementEnterTransition();
-            enterTransition.addListener(new Transition.TransitionListener()
-            {
-                @Override
-                public void onTransitionStart(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionEnd(Transition transition)
-                {
-                    animateRevealShow(mBgView);
-                }
-
-                @Override
-                public void onTransitionCancel(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionPause(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionResume(Transition transition)
-                {
-                }
-            });
-        }
-    }
-
-    private void setupExitAnimations()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            Transition sharedElementReturnTransition = getActivity().getWindow().getSharedElementReturnTransition();
-            sharedElementReturnTransition.setStartDelay(ANIM_DURATION);
-
-            Transition returnTransition = getActivity().getWindow().getReturnTransition();
-            returnTransition.setDuration(ANIM_DURATION);
-            returnTransition.addListener(new Transition.TransitionListener()
-            {
-                @Override
-                public void onTransitionStart(Transition transition)
-                {
-                    animateRevealHide(mBgView);
-                }
-
-                @Override
-                public void onTransitionEnd(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionCancel(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionPause(Transition transition)
-                {
-                }
-
-                @Override
-                public void onTransitionResume(Transition transition)
-                {
-                }
-            });
-        }
-    }
-
-    private void animateRevealShow(View viewRoot)
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            int cx = (mUserAvatarImageView.getLeft() + mUserAvatarImageView.getRight()) / 2;
-            int cy = (mUserAvatarImageView.getTop() + mUserAvatarImageView.getBottom()) / 2;
-            int finalRadius = Math.max(viewRoot.getWidth(), viewRoot.getHeight());
-
-            Animator anim = ViewAnimationUtils.createCircularReveal(viewRoot, cx, cy, 0, finalRadius);
-            viewRoot.setVisibility(View.VISIBLE);
-            anim.setDuration(ANIM_DURATION);
-            anim.start();
-        }
-    }
-
-    private void animateRevealHide(final View viewRoot)
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            int cx = (mUserAvatarImageView.getLeft() + mUserAvatarImageView.getRight()) / 2;
-            int cy = (mUserAvatarImageView.getTop() + mUserAvatarImageView.getBottom()) / 2;
-            int initialRadius = viewRoot.getWidth();
-
-            Animator anim = ViewAnimationUtils.createCircularReveal(viewRoot, cx, cy, initialRadius, 0);
-            anim.addListener(new AnimatorListenerAdapter()
-            {
-                @Override
-                public void onAnimationEnd(Animator animation)
-                {
-                    super.onAnimationEnd(animation);
-                    viewRoot.setVisibility(View.INVISIBLE);
-                }
-            });
-            anim.setDuration(ANIM_DURATION);
-            anim.start();
         }
     }
 }

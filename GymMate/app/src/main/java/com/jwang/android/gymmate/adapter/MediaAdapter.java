@@ -8,14 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.makeramen.roundedimageview.RoundedImageView;
+import com.jwang.android.gymmate.viewholder.MediaListViewHolder;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -38,7 +36,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
     {
         int layoutId = R.layout.list_item_media;
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+        MediaListViewHolder viewHolder = new MediaListViewHolder(view);
         view.setTag(viewHolder);
         viewHolder.mUserInfoRootView.setOnClickListener(this);
         viewHolder.mUserInfoRootView.setTag(viewHolder);
@@ -50,7 +48,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
     @Override
     public void bindView(View view, Context context, Cursor cursor)
     {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        MediaListViewHolder viewHolder = (MediaListViewHolder) view.getTag();
         int profile_image_index = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
         Picasso.with(context).load(cursor.getString(profile_image_index)).into(viewHolder.mOwnerProfileImage);
 
@@ -89,7 +87,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
     @Override
     public void onClick(View view)
     {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        MediaListViewHolder viewHolder = (MediaListViewHolder) view.getTag();
         switch (view.getId())
         {
             case R.id.root_user_info:
@@ -107,26 +105,7 @@ public class MediaAdapter extends CursorAdapter implements View.OnClickListener
                 {
                     MediaDetailActivity.startActivity(mContext, viewHolder.mMediaImage, viewHolder.mMediaId);
                 }
-        }
-    }
-
-    public static class ViewHolder
-    {
-        public final RoundedImageView mOwnerProfileImage;
-        public final TextView mOwnerUserName;
-        public final TextView mCaptionText;
-        public final ImageView mMediaImage;
-        public final View mUserInfoRootView;
-        public String mMediaId;
-        public String mOwnerId;
-
-        public ViewHolder(View view)
-        {
-            mOwnerProfileImage = (RoundedImageView) view.findViewById(R.id.owner_profile_image);
-            mOwnerUserName = (TextView) view.findViewById(R.id.owner_username);
-            mMediaImage = (ImageView) view.findViewById(R.id.media_image);
-            mCaptionText = (TextView) view.findViewById(R.id.caption_text);
-            mUserInfoRootView = view.findViewById(R.id.root_user_info);
+                break;
         }
     }
 }

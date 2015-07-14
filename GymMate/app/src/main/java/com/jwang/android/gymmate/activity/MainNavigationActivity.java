@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
-import com.jwang.android.gymmate.fragment.MediaListFragment;
+import com.jwang.android.gymmate.fragment.MainMediaListFragment;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -24,7 +24,7 @@ public class MainNavigationActivity extends BaseActivity
     protected void onResume()
     {
         super.onResume();
-        MediaListFragment mediaListFragment = (MediaListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_media_list);
+        MainMediaListFragment mediaListFragment = (MainMediaListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_media_list);
         mediaListFragment.refreshData();
     }
 }

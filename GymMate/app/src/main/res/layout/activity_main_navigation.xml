@@ -1,15 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/layout_toolbar" />
+    <!-- The main content view -->
 
-    <fragment xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/fragment_media_list"
-        android:name="com.jwang.android.gymmate.fragment.MediaListFragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.jwang.android.gymmate.fragment.MediaListFragment"
-        tools:layout="@android:layout/list_content" />
-</LinearLayout>
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_toolbar" />
+
+        <fragment xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/fragment_media_list"
+            android:name="com.jwang.android.gymmate.fragment.MediaListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.jwang.android.gymmate.fragment.MediaListFragment"
+            tools:layout="@android:layout/list_content" />
+    </LinearLayout>
+
+    <!-- The navigation drawer -->
+
+    <FrameLayout
+        android:id="@+id/drawer_layout_left"
+        android:layout_width="@dimen/drawer_left_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="#F1F2F2"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/fragment_drawer_navigation"
+            android:name="com.jwang.android.gymmate.fragment.DrawerNavigationFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_drawer_navigation" />
+    </FrameLayout>
+
+</android.support.v4.widget.DrawerLayout>

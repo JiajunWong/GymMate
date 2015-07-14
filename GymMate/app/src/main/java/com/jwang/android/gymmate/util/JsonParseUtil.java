@@ -287,7 +287,7 @@ public class JsonParseUtil
                         }
                     }
 
-                    if (mediaObject.has("caption") && !mediaObject.get("caption").equals("null"))
+                    if (mediaObject.has("caption") && !mediaObject.getString("caption").equals("null"))
                     {
                         JSONObject captionJsonObject = mediaObject.getJSONObject("caption");
                         if (captionJsonObject != null && captionJsonObject.has("text"))
@@ -335,7 +335,7 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "parseGetMediaByLocationResultJson ERROR!!: "+e.toString());
         }
         return medias;
     }

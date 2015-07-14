@@ -7,4 +7,5 @@
 
     <dimen name="user_profile_avatar_size">88dp</dimen>
     <dimen name="fake_header_height">200dp</dimen>
+    <dimen name="drawer_left_width">280dp</dimen>
 </resources>

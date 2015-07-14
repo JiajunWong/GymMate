@@ -7,17 +7,17 @@
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     android:elevation="@dimen/default_elevation"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:popupTheme="@style/ToolBarPopupStyle">
+    app:popupTheme="@style/ToolBarPopupStyle"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <com.jwang.android.gymmate.view.CustomizableTextView
         android:id="@+id/toolbar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
+        android:layout_gravity="center"
+        android:elevation="8dp"
         android:text="@string/app_name"
         android:textColor="@android:color/white"
         android:textSize="30sp"
-        android:elevation="8dp"
         font:customFont="billabong.ttf" />
 </android.support.v7.widget.Toolbar>

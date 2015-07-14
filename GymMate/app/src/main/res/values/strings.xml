@@ -14,6 +14,12 @@
     <!-- Media detail page -->
     <string name="action_share">Share</string>
 
+    <!-- Navigation Drawer -->
+    <string name="my_recent">My Recent</string>
+    <string name="popular">Popular</string>
+    <string name="likes">Photos You\'ve Liked</string>
+    <string name="about">About</string>
+
     <!-- Animation transition-->
     <string name="transition_name_user" translatable="false">mediaTransition</string>
     <string name="transition_name_media" translatable="false">mediaTransition</string>

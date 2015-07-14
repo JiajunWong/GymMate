@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <com.jwang.android.gymmate.view.HeaderGridView
+        android:id="@+id/list_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="2dp"
+        android:numColumns="3"
+        android:scrollbars="none"
+        android:verticalSpacing="2dp" />
 
     <LinearLayout
         android:id="@+id/user_profile_root"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/fake_header_height"
         android:background="?attr/colorPrimary"
         android:clipChildren="false"
         android:clipToPadding="false"
@@ -144,13 +152,4 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-    <com.jwang.android.gymmate.view.HeaderGridView
-        android:id="@+id/list_item_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="3"
-        android:horizontalSpacing="2dp"
-        android:scrollbars="none"
-        android:verticalSpacing="2dp" />
-</LinearLayout>
+</FrameLayout>

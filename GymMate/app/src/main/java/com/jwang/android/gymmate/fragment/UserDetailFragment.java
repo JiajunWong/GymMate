@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,8 +32,6 @@ public class UserDetailFragment extends BaseFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
-    private static final long ANIM_DURATION = 200;
-
     private String mUserId;
 
     private TextView mUserNameTextView;
@@ -43,8 +42,12 @@ public class UserDetailFragment extends BaseFragment implements
     private ImageView mUserAvatarImageView;
     private HeaderGridView mStaggeredGridView;
     private View mBgView;
-
     private UserMediaAdapter mUserMediaAdapter;
+
+    private int mHeaderHeight;
+    private int mMinHeaderTranslation;
+    private View mPlaceHolderView;
+    private View mHeader;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -84,13 +87,60 @@ public class UserDetailFragment extends BaseFragment implements
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
         mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
         mBgView = rootView.findViewById(R.id.container);
+        mHeader = rootView.findViewById(R.id.user_profile_root);
+
         mUserMediaAdapter = new UserMediaAdapter(getActivity(), null, 0);
-        mStaggeredGridView.setAdapter(mUserMediaAdapter);
+
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
+        mMinHeaderTranslation = -mHeaderHeight;
+        setupListView();
 
         AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
 
         fetchUserInfo();
         return rootView;
+    }
+
+    private void setupListView()
+    {
+        mPlaceHolderView = getLayoutInflater(getArguments()).inflate(R.layout.view_header_placeholder, mStaggeredGridView, false);
+        mStaggeredGridView.addHeaderView(mPlaceHolderView);
+        mStaggeredGridView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                int scrollY = getScrollY();
+                //sticky actionbar
+                mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+            }
+        });
+        mStaggeredGridView.setAdapter(mUserMediaAdapter);
+    }
+
+    public int getScrollY()
+    {
+        View c = mStaggeredGridView.getChildAt(0);
+        if (c == null)
+        {
+            return 0;
+        }
+
+        int firstVisiblePosition = mStaggeredGridView.getFirstVisiblePosition();
+        int top = c.getTop();
+
+        int headerHeight = 0;
+        if (firstVisiblePosition >= 1)
+        {
+            headerHeight = mPlaceHolderView.getHeight();
+        }
+
+        return -top + firstVisiblePosition * c.getHeight() + headerHeight;
     }
 
     private void fetchUserInfo()

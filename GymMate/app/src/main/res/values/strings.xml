@@ -13,6 +13,7 @@
 
     <!-- Media detail page -->
     <string name="action_share">Share</string>
+    <string name="action_instagram">Open From Instagram</string>
 
     <!-- Navigation Drawer -->
     <string name="my_recent">My Recent</string>

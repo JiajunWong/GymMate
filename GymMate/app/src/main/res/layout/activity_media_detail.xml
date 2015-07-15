@@ -13,11 +13,4 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:transitionName="@string/transition_name_media" />
-
-    <Button
-        android:id="@+id/instagram_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_color"
-        android:text="open from Instagram" />
 </LinearLayout>

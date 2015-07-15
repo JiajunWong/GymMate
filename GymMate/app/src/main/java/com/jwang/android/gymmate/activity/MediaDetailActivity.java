@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
@@ -37,7 +36,6 @@ public class MediaDetailActivity extends BaseActivity implements
     private String mMediaId;
     private String mMediaLink;
     private ImageView mMediaImageView;
-    private Button mInstagramButton;
 
     public static void startActivity(Context context, View view, String id)
     {
@@ -63,8 +61,6 @@ public class MediaDetailActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_detail);
         mMediaImageView = (ImageView) findViewById(R.id.media_image);
-        mInstagramButton = (Button) findViewById(R.id.instagram_btn);
-        mInstagramButton.setOnClickListener(this);
         mMediaId = getIntent().getStringExtra(KEY_MEDIA_ID);
         if (TextUtils.isEmpty(mMediaId))
         {
@@ -92,6 +88,21 @@ public class MediaDetailActivity extends BaseActivity implements
             mShareActionProvider.setShareIntent(createShareForecastIntent());
         }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.action_instagram:
+                Intent shareIntent = new Intent(Intent.ACTION_VIEW);
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                shareIntent.setData(Uri.parse(mMediaLink));
+                startActivity(shareIntent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Intent createShareForecastIntent()
@@ -149,15 +160,6 @@ public class MediaDetailActivity extends BaseActivity implements
     {
         switch (v.getId())
         {
-            case R.id.instagram_btn:
-                if (!TextUtils.isEmpty(mMediaLink))
-                {
-                    Intent shareIntent = new Intent(Intent.ACTION_VIEW);
-                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                    shareIntent.setData(Uri.parse(mMediaLink));
-                    startActivity(shareIntent);
-                }
-                break;
         }
     }
 }

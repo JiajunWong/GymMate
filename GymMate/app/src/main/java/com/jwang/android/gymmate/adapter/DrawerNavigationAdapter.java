@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.MediaListActivity;
-import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
-
-import net.londatiga.android.instagram.InstagramUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,8 +112,8 @@ public class DrawerNavigationAdapter extends
         switch (position)
         {
             case 0:
-                InstagramUser user = InstagramOauth.getsInstance(mContext).getSession().getUser();
-                UserDetailActivity.startActivity(mContext, user.id);
+                String userMediaUrl = AppConfig.INSTAGRAM_USER_MEDIA_ENDPOINT + accessToken;
+                MediaListActivity.startActivity(mContext, userMediaUrl);
                 break;
             case 1:
                 String popularUrl = AppConfig.INSTAGRAM_POPULAR_ENDPOINT + accessToken;

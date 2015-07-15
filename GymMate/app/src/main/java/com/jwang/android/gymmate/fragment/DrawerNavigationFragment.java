@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.DrawerNavigationAdapter;
 import com.jwang.android.gymmate.util.InstagramOauth;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -22,7 +23,8 @@ import net.londatiga.android.instagram.InstagramUser;
  * @author Jiajun Wang on 7/14/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class DrawerNavigationFragment extends BaseFragment
+public class DrawerNavigationFragment extends BaseFragment implements
+        View.OnClickListener
 {
     private RoundedImageView mRoundedImageView;
     private TextView mUsernameTextView;
@@ -43,6 +45,8 @@ public class DrawerNavigationFragment extends BaseFragment
     {
         mRoundedImageView = (RoundedImageView) rootView.findViewById(R.id.user_photo);
         mUsernameTextView = (TextView) rootView.findViewById(R.id.username);
+        mRoundedImageView.setOnClickListener(this);
+        mUsernameTextView.setOnClickListener(this);
         mListView = (ListView) rootView.findViewById(R.id.drawer_list_view);
         mDrawerNavigationAdapter = new DrawerNavigationAdapter(getActivity());
         mListView.setAdapter(mDrawerNavigationAdapter);
@@ -59,6 +63,19 @@ public class DrawerNavigationFragment extends BaseFragment
             {
                 Picasso.with(getActivity()).load(owner.profilPicture).into(mRoundedImageView);
             }
+        }
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.user_photo:
+            case R.id.username:
+                InstagramUser user = InstagramOauth.getsInstance(getActivity()).getSession().getUser();
+                UserDetailActivity.startActivity(getActivity(), user.id);
+                break;
         }
     }
 }

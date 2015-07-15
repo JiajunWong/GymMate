@@ -24,4 +24,5 @@ public class AppConfig
     public static final String INSTAGRAM_LOCATION_ENDPOINT = "https://api.instagram.com/v1/locations/search";
     public static final String INSTAGRAM_POPULAR_ENDPOINT = "https://api.instagram.com/v1/media/popular?access_token=";
     public static final String INSTAGRAM_LIKED_ENDPOINT = "https://api.instagram.com/v1/users/self/media/liked?access_token=";
+    public static final String INSTAGRAM_USER_MEDIA_ENDPOINT = "https://api.instagram.com/v1/users/self/media/recent/?access_token=";
 }

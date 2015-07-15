@@ -38,7 +38,7 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
     private static final String TAG = MediaSyncAdapter.class.getSimpleName();
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 30;
+    public static final int SYNC_INTERVAL = 60 * 60;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 6;
 
     public MediaSyncAdapter(Context context, boolean autoInitialize)

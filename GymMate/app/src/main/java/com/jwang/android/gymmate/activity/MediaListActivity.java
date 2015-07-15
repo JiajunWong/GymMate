@@ -1,7 +1,10 @@
 package com.jwang.android.gymmate.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.fragment.MediaListFragment;
@@ -19,7 +22,16 @@ import java.util.ArrayList;
 public class MediaListActivity extends BaseActivity implements
         OnRefreshListener
 {
+    public static final String KEY_URL = "url_key";
     private FetchPopularMediaTask mFetchPopularMediaTask;
+    private String mUrl;
+
+    public static void startActivity(Context context, String url)
+    {
+        Intent intent = new Intent(context, MediaListActivity.class);
+        intent.putExtra(KEY_URL, url);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,9 +45,14 @@ public class MediaListActivity extends BaseActivity implements
 
     private void setFetchTask()
     {
+        mUrl = getIntent().getStringExtra(KEY_URL);
+        if (TextUtils.isEmpty(mUrl))
+        {
+            finish();
+        }
         mFetchPopularMediaTask = new FetchPopularMediaTask(this);
         mFetchPopularMediaTask.setOnFetchFinishedListener(mOnFetchFinishedListener);
-        mFetchPopularMediaTask.execute();
+        mFetchPopularMediaTask.execute(mUrl);
     }
 
     private OnFetchFinishedListener mOnFetchFinishedListener = new OnFetchFinishedListener()

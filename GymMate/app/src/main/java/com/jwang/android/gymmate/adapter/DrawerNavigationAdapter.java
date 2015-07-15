@@ -1,7 +1,6 @@
 package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.MediaListActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
+import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
 
 import net.londatiga.android.instagram.InstagramUser;
@@ -111,6 +111,7 @@ public class DrawerNavigationAdapter extends
 
     private void onItemClicked(int position, View v)
     {
+        String accessToken = InstagramOauth.getsInstance(mContext).getSession().getAccessToken();
         switch (position)
         {
             case 0:
@@ -118,10 +119,12 @@ public class DrawerNavigationAdapter extends
                 UserDetailActivity.startActivity(mContext, user.id);
                 break;
             case 1:
-                Intent intent = new Intent(mContext, MediaListActivity.class);
-                mContext.startActivity(intent);
+                String popularUrl = AppConfig.INSTAGRAM_POPULAR_ENDPOINT + accessToken;
+                MediaListActivity.startActivity(mContext, popularUrl);
                 break;
             case 2:
+                String likedUrl = AppConfig.INSTAGRAM_LIKED_ENDPOINT + accessToken;
+                MediaListActivity.startActivity(mContext, likedUrl);
                 break;
             case 4:
                 break;

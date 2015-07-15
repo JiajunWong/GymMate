@@ -62,4 +62,12 @@ public abstract class BaseActivity extends AppCompatActivity
         }
         return false;
     }
+
+    protected void setDisplayHomeAsUpEnabled(boolean enabled)
+    {
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(enabled);
+        }
+    }
 }

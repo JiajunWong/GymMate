@@ -22,5 +22,5 @@ public class AppConfig
     public static final String FACEBOOK_ACCESS_TOKEN = "425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b";
 
     public static final String INSTAGRAM_LOCATION_ENDPOINT = "https://api.instagram.com/v1/locations/search";
-
+    public static final String INSTAGRAM_POPULAR_ENDPOINT = "https://api.instagram.com/v1/media/popular?access_token=";
 }

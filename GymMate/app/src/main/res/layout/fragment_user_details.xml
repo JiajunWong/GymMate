@@ -9,6 +9,7 @@
         android:id="@+id/list_item_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#e5e5e5"
         android:horizontalSpacing="2dp"
         android:numColumns="3"
         android:scrollbars="none"

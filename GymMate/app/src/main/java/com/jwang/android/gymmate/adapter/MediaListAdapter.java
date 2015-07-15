@@ -70,6 +70,11 @@ public class MediaListAdapter extends BaseAdapter implements
             viewHolder = (MediaListViewHolder) convertView.getTag();
         }
 
+        viewHolder.mUserInfoRootView.setOnClickListener(this);
+        viewHolder.mUserInfoRootView.setTag(viewHolder);
+        viewHolder.mMediaImage.setOnClickListener(this);
+        viewHolder.mMediaImage.setTag(viewHolder);
+
         ModelMedia modelMedia = mModelMedias.get(position);
         String profileUrl = modelMedia.getOwner().getProfilePicture();
         if (!TextUtils.isEmpty(profileUrl))
@@ -105,10 +110,8 @@ public class MediaListAdapter extends BaseAdapter implements
             viewHolder.mCaptionText.setVisibility(View.GONE);
         }
 
-        viewHolder.mUserInfoRootView.setOnClickListener(this);
-        viewHolder.mUserInfoRootView.setTag(viewHolder);
-        viewHolder.mMediaImage.setOnClickListener(this);
-        viewHolder.mMediaImage.setTag(viewHolder);
+        viewHolder.mMediaId = modelMedia.getInstagramId();
+        viewHolder.mOwnerId = Long.toString(modelMedia.getOwner().getInstagramId());
 
         return convertView;
     }

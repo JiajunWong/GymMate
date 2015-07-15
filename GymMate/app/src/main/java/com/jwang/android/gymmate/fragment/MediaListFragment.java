@@ -1,5 +1,6 @@
 package com.jwang.android.gymmate.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaListAdapter;
+import com.jwang.android.gymmate.interfaces.OnRefreshListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class MediaListFragment extends BaseFragment
     private StaggeredGridView mListView;
     private MediaListAdapter mMediaAdapter;
     private SwipeRefreshLayout swipeContainer;
+    private OnRefreshListener mRefreshListener = OnRefreshListener.NO_OP;
 
     private static final String SELECTED_KEY = "selected_position";
     private int mPosition = ListView.INVALID_POSITION;
@@ -32,6 +35,20 @@ public class MediaListFragment extends BaseFragment
     public void setModelMedias(ArrayList<ModelMedia> medias)
     {
         mMediaAdapter.setModelMedias(medias);
+    }
+
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        try
+        {
+            mRefreshListener = (OnRefreshListener) activity;
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(activity.toString() + " must implement OnRefreshListener");
+        }
     }
 
     @Nullable
@@ -73,7 +90,7 @@ public class MediaListFragment extends BaseFragment
 
     public void refreshData()
     {
-        //TODO
+        mRefreshListener.onRefresh();
     }
 
     AbsListView.OnScrollListener mOnScrollListener = new AbsListView.OnScrollListener()

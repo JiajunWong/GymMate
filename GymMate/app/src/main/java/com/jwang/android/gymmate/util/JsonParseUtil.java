@@ -197,15 +197,15 @@ public class JsonParseUtil
         try
         {
             mediaJsonObject = new JSONObject(jsonString);
-            if (mediaJsonObject.has("meta"))
-            {
-                JSONObject requestCodeJsonObject = mediaJsonObject.getJSONObject("meta");
-                if (requestCodeJsonObject.has("code") && requestCodeJsonObject.getInt("code") != 200)
-                {
-                    //request failed.
-                    return medias;
-                }
-            }
+//            if (mediaJsonObject.has("meta"))
+//            {
+//                JSONObject requestCodeJsonObject = mediaJsonObject.getJSONObject("meta");
+//                if (requestCodeJsonObject.has("code") && requestCodeJsonObject.getInt("code") != 200)
+//                {
+//                    //request failed.
+//                    return medias;
+//                }
+//            }
 
             if (mediaJsonObject.has("data"))
             {

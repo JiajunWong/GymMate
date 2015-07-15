@@ -1,6 +1,7 @@
 package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.MediaListActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.util.InstagramOauth;
 
@@ -116,6 +118,8 @@ public class DrawerNavigationAdapter extends
                 UserDetailActivity.startActivity(mContext, user.id);
                 break;
             case 1:
+                Intent intent = new Intent(mContext, MediaListActivity.class);
+                mContext.startActivity(intent);
                 break;
             case 2:
                 break;

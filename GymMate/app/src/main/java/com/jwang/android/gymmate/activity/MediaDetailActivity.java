@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
@@ -28,7 +29,7 @@ import com.squareup.picasso.Picasso;
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
 public class MediaDetailActivity extends BaseActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener
 {
     public static final String KEY_MEDIA_ID = "media_id_key";
     private static final int MEDIA_NEAR_LOADER = 0;
@@ -36,6 +37,7 @@ public class MediaDetailActivity extends BaseActivity implements
     private String mMediaId;
     private String mMediaLink;
     private ImageView mMediaImageView;
+    private Button mInstagramButton;
 
     public static void startActivity(Context context, View view, String id)
     {
@@ -61,6 +63,8 @@ public class MediaDetailActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_detail);
         mMediaImageView = (ImageView) findViewById(R.id.media_image);
+        mInstagramButton = (Button) findViewById(R.id.instagram_btn);
+        mInstagramButton.setOnClickListener(this);
         mMediaId = getIntent().getStringExtra(KEY_MEDIA_ID);
         if (TextUtils.isEmpty(mMediaId))
         {
@@ -138,5 +142,22 @@ public class MediaDetailActivity extends BaseActivity implements
     public void onLoaderReset(Loader<Cursor> loader)
     {
 
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.instagram_btn:
+                if (!TextUtils.isEmpty(mMediaLink))
+                {
+                    Intent shareIntent = new Intent(Intent.ACTION_VIEW);
+                    shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    shareIntent.setData(Uri.parse(mMediaLink));
+                    startActivity(shareIntent);
+                }
+                break;
+        }
     }
 }

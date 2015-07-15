@@ -20,8 +20,11 @@ import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.task.FetchPopularMediaTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
+import com.jwang.android.gymmate.util.CursorUtil;
+import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
 
@@ -118,6 +121,15 @@ public class UserDetailFragment extends BaseFragment implements
                 int scrollY = getScrollY();
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()))
+                {
+                    String minCreateTime = CursorUtil.minTimeStampByUserId(getActivity(), mUserId);
+                    String accessToken = InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken();
+                    String mediaEndPoint = "https://api.instagram.com/v1/users/" + mUserId + "/media/recent/?access_token=" + accessToken + "&max_timestamp=" + minCreateTime;
+                    FetchPopularMediaTask fetchPopularMediaTask = new FetchPopularMediaTask(getActivity());
+                    fetchPopularMediaTask.execute(mediaEndPoint);
+                }
             }
         });
         mStaggeredGridView.setAdapter(mUserMediaAdapter);

@@ -74,7 +74,7 @@ public class MediaProvider extends ContentProvider
         return mOpenHelper.getReadableDatabase().query(MediaContract.UserEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
-    private static final String sOwnerSelection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ?";
+    public static final String sOwnerSelection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ?";
 
     private Cursor getMediaByOwnerId(Uri uri, String[] projection, String sortOrder)
     {

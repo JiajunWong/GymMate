@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.text.format.Time;
 
 import com.jwang.android.gymmate.util.AppConfig;
 
@@ -27,7 +26,25 @@ public class MediaContract
 
     public static final String PATH_USER = "user";
     public static final String PATH_MEDIA = "media";
-    public static final String PATH_USER_INFO = "user_info";
+    public static final String PATH_LOCATION = "location";
+
+    public static final class LocationEntry implements BaseColumns
+    {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+
+        // Table name
+        public static final String TABLE_NAME = "location";
+
+        //Schema
+        public static final String COLUMN_INSTAGRAM_LOCATION_ID = "location_instagram_id";
+        public static final String COLUMN_LOCATION_NAME = "location_name";
+        public static final String COLUMN_LOCATION_LONGITUDE = "location_longitude";
+        public static final String COLUMN_LOCATION_LATITUDE = "location_latitude";
+        public static final String COLUMN_NEXT_URL = "location_next_url";
+    }
 
     public static final class UserEntry implements BaseColumns
     {

@@ -126,7 +126,7 @@ public class UserDetailFragment extends BaseFragment implements
                 {
                     String minCreateTime = CursorUtil.minTimeStampByUserId(getActivity(), mUserId);
                     String accessToken = InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken();
-                    String mediaEndPoint = "https://api.instagram.com/v1/users/" + mUserId + "/media/recent/?access_token=" + accessToken + "&max_timestamp=" + minCreateTime;
+                    String mediaEndPoint = "https://api.instagram.com/v1/users/" + mUserId + "/media/recent/?access_token=" + accessToken + "&max_timestamp=" + minCreateTime + "&count=20";
                     FetchPopularMediaTask fetchPopularMediaTask = new FetchPopularMediaTask(getActivity());
                     fetchPopularMediaTask.execute(mediaEndPoint);
                 }

@@ -12,7 +12,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static final String DATABASE_NAME = "media.db";
 
     public MediaDBHelper(Context context)

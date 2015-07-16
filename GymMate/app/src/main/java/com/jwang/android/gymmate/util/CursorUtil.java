@@ -33,9 +33,11 @@ public class CursorUtil
         {
             cursor.moveToFirst();
             int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
-            if (!TextUtils.isEmpty(cursor.getString(index_create_time)))
-                Log.w(TAG, cursor.getString(index_create_time));
-            return cursor.getString(index_create_time);
+            String date = cursor.getString(index_create_time);
+            if (!TextUtils.isEmpty(date))
+                Log.w(TAG, date);
+            cursor.close();
+            return date;
         }
         return "";
     }

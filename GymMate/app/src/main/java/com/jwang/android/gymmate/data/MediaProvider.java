@@ -181,7 +181,6 @@ public class MediaProvider extends ContentProvider
         {
             case MEDIA:
             {
-                normalizeDate(values);
                 long _id = db.insert(MediaContract.MediaEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = MediaContract.MediaEntry.buildMediaUri(_id);
@@ -244,7 +243,6 @@ public class MediaProvider extends ContentProvider
         switch (match)
         {
             case MEDIA:
-                normalizeDate(values);
                 rowsUpdated = db.update(MediaContract.MediaEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case USER:
@@ -274,7 +272,6 @@ public class MediaProvider extends ContentProvider
                 {
                     for (ContentValues value : values)
                     {
-                        normalizeDate(value);
                         long _id = db.insert(MediaContract.MediaEntry.TABLE_NAME, null, value);
                         if (_id != -1)
                         {
@@ -309,15 +306,5 @@ public class MediaProvider extends ContentProvider
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*/*", MEDIA_WITH_INSTAGRAM_ID);
         matcher.addURI(authority, MediaContract.PATH_USER + "/*", USER_WITH_INSTAGRAM_ID);
         return matcher;
-    }
-
-    private void normalizeDate(ContentValues values)
-    {
-        // normalize the date value
-        if (values.containsKey(MediaContract.MediaEntry.COLUMN_CREATE_TIME))
-        {
-            long dateValue = values.getAsLong(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
-            values.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, MediaContract.normalizeDate(dateValue));
-        }
     }
 }

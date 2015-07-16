@@ -36,6 +36,7 @@ public class UserDetailFragment extends BaseFragment implements
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
+    private int mMediaCount;
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -122,7 +123,7 @@ public class UserDetailFragment extends BaseFragment implements
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()))
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount)
                 {
                     String minCreateTime = CursorUtil.minTimeStampByUserId(getActivity(), mUserId);
                     String accessToken = InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken();
@@ -228,6 +229,7 @@ public class UserDetailFragment extends BaseFragment implements
                     if (!TextUtils.isEmpty(mediaCount))
                     {
                         mPostsCountTextView.setText(mediaCount);
+                        mMediaCount = new Integer(mediaCount);
                     }
 
                     int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);

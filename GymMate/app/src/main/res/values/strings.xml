@@ -4,7 +4,7 @@
     <string name="app_hash_tag" translatable="false">#GymMateApp</string>
 
     <!-- Log in -->
-    <string name="log_in">Log In</string>
+    <string name="log_in">Log in with Instagram</string>
 
     <!-- User Detail Page-->
     <string name="following">Following</string>

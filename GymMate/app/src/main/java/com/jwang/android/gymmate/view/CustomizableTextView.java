@@ -8,11 +8,6 @@ import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 
-
-/**
- * @author Vinh Huynh on 12/01/14
- *         Copyright (c) 2014 StumbleUpon, Inc. All rights reserved.
- */
 public class CustomizableTextView extends TextView
 {
 

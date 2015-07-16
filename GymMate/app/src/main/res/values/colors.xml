@@ -7,7 +7,8 @@
     <color name="primary_color">#255178</color>
     <color name="primary_color_dark">#21425d</color>
 
-    <color name="text_like_blue">#2b5a83</color>
+    <color name="text_like_blue">@color/primary_color</color>
+    <color name="grey">#cccccc</color>
 
     <!-- Transparency -->
     <color name="transparency_100">#FF000000</color>

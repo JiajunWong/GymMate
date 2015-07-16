@@ -1,12 +1,12 @@
 package com.jwang.android.gymmate.view;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 
 import com.jwang.android.gymmate.GymMateApp;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TypefaceFactory
 {
@@ -51,8 +51,6 @@ public class TypefaceFactory
 
     private Typeface getInternal(final Context context, final String fontName)
     {
-        Log.w(TAG, "getInternal: " + fontName);
-
         Typeface typeface = null;
         if (mCache != null)
         {

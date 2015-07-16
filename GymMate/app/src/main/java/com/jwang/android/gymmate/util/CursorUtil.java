@@ -29,7 +29,7 @@ public class CursorUtil
         String[] selectionArgs = { id };
         String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " ASC LIMIT 1";
         Cursor cursor = context.getContentResolver().query(uri, PROJECTION, selection, selectionArgs, sortOrder);
-        if (cursor != null)
+        if (cursor != null && cursor.getCount() > 0)
         {
             cursor.moveToFirst();
             int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);

@@ -95,7 +95,7 @@ public class MainMediaListFragment extends BaseFragment implements
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
         {
-            if (view.getFirstVisiblePosition() == 0 && (view.getChildAt(0) != null && view.getChildAt(0).getTop() >= 0))
+            if ((view.getFirstVisiblePosition() == 0 && (view.getChildAt(0) != null && view.getChildAt(0).getTop() >= 0)) || totalItemCount == 0)
             {
                 swipeContainer.setEnabled(true);
             }

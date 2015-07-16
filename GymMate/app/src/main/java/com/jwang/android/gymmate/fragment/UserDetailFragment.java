@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -52,6 +53,8 @@ public class UserDetailFragment extends BaseFragment implements
     private int mMinHeaderTranslation;
     private View mPlaceHolderView;
     private View mHeader;
+
+    private FetchPopularMediaTask mFetchPopularMediaTask;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -123,13 +126,13 @@ public class UserDetailFragment extends BaseFragment implements
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount)
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mFetchPopularMediaTask == null || mFetchPopularMediaTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
                     String minCreateTime = CursorUtil.minTimeStampByUserId(getActivity(), mUserId);
                     String accessToken = InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken();
                     String mediaEndPoint = "https://api.instagram.com/v1/users/" + mUserId + "/media/recent/?access_token=" + accessToken + "&max_timestamp=" + minCreateTime + "&count=20";
-                    FetchPopularMediaTask fetchPopularMediaTask = new FetchPopularMediaTask(getActivity());
-                    fetchPopularMediaTask.execute(mediaEndPoint);
+                    mFetchPopularMediaTask = new FetchPopularMediaTask(getActivity());
+                    mFetchPopularMediaTask.execute(mediaEndPoint);
                 }
             }
         });

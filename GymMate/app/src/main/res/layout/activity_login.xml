@@ -16,34 +16,41 @@
         android:textSize="40sp"
         app:customFont="billabong.ttf" />
 
-    <LinearLayout
-        android:id="@+id/tv_log_in"
+    <android.support.v7.widget.CardView
+        style="@style/CardView.NoRadius"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="80dp"
         android:layout_marginLeft="@dimen/horizontal_margin"
         android:layout_marginRight="@dimen/horizontal_margin"
-        android:background="@drawable/touch_selector"
-        android:elevation="2dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:gravity="center">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/icon" />
-
-        <com.jwang.android.gymmate.view.CustomizableTextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/tv_log_in"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="@string/log_in"
-            android:textColor="@color/primary_color"
-            android:textSize="18sp"
-            app:customFont="Roboto-Regular.ttf" />
-    </LinearLayout>
+            android:background="@drawable/touch_selector"
+            android:elevation="2dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon" />
+
+            <com.jwang.android.gymmate.view.CustomizableTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@string/log_in"
+                android:textColor="@color/primary_color"
+                android:textSize="18sp"
+                app:customFont="Roboto-Regular.ttf" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

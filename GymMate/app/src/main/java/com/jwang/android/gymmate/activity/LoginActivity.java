@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.util.AppConfig;
@@ -25,7 +24,7 @@ import net.londatiga.android.instagram.InstagramUser;
 public class LoginActivity extends BaseActivity implements View.OnClickListener
 {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private Button mLogInButton;
+    private View mLogInButton;
 
     private InstagramOauth mInstagramOauth;
 
@@ -39,7 +38,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
         {
             //log in
             setContentView(R.layout.activity_login);
-            mLogInButton = (Button) findViewById(R.id.btn_log_in);
+            mLogInButton = findViewById(R.id.tv_log_in);
             mLogInButton.setOnClickListener(this);
         }
         else
@@ -92,7 +91,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
     {
         switch (v.getId())
         {
-            case R.id.btn_log_in:
+            case R.id.tv_log_in:
                 //show instagram log in screen.
                 mInstagramOauth.authorize(mAuthListener);
                 break;

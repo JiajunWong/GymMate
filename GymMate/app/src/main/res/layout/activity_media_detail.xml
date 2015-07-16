@@ -6,11 +6,21 @@
 
     <include layout="@layout/layout_toolbar" />
 
-    <ImageView
-        android:id="@+id/media_image"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:transitionName="@string/transition_name_media" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/media_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/transition_name_media" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:src="@drawable/actionbar_shadow" />
+    </FrameLayout>
 </LinearLayout>

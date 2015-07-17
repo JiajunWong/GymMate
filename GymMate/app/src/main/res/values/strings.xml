@@ -6,6 +6,12 @@
     <!-- Log in -->
     <string name="log_in">Log in with Instagram</string>
 
+    <!-- Log out -->
+    <string name="log_out">Log Out</string>
+    <string name="log_out_content">Are you sure you would like to sign out?</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+
     <!-- User Detail Page-->
     <string name="following">Following</string>
     <string name="followers">Followers</string>

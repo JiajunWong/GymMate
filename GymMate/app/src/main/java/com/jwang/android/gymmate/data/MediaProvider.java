@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.GeoLocation;
@@ -17,6 +18,7 @@ import com.jwang.android.gymmate.util.GeoLocation;
  */
 public class MediaProvider extends ContentProvider
 {
+    private static final String TAG = MediaProvider.class.getSimpleName();
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MediaDBHelper mOpenHelper;
@@ -42,26 +44,29 @@ public class MediaProvider extends ContentProvider
 
     private static final String sLatitudeLongitudeSelection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE + " >= ? AND " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE + " <= ? AND " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE + " >= ? AND " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE + " <= ? ";
 
-    private Cursor getMediaByLatitudeAndLongitude(Uri uri, String[] projection, String sortOrder)
+    private static final String sGetLocationIdSQL = "SELECT " + MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID + " FROM " + MediaContract.LocationEntry.TABLE_NAME + " WHERE " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE + " >= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE + " <= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " >= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " <= ? ";
+    private static final String sMediaTableInnerJoinUserTableSQL = MediaContract.MediaEntry.TABLE_NAME + " INNER JOIN " + MediaContract.UserEntry.TABLE_NAME + " ON " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = " + MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID;
+//    private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ") ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
+    private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ");";
+
+    private Cursor getMediaByLatitudeAndLongitude(Uri uri)
     {
         float lat = MediaContract.MediaEntry.getLatFromUri(uri);
         float lng = MediaContract.MediaEntry.getLongFromUri(uri);
 
         String[] selectionArgs;
-        String selection;
 
         if (lat == Float.POSITIVE_INFINITY || lng == Float.POSITIVE_INFINITY)
         {
-            selection = null;
             selectionArgs = new String[] {};
         }
         else
         {
-            selection = sLatitudeLongitudeSelection;
             selectionArgs = getArgs(lat, lng);
         }
 
-        return sWeatherByIdQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        Log.d(TAG, "$$$getMediaByLatitudeAndLongitude: the sql is " + sGetMediaByLocationSQL);
+        return mOpenHelper.getReadableDatabase().rawQuery(sGetMediaByLocationSQL, selectionArgs);
     }
 
     private static final String sInstagramIdSelection = MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?";
@@ -132,7 +137,7 @@ public class MediaProvider extends ContentProvider
                 retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.LocationEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case MEDIA_WITH_LOCATION:
-                retCursor = getMediaByLatitudeAndLongitude(uri, projection, sortOrder);
+                retCursor = getMediaByLatitudeAndLongitude(uri);
                 break;
             case USER_WITH_INSTAGRAM_ID:
                 retCursor = getUserByInstagramId(uri, projection, sortOrder);

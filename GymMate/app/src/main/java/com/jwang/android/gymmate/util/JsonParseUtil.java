@@ -326,14 +326,22 @@ public class JsonParseUtil
 
                     if (mediaObject.has("location") && !mediaObject.getString("location").equals("null")) //location
                     {
-                        JSONObject locationJsonArray = mediaObject.getJSONObject("location");
-                        if (locationJsonArray.has("latitude"))
+                        JSONObject locationJsonObject = mediaObject.getJSONObject("location");
+                        if (locationJsonObject.has("latitude"))
                         {
-                            modelMedia.setLocationLat(locationJsonArray.getString("latitude"));
+                            modelMedia.setLocationLat(locationJsonObject.getString("latitude"));
                         }
-                        if (locationJsonArray.has("longitude"))
+                        if (locationJsonObject.has("longitude"))
                         {
-                            modelMedia.setLocationLong(locationJsonArray.getString("longitude"));
+                            modelMedia.setLocationLong(locationJsonObject.getString("longitude"));
+                        }
+                        if (locationJsonObject.has("id"))
+                        {
+                            modelMedia.setLocationId(locationJsonObject.getString("id"));
+                        }
+                        if (locationJsonObject.has("name"))
+                        {
+                            modelMedia.setLocationName(locationJsonObject.getString("name"));
                         }
                     }
 
@@ -481,6 +489,9 @@ public class JsonParseUtil
     private static void updateUserValues(Context context, ModelUser modelUser)
     {
         ContentValues userInfoContentValues = new ContentValues();
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_USERNAME, modelUser.getUserName());
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FULL_NAME, modelUser.getFullName());
+        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE, modelUser.getProfilePicture());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_MEDIA_COUNT, modelUser.getMediaCount());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT, modelUser.getFollowedByCount());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT, modelUser.getFollowsCount());
@@ -498,6 +509,8 @@ public class JsonParseUtil
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TYPE, modelMedia.getType());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE, modelMedia.getLocationLat());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, modelMedia.getLocationLong());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID, modelMedia.getLocationId());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_NAME, modelMedia.getLocationName());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, modelMedia.getCreateTime());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LINK, modelMedia.getLink());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW, modelMedia.getImageLowRes());

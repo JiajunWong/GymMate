@@ -16,6 +16,8 @@ public class ModelMedia
     private String mType;
     private String mLocationLong;
     private String mLocationLat;
+    private String mLocationId;
+    private String mLocationName;
     private long mCreateTime;
     private String mLink;
 
@@ -48,6 +50,26 @@ public class ModelMedia
             sb.append(s).append(", ");
         }
         return sb.toString().substring(0, sb.length() - 1);
+    }
+
+    public void setLocationId(String id)
+    {
+        mLocationId = id;
+    }
+
+    public String getLocationId()
+    {
+        return mLocationId;
+    }
+
+    public void setLocationName(String name)
+    {
+        mLocationName = name;
+    }
+
+    public String getLocationName()
+    {
+        return mLocationName;
     }
 
     public String getCaptionText()

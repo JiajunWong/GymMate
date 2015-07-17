@@ -22,11 +22,9 @@ import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.OnFetchUserInfoFinishedListener;
-import com.jwang.android.gymmate.task.FetchPopularMediaTask;
 import com.jwang.android.gymmate.task.FetchUserMediaTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
-import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
 

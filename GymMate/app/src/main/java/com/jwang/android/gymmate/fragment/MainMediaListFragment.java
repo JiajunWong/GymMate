@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -19,6 +20,7 @@ import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.task.FetchGymMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.LocationUtil;
 
@@ -33,6 +35,7 @@ public class MainMediaListFragment extends BaseFragment implements
     private SwipeRefreshLayout swipeContainer;
     private MediaAdapter mMediaAdapter;
 
+    private FetchGymMediaTask mFetchGymMediaTask;
     private static final String SELECTED_KEY = "selected_position";
     private int mPosition = ListView.INVALID_POSITION;
     private static final int MEDIA_NEAR_LOADER = 0;
@@ -102,6 +105,13 @@ public class MainMediaListFragment extends BaseFragment implements
             else
             {
                 swipeContainer.setEnabled(false);
+            }
+
+            int lastInScreen = firstVisibleItem + visibleItemCount;
+            if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && (mFetchGymMediaTask == null || mFetchGymMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+            {
+                mFetchGymMediaTask = new FetchGymMediaTask(getActivity());
+                mFetchGymMediaTask.execute();
             }
         }
     };

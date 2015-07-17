@@ -12,7 +12,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 20;
     private static final String DATABASE_NAME = "gymmate.db";
 
     public MediaDBHelper(Context context)
@@ -51,6 +51,8 @@ public class MediaDBHelper extends SQLiteOpenHelper
                 MediaContract.MediaEntry.COLUMN_TYPE + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE + " REAL, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE + " REAL, " +
+                MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " BIGINT, " +
+                MediaContract.MediaEntry.COLUMN_LOCATION_NAME + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_CREATE_TIME + " INTEGER NOT NULL, " +
                 MediaContract.MediaEntry.COLUMN_LINK + " TEXT NOT NULL, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " INTEGER NOT NULL, " +

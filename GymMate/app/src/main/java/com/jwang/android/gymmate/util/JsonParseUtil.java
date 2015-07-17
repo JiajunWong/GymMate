@@ -150,13 +150,13 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "parseUserInfoJson: " + e.getMessage());
         }
         updateUserValues(context, modelUser);
         return modelUser;
     }
 
-    public static ModelLocation parseGetInstagramLocationByFaceBookIdJson(String jsonString)
+    public static ModelLocation parseGetInstagramLocationByFaceBookIdJson(Context context, String jsonString)
     {
         ModelLocation modelLocation = new ModelLocation();
         JSONObject respondJsonObject;
@@ -179,17 +179,112 @@ public class JsonParseUtil
                     {
                         modelLocation.setId(locationJsonObject.getString("id"));
                     }
+                    if (locationJsonObject.has("latitude"))
+                    {
+                        modelLocation.setLocationLat(locationJsonObject.getString("latitude"));
+                    }
+                    if (locationJsonObject.has("longitude"))
+                    {
+                        modelLocation.setLocationLong(locationJsonObject.getString("longitude"));
+                    }
+                    addLocationValues(context, modelLocation);
                 }
             }
         }
         catch (Exception e)
         {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "parseGetInstagramLocationByFaceBookIdJson: " + e.getMessage());
         }
+
         return modelLocation;
     }
 
-    public static ArrayList<ModelMedia> parseGetMediaByLocationResultJson(Context context, String jsonString)
+    // Such as location, user media
+    public static String parseMediaGetPagination(Context context, final String jsonString, boolean enableStore)
+    {
+        ArrayList<ModelMedia> medias;
+        if (enableStore)
+        {
+            medias = parseMediaJsonWithStoreMedia(context, jsonString);
+        }
+        else
+        {
+            medias = parseMediaJsonWithoutStoreMedia(jsonString);
+        }
+        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
+        return parseMediaJsonGetPagination(jsonString);
+    }
+
+    // Such as popular
+    public static ArrayList<ModelMedia> parseMediaGetMedias(Context context, final String jsonString, boolean enableStore)
+    {
+        ArrayList<ModelMedia> medias;
+        if (enableStore)
+        {
+            medias = parseMediaJsonWithStoreMedia(context, jsonString);
+        }
+        else
+        {
+            medias = parseMediaJsonWithoutStoreMedia(jsonString);
+        }
+        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
+        return medias;
+    }
+
+    // Such as media liked
+    public static ResultWrapper parseMediaGetMediasAndPagination(Context context, final String jsonString, boolean enableStore)
+    {
+        ArrayList<ModelMedia> medias;
+        if (enableStore)
+        {
+            medias = parseMediaJsonWithStoreMedia(context, jsonString);
+        }
+        else
+        {
+            medias = parseMediaJsonWithoutStoreMedia(jsonString);
+        }
+        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
+        String url = parseMediaJsonGetPagination(jsonString);
+        return new ResultWrapper(medias, url);
+    }
+
+    public static class ResultWrapper
+    {
+        public ArrayList<ModelMedia> mMedias;
+        public String mPaginationUrl;
+
+        public ResultWrapper(ArrayList<ModelMedia> arrayList, String url)
+        {
+            mMedias = arrayList;
+            mPaginationUrl = url;
+        }
+    }
+
+    private static String parseMediaJsonGetPagination(String jsonString)
+    {
+        String nextUrl = "";
+        JSONObject mediaJsonObject;
+        try
+        {
+            mediaJsonObject = new JSONObject(jsonString);
+            if (mediaJsonObject.has("pagination"))
+            {
+                JSONObject paginationJsonObject = mediaJsonObject.getJSONObject("pagination");
+                if (paginationJsonObject.has("next_url"))
+                {
+                    nextUrl = paginationJsonObject.getString("next_url");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "parseMediaJsonGetPagination: " + e.getMessage());
+        }
+        return nextUrl;
+    }
+
+    // Just parse json without store.
+    private static ArrayList<ModelMedia> parseMediaJsonWithoutStoreMedia(String jsonString)
     {
         ArrayList<ModelMedia> medias = new ArrayList<>();
 
@@ -197,15 +292,15 @@ public class JsonParseUtil
         try
         {
             mediaJsonObject = new JSONObject(jsonString);
-//            if (mediaJsonObject.has("meta"))
-//            {
-//                JSONObject requestCodeJsonObject = mediaJsonObject.getJSONObject("meta");
-//                if (requestCodeJsonObject.has("code") && requestCodeJsonObject.getInt("code") != 200)
-//                {
-//                    //request failed.
-//                    return medias;
-//                }
-//            }
+            //            if (mediaJsonObject.has("meta"))
+            //            {
+            //                JSONObject requestCodeJsonObject = mediaJsonObject.getJSONObject("meta");
+            //                if (requestCodeJsonObject.has("code") && requestCodeJsonObject.getInt("code") != 200)
+            //                {
+            //                    //request failed.
+            //                    return medias;
+            //                }
+            //            }
 
             if (mediaJsonObject.has("data"))
             {
@@ -326,8 +421,6 @@ public class JsonParseUtil
                     }
 
                     medias.add(modelMedia);
-                    addMediaValues(context, modelMedia);
-                    addUserValues(context, modelMedia);
                 }
             }
 
@@ -335,7 +428,19 @@ public class JsonParseUtil
         }
         catch (Exception e)
         {
-            Log.e(TAG, "parseGetMediaByLocationResultJson ERROR!!: "+e.toString());
+            Log.e(TAG, "parseMediaJson ERROR!!: " + e.toString());
+        }
+        return medias;
+    }
+
+    //parse media json and store
+    private static ArrayList<ModelMedia> parseMediaJsonWithStoreMedia(Context context, String jsonString)
+    {
+        ArrayList<ModelMedia> medias = parseMediaJsonWithoutStoreMedia(jsonString);
+        for (ModelMedia modelMedia : medias)
+        {
+            addMediaValues(context, modelMedia);
+            addUserValues(context, modelMedia);
         }
         return medias;
     }
@@ -355,6 +460,22 @@ public class JsonParseUtil
             context.getContentResolver().insert(MediaContract.UserEntry.CONTENT_URI, userContentValues);
         }
         userCursor.close();
+    }
+
+    private static void addLocationValues(Context context, ModelLocation modelLocation)
+    {
+        Cursor locationCursor = context.getContentResolver().query(MediaContract.LocationEntry.CONTENT_URI, new String[] { MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID }, MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID + " = ?", new String[] { modelLocation.getId() }, null);
+        if (!locationCursor.moveToFirst())
+        {
+            ContentValues locationContentValues = new ContentValues();
+            locationContentValues.put(MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID, modelLocation.getId());
+            locationContentValues.put(MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE, modelLocation.getLocationLat());
+            locationContentValues.put(MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE, modelLocation.getLocationLong());
+            locationContentValues.put(MediaContract.LocationEntry.COLUMN_LOCATION_NAME, modelLocation.getName());
+
+            context.getContentResolver().insert(MediaContract.LocationEntry.CONTENT_URI, locationContentValues);
+        }
+        locationCursor.close();
     }
 
     private static void updateUserValues(Context context, ModelUser modelUser)
@@ -388,6 +509,7 @@ public class JsonParseUtil
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES, modelMedia.getVideoStandardRes());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES, modelMedia.getVideoLowRes());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT, modelMedia.getCaptionText());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_ENABLED, "0");
 
             context.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
         }

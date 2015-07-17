@@ -13,13 +13,13 @@ import com.jwang.android.gymmate.util.JsonParseUtil;
 /**
  * Created by jiajunwang on 7/2/15.
  */
-public class FetchUserProfileTask extends AsyncTask<String, Void, String>
+public class FetchUserMediaTask extends AsyncTask<String, Void, String>
 {
-    private static final String TAG = FetchUserProfileTask.class.getSimpleName();
+    private static final String TAG = FetchUserMediaTask.class.getSimpleName();
     private Context mContext;
     private OnFetchUserInfoFinishedListener mOnFetchUserInfoFinishedListener = OnFetchUserInfoFinishedListener.NO_OP;
 
-    public FetchUserProfileTask(Context context)
+    public FetchUserMediaTask(Context context)
     {
         mContext = context;
     }
@@ -37,13 +37,8 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
             Log.e(TAG, "doInBackground: user id is null!");
             return null;
         }
-        String instagramId = params[0];
-        String accessToken = InstagramOauth.getsInstance(mContext).getSession().getAccessToken();
-        String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + accessToken + "&count=20";
-        String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + accessToken;
-        String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
-        String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
-        JsonParseUtil.parseUserInfoJson(mContext, infoResponse);
+        Log.d(TAG, "doInBackground url is " + params[0]);
+        String mediaResponse = HttpRequestUtil.startHttpRequest(params[0], TAG);
         return JsonParseUtil.parseMediaGetPagination(mContext, mediaResponse, true);
     }
 

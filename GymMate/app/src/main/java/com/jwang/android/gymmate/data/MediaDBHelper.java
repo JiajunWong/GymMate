@@ -12,8 +12,8 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 12;
-    private static final String DATABASE_NAME = "media.db";
+    private static final int DATABASE_VERSION = 16;
+    private static final String DATABASE_NAME = "gymmate.db";
 
     public MediaDBHelper(Context context)
     {
@@ -23,6 +23,15 @@ public class MediaDBHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
+        //Create location table
+        final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + MediaContract.LocationEntry.TABLE_NAME + " (" +
+                MediaContract.LocationEntry._ID + " INTEGER PRIMARY KEY," +
+                MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID + " BIGINT UNIQUE NOT NULL, " +
+                MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE + " REAL, " +
+                MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " REAL, " +
+                MediaContract.LocationEntry.COLUMN_LOCATION_NAME + " TEXT " + " );";
+        Log.d(TAG, "SQL Statement: "+SQL_CREATE_LOCATION_TABLE);
+
         //Create user table
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + MediaContract.UserEntry.TABLE_NAME + " (" +
                 MediaContract.UserEntry._ID + " INTEGER PRIMARY KEY," +
@@ -52,12 +61,14 @@ public class MediaDBHelper extends SQLiteOpenHelper
                 MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES + " TEXT, " +
-                MediaContract.MediaEntry.COLUMN_CAPTION_TEXT + " TEXT" +
+                MediaContract.MediaEntry.COLUMN_CAPTION_TEXT + " TEXT, " +
+                MediaContract.MediaEntry.COLUMN_MEDIA_ENABLED + " TEXT" +
                 " );";
         Log.d(TAG, "SQL Statement: "+SQL_CREATE_MEDIA_TABLE);
 
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MEDIA_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
     }
 
     @Override
@@ -71,6 +82,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
         // should be your top priority before modifying this method.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.UserEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.MediaEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.LocationEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

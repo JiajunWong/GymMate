@@ -27,6 +27,7 @@ public class MediaProvider extends ContentProvider
     static final int MEDIA_WITH_INSTAGRAM_ID = 103;
     static final int USER = 300;
     static final int USER_WITH_INSTAGRAM_ID = 301;
+    static final int LOCATION = 500;
 
     private static final SQLiteQueryBuilder sWeatherByIdQueryBuilder;
 
@@ -127,6 +128,9 @@ public class MediaProvider extends ContentProvider
             case USER:
                 retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.UserEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+            case LOCATION:
+                retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.LocationEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
             case MEDIA_WITH_LOCATION:
                 retCursor = getMediaByLatitudeAndLongitude(uri, projection, sortOrder);
                 break;
@@ -163,6 +167,8 @@ public class MediaProvider extends ContentProvider
                 return MediaContract.MediaEntry.CONTENT_TYPE;
             case USER:
                 return MediaContract.UserEntry.CONTENT_TYPE;
+            case LOCATION:
+                return MediaContract.LocationEntry.CONTENT_TYPE;
             case USER_WITH_INSTAGRAM_ID:
                 return MediaContract.UserEntry.CONTENT_ITEM_TYPE;
             default:
@@ -197,6 +203,15 @@ public class MediaProvider extends ContentProvider
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case LOCATION:
+            {
+                long _id = db.insert(MediaContract.LocationEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = MediaContract.LocationEntry.buildUserUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -223,6 +238,9 @@ public class MediaProvider extends ContentProvider
             case USER:
                 rowsDeleted = db.delete(MediaContract.UserEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+            case LOCATION:
+                rowsDeleted = db.delete(MediaContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -247,6 +265,9 @@ public class MediaProvider extends ContentProvider
                 break;
             case USER:
                 rowsUpdated = db.update(MediaContract.UserEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case LOCATION:
+                rowsUpdated = db.update(MediaContract.LocationEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -301,6 +322,7 @@ public class MediaProvider extends ContentProvider
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MediaContract.PATH_MEDIA, MEDIA);
         matcher.addURI(authority, MediaContract.PATH_USER, USER);
+        matcher.addURI(authority, MediaContract.PATH_LOCATION, LOCATION);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*", MEDIA_WITH_LOCATION);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*", MEDIA_WITH_OWNER_ID);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*/*", MEDIA_WITH_INSTAGRAM_ID);

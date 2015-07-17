@@ -43,7 +43,11 @@ public class MediaContract
         public static final String COLUMN_LOCATION_NAME = "location_name";
         public static final String COLUMN_LOCATION_LONGITUDE = "location_longitude";
         public static final String COLUMN_LOCATION_LATITUDE = "location_latitude";
-        public static final String COLUMN_NEXT_URL = "location_next_url";
+
+        public static Uri buildUserUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     public static final class UserEntry implements BaseColumns
@@ -107,6 +111,7 @@ public class MediaContract
         public static final String COLUMN_MEDIA_VIDEO_STANDARD_RES = "media_video_standard";
         public static final String COLUMN_MEDIA_VIDEO_LOW_RES = "media_video_low";
         public static final String COLUMN_CAPTION_TEXT = "caption_text";
+        public static final String COLUMN_MEDIA_ENABLED = "media_enabled";
 
         public static Uri buildMediaUri(long id)
         {

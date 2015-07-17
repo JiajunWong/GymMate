@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.model.ModelLocation;
-import com.jwang.android.gymmate.model.ModelMedia;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
@@ -13,6 +12,8 @@ import com.loopj.android.http.SyncHttpClient;
 import org.apache.http.Header;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Jiajun Wang on 7/16/15
@@ -23,13 +24,15 @@ public class MediaWorker
     private static final String TAG = MediaWorker.class.getSimpleName();
     private static MediaWorker sMediaWorker;
     private Context mContext;
+    private HashSet<String> mGymMediaPaginationUrls;
 
     private MediaWorker(Context context)
     {
         mContext = context;
+        mGymMediaPaginationUrls = new HashSet<>();
     }
 
-    public MediaWorker getInstance(Context context)
+    public static MediaWorker getInstance(Context context)
     {
         if (sMediaWorker == null)
         {
@@ -38,9 +41,14 @@ public class MediaWorker
         return sMediaWorker;
     }
 
-    public void startFetch(String[] location)
+    public void startFetchGymMedia(String[] location)
     {
+        fetchLocationsFromGoogle(location);
+    }
 
+    public HashSet<String> getPaginationUrls()
+    {
+        return mGymMediaPaginationUrls;
     }
 
     private void fetchLocationsFromGoogle(String[] location)
@@ -102,13 +110,13 @@ public class MediaWorker
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
                     {
-                        String instagramLocationId = JsonParseUtil.parseGetInstagramLocationByFaceBookIdJson(new String(responseBody)).getId();
+                        String instagramLocationId = JsonParseUtil.parseGetInstagramLocationByFaceBookIdJson(mContext, new String(responseBody)).getId();
                         Log.w(TAG, "***Instagram Id is " + instagramLocationId);
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            ArrayList<ModelMedia> modelMedias = JsonParseUtil.parseGetMediaByLocationResultJson(mContext, popularJsonStr);
-                            Log.w(TAG, "***Get " + modelMedias.size() + " from Instagram.");
+                            String pagination = JsonParseUtil.parseMediaGetPagination(mContext, popularJsonStr, true);
+                            mGymMediaPaginationUrls.add(pagination);
                         }
                     }
 

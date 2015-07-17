@@ -21,10 +21,11 @@ import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.interfaces.OnFetchUserInfoFinishedListener;
 import com.jwang.android.gymmate.task.FetchPopularMediaTask;
+import com.jwang.android.gymmate.task.FetchUserMediaTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
-import com.jwang.android.gymmate.util.CursorUtil;
 import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
@@ -37,6 +38,7 @@ public class UserDetailFragment extends BaseFragment implements
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
+    private String mPaginationUrl;
     private int mMediaCount;
 
     private TextView mUserNameTextView;
@@ -54,7 +56,7 @@ public class UserDetailFragment extends BaseFragment implements
     private View mPlaceHolderView;
     private View mHeader;
 
-    private FetchPopularMediaTask mFetchPopularMediaTask;
+    private FetchUserMediaTask mFetchUserMediaTask;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -126,13 +128,11 @@ public class UserDetailFragment extends BaseFragment implements
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mFetchPopularMediaTask == null || mFetchPopularMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchUserMediaTask == null || mFetchUserMediaTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
-                    String minCreateTime = CursorUtil.minTimeStampByUserId(getActivity(), mUserId);
-                    String accessToken = InstagramOauth.getsInstance(getActivity()).getSession().getAccessToken();
-                    String mediaEndPoint = "https://api.instagram.com/v1/users/" + mUserId + "/media/recent/?access_token=" + accessToken + "&max_timestamp=" + minCreateTime + "&count=20";
-                    mFetchPopularMediaTask = new FetchPopularMediaTask(getActivity());
-                    mFetchPopularMediaTask.execute(mediaEndPoint);
+                    mFetchUserMediaTask = new FetchUserMediaTask(getActivity());
+                    mFetchUserMediaTask.setOnFetchUserInfoFinishedListener(mOnFetchUserInfoFinishedListener);
+                    mFetchUserMediaTask.execute(mPaginationUrl);
                 }
             }
         });
@@ -169,8 +169,18 @@ public class UserDetailFragment extends BaseFragment implements
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
         FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
+        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchUserInfoFinishedListener);
         fetchUserProfileTask.execute(mUserId);
     }
+
+    private OnFetchUserInfoFinishedListener mOnFetchUserInfoFinishedListener = new OnFetchUserInfoFinishedListener()
+    {
+        @Override
+        public void onFetchFinished(String paginationUrl)
+        {
+            mPaginationUrl = paginationUrl;
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)

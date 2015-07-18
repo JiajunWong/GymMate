@@ -151,7 +151,7 @@ public class DrawerNavigationAdapter extends
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                InstagramOauth.getsInstance(mContext).resetSession();
+                InstagramOauth.getsInstance(mContext).resetOauth(mContext);
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mContext.startActivity(intent);

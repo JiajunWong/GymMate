@@ -1,6 +1,9 @@
 package com.jwang.android.gymmate.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.LoginActivity;
 import com.jwang.android.gymmate.activity.MediaListActivity;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
@@ -126,8 +131,33 @@ public class DrawerNavigationAdapter extends
             case 4:
                 break;
             case 5:
+                //log out
+                showLogOutDialog();
                 break;
         }
+    }
+
+    private void showLogOutDialog()
+    {
+        new AlertDialogWrapper.Builder(mContext).setTitle(R.string.log_out).setMessage(R.string.log_out_content).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        }).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                InstagramOauth.getsInstance(mContext).resetOauth(mContext);
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mContext.startActivity(intent);
+                ((Activity) mContext).finish();
+            }
+        }).show();
     }
 
     public static class MenuItemViewHolder
@@ -151,7 +181,7 @@ public class DrawerNavigationAdapter extends
         menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_likes, mContext.getString(R.string.likes)));
         menuItems.add(GlobalMenuItem.dividerMenuItem());
         menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.action_settings)));
-        menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.about)));
+        menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.log_out)));
         notifyDataSetChanged();
     }
 

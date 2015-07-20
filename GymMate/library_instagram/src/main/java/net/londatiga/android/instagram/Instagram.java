@@ -1,20 +1,19 @@
 package net.londatiga.android.instagram;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import net.londatiga.android.instagram.util.*;
+import net.londatiga.android.instagram.util.Cons;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Instragam main class.
@@ -54,29 +53,6 @@ public class Instagram
         mAuthUrl = Cons.AUTH_URL + "client_id=" + mClientId + "&redirect_uri=" + mRedirectUri + "&response_type=code";
 
         mSession = new InstagramSession(context);
-
-        mDialog = new InstagramDialog(context, mAuthUrl, redirectUri, new InstagramDialog.InstagramDialogListener()
-        {
-
-            @Override
-            public void onSuccess(String code)
-            {
-                retreiveAccessToken(code);
-            }
-
-            @Override
-            public void onError(String error)
-            {
-                mListener.onError(error);
-            }
-
-            @Override
-            public void onCancel()
-            {
-                mListener.onCancel();
-
-            }
-        });
     }
 
     /**
@@ -88,7 +64,7 @@ public class Instagram
     {
         mListener = listener;
 
-        mDialog =new InstagramDialog(context, mAuthUrl, mRedirectUri, new InstagramDialog.InstagramDialogListener()
+        mDialog = new InstagramDialog(context, mAuthUrl, mRedirectUri, new InstagramDialog.InstagramDialogListener()
         {
 
             @Override

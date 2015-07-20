@@ -1,6 +1,5 @@
 package net.londatiga.android.instagram;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -23,8 +22,6 @@ import java.util.List;
  */
 public class Instagram
 {
-    private Context mContext;
-
     private InstagramDialog mDialog;
     private InstagramAuthListener mListener;
     private InstagramSession mSession;
@@ -44,8 +41,6 @@ public class Instagram
      */
     public Instagram(Context context, String clientId, String clientSecret, String redirectUri)
     {
-        mContext = context;
-
         mClientId = clientId;
         mClientSecret = clientSecret;
         mRedirectUri = redirectUri;
@@ -122,27 +117,12 @@ public class Instagram
 
     public class AccessTokenTask extends AsyncTask<URL, Integer, Long>
     {
-        ProgressDialog progressDlg;
         InstagramUser user;
         String code;
 
         public AccessTokenTask(String code)
         {
             this.code = code;
-
-            progressDlg = new ProgressDialog(mContext);
-
-            progressDlg.setMessage("Getting access token...");
-        }
-
-        protected void onCancelled()
-        {
-            progressDlg.cancel();
-        }
-
-        protected void onPreExecute()
-        {
-            progressDlg.show();
         }
 
         protected Long doInBackground(URL... urls)
@@ -185,14 +165,8 @@ public class Instagram
             return result;
         }
 
-        protected void onProgressUpdate(Integer... progress)
-        {
-        }
-
         protected void onPostExecute(Long result)
         {
-            progressDlg.dismiss();
-
             if (user != null)
             {
                 mSession.store(user);

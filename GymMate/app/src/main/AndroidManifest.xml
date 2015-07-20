@@ -74,11 +74,6 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        <receiver android:name=".receiver.BootCompleteReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="5b420a8e10b9ce73b75f4c608fffb1cb804c58fe" />

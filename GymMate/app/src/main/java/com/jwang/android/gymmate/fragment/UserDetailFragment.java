@@ -217,9 +217,9 @@ public class UserDetailFragment extends BaseFragment implements
                 Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             case MEDIA_NEAR_LOADER:
-                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
+//                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
                 Uri uri1 = MediaContract.MediaEntry.buildMediaWithOwnerId(mUserId);
-                return new CursorLoader(getActivity(), uri1, null, null, null, sortOrder);
+                return new CursorLoader(getActivity(), uri1, null, null, null, null);
             default:
                 return null;
         }

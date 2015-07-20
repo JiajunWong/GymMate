@@ -1,10 +1,5 @@
 package com.jwang.android.gymmate.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import org.apache.http.Header;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,30 +9,35 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
+import org.apache.http.Header;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
 /**
  * @author Jiajun Wang on 7/16/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class MediaWorker
+public class MediaSyncWorker
 {
-    private static final String TAG = MediaWorker.class.getSimpleName();
-    private static MediaWorker sMediaWorker;
+    private static final String TAG = MediaSyncWorker.class.getSimpleName();
+    private static MediaSyncWorker sMediaSyncWorker;
     private Context mContext;
     private HashSet<String> mGymMediaPaginationUrls;
 
-    private MediaWorker(Context context)
+    private MediaSyncWorker(Context context)
     {
         mContext = context;
         mGymMediaPaginationUrls = new HashSet<>();
     }
 
-    public static MediaWorker getInstance(Context context)
+    public static MediaSyncWorker getInstance(Context context)
     {
-        if (sMediaWorker == null)
+        if (sMediaSyncWorker == null)
         {
-            sMediaWorker = new MediaWorker(context);
+            sMediaSyncWorker = new MediaSyncWorker(context);
         }
-        return sMediaWorker;
+        return sMediaSyncWorker;
     }
 
     public void startFetchGymMedia(String[] location)

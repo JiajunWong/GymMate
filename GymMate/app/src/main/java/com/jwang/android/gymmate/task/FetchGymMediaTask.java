@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
-import com.jwang.android.gymmate.util.MediaWorker;
+import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +28,7 @@ public class FetchGymMediaTask extends AsyncTask<String, Void, Void>
     @Override
     protected Void doInBackground(String... params)
     {
-        HashSet<String> paginationUrls = MediaWorker.getInstance(mContext).getPaginationUrls();
+        HashSet<String> paginationUrls = MediaSyncWorker.getInstance(mContext).getPaginationUrls();
         ArrayList<String> newPaginationUrls = new ArrayList<>();
         if (paginationUrls.size() == 0)
         {

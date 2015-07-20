@@ -199,55 +199,6 @@ public class JsonParseUtil
         return modelLocation;
     }
 
-    // Such as location, user media
-    public static String parseMediaGetPagination(Context context, final String jsonString, boolean enableStore)
-    {
-        ArrayList<ModelMedia> medias;
-        if (enableStore)
-        {
-            medias = parseMediaJsonWithStoreMedia(context, jsonString);
-        }
-        else
-        {
-            medias = parseMediaJsonWithoutStoreMedia(jsonString);
-        }
-        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
-        return parseMediaJsonGetPagination(jsonString);
-    }
-
-    // Such as popular
-    public static ArrayList<ModelMedia> parseMediaGetMedias(Context context, final String jsonString, boolean enableStore)
-    {
-        ArrayList<ModelMedia> medias;
-        if (enableStore)
-        {
-            medias = parseMediaJsonWithStoreMedia(context, jsonString);
-        }
-        else
-        {
-            medias = parseMediaJsonWithoutStoreMedia(jsonString);
-        }
-        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
-        return medias;
-    }
-
-    // Such as media liked
-    public static ResultWrapper parseMediaGetMediasAndPagination(Context context, final String jsonString, boolean enableStore)
-    {
-        ArrayList<ModelMedia> medias;
-        if (enableStore)
-        {
-            medias = parseMediaJsonWithStoreMedia(context, jsonString);
-        }
-        else
-        {
-            medias = parseMediaJsonWithoutStoreMedia(jsonString);
-        }
-        Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
-        String url = parseMediaJsonGetPagination(jsonString);
-        return new ResultWrapper(medias, url);
-    }
-
     public static class ResultWrapper
     {
         public ArrayList<ModelMedia> mMedias;
@@ -284,23 +235,12 @@ public class JsonParseUtil
     }
 
     // Just parse json without store.
-    private static ArrayList<ModelMedia> parseMediaJsonWithoutStoreMedia(String jsonString)
+    private static ArrayList<ModelMedia> parseMediaJsonWithoutStoreMedia(String jsonString, ArrayList<ModelMedia> medias)
     {
-        ArrayList<ModelMedia> medias = new ArrayList<>();
-
         JSONObject mediaJsonObject;
         try
         {
             mediaJsonObject = new JSONObject(jsonString);
-            //            if (mediaJsonObject.has("meta"))
-            //            {
-            //                JSONObject requestCodeJsonObject = mediaJsonObject.getJSONObject("meta");
-            //                if (requestCodeJsonObject.has("code") && requestCodeJsonObject.getInt("code") != 200)
-            //                {
-            //                    //request failed.
-            //                    return medias;
-            //                }
-            //            }
 
             if (mediaJsonObject.has("data"))
             {
@@ -313,8 +253,6 @@ public class JsonParseUtil
                     medias.add(modelMedia);
                 }
             }
-
-            return medias;
         }
         catch (Exception e)
         {
@@ -474,15 +412,22 @@ public class JsonParseUtil
     }
 
     //parse media json and store
-    private static ArrayList<ModelMedia> parseMediaJsonWithStoreMedia(Context context, String jsonString)
+    public boolean parseInstagramMediaJson(Context context, String jsonString, boolean shouldStore, ArrayList<ModelMedia> medias, ArrayList<String> paginations)
     {
-        ArrayList<ModelMedia> medias = parseMediaJsonWithoutStoreMedia(jsonString);
-        for (ModelMedia modelMedia : medias)
+        parseMediaJsonWithoutStoreMedia(jsonString, medias);
+        paginations.add(parseMediaJsonGetPagination(jsonString));
+
+        boolean isAddNew = false;
+        if (shouldStore)
         {
-            addMediaValues(context, modelMedia);
-            addUserValues(context, modelMedia);
+            for (ModelMedia modelMedia : medias)
+            {
+                boolean b = addMediaValues(context, modelMedia);
+                addUserValues(context, modelMedia);
+                isAddNew = isAddNew || b;
+            }
         }
-        return medias;
+        return isAddNew;
     }
 
     private static void addUserValues(Context context, ModelMedia modelMedia)
@@ -531,8 +476,9 @@ public class JsonParseUtil
         context.getContentResolver().update(MediaContract.UserEntry.CONTENT_URI, userInfoContentValues, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelUser.getInstagramId()) });
     }
 
-    private static void addMediaValues(Context context, ModelMedia modelMedia)
+    private static boolean addMediaValues(Context context, ModelMedia modelMedia)
     {
+        boolean isAddNew = false;
         Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
         if (!mediaCursor.moveToFirst())
         {
@@ -557,7 +503,9 @@ public class JsonParseUtil
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_ENABLED, "0");
 
             context.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
+            isAddNew = true;
         }
         mediaCursor.close();
+        return isAddNew;
     }
 }

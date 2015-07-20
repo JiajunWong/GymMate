@@ -10,25 +10,11 @@ import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.model.ModelLocation;
-import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.util.AppConfig;
-import com.jwang.android.gymmate.util.HttpRequestUtil;
-import com.jwang.android.gymmate.util.InstagramOauth;
-import com.jwang.android.gymmate.util.JsonParseUtil;
 import com.jwang.android.gymmate.util.LocationUtil;
-import com.jwang.android.gymmate.util.MediaWorker;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.SyncHttpClient;
-
-import org.apache.http.Header;
-
-import java.util.ArrayList;
+import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 /**
  * @author Jiajun Wang on 7/1/15
@@ -53,7 +39,7 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
         Log.d(TAG, "onPerformSync");
 
         String[] locations = LocationUtil.getCurrentLocation(getContext());
-        MediaWorker.getInstance(getContext()).startFetchGymMedia(locations);
+        MediaSyncWorker.getInstance(getContext()).startFetchGymMedia(locations);
     }
 
     /**

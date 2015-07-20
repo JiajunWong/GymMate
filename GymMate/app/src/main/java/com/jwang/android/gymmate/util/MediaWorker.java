@@ -1,5 +1,10 @@
 package com.jwang.android.gymmate.util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import org.apache.http.Header;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,12 +13,6 @@ import com.jwang.android.gymmate.model.ModelLocation;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
-
-import org.apache.http.Header;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * @author Jiajun Wang on 7/16/15
@@ -43,7 +42,10 @@ public class MediaWorker
 
     public void startFetchGymMedia(String[] location)
     {
-        fetchLocationsFromGoogle(location);
+        if (InstagramOauth.getsInstance().getSession().isActive())
+        {
+            fetchLocationsFromGoogle(location);
+        }
     }
 
     public HashSet<String> getPaginationUrls()
@@ -100,7 +102,7 @@ public class MediaWorker
                 String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(new String(responseBody)).getId();
                 Log.w(TAG, "***Facebook Id is " + facebookLocationId);
 
-                final String access_token = InstagramOauth.getsInstance(mContext).getSession().getAccessToken();
+                final String access_token = InstagramOauth.getsInstance().getSession().getAccessToken();
                 SyncHttpClient getInstagramSyncHttpClient = new SyncHttpClient();
                 RequestParams instagramRequestParams = new RequestParams();
                 instagramRequestParams.put("facebook_places_id", facebookLocationId);

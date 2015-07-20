@@ -38,7 +38,7 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
             return null;
         }
         String instagramId = params[0];
-        String accessToken = InstagramOauth.getsInstance(mContext).getSession().getAccessToken();
+        String accessToken = InstagramOauth.getsInstance().getSession().getAccessToken();
         String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + accessToken + "&count=20";
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + accessToken;
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);

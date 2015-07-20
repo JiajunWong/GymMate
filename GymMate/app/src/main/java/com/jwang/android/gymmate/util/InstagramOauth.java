@@ -2,6 +2,8 @@ package com.jwang.android.gymmate.util;
 
 import android.content.Context;
 
+import com.jwang.android.gymmate.GymMateApp;
+
 import net.londatiga.android.instagram.Instagram;
 import net.londatiga.android.instagram.InstagramSession;
 
@@ -17,21 +19,19 @@ public class InstagramOauth
     private static InstagramOauth sInstance;
 
     private Instagram mInstagram;
-    private Context mContext;
 
-    public static InstagramOauth getsInstance(Context context)
+    public static InstagramOauth getsInstance()
     {
         if (sInstance == null)
         {
-            sInstance = new InstagramOauth(context);
+            sInstance = new InstagramOauth();
         }
         return sInstance;
     }
 
-    public InstagramOauth(Context context)
+    public InstagramOauth()
     {
-        mContext = context;
-        mInstagram = new Instagram(mContext, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+        mInstagram = new Instagram(GymMateApp.getContext(), CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     }
 
     public InstagramSession getSession()

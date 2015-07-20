@@ -33,7 +33,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
         updateGeoLocation();
-        mInstagramOauth = InstagramOauth.getsInstance(this);
+        mInstagramOauth = InstagramOauth.getsInstance();
         if (!mInstagramOauth.getSession().isActive())
         {
             //log in

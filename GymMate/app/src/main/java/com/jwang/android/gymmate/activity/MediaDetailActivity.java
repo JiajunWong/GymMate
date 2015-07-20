@@ -96,7 +96,7 @@ public class MediaDetailActivity extends BaseActivity implements
 
         if (!TextUtils.isEmpty(mMediaLink))
         {
-            if (!InstagramOauth.getsInstance(this).getSession().isActive())
+            if (!InstagramOauth.getsInstance().getSession().isActive())
             {
                 Intent launchLoginIntent = new Intent(this, LoginActivity.class);
                 startActivity(launchLoginIntent);

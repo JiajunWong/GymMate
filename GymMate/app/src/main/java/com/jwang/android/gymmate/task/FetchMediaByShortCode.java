@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.jwang.android.gymmate.interfaces.OnFetchMediaObjectFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
@@ -42,7 +41,7 @@ public class FetchMediaByShortCode extends AsyncTask<String, Void, ModelMedia>
         }
         String shortCode = params[0];
         //https://api.instagram.com/v1/media/shortcode/D?access_token=ACCESS-TOKEN
-        String url = AppConfig.INSTAGRAM_MEDIA_SHORT_CODE_ENDPOINT + shortCode + "?access_token=" + InstagramOauth.getsInstance(mContext).getSession().getAccessToken();
+        String url = AppConfig.INSTAGRAM_MEDIA_SHORT_CODE_ENDPOINT + shortCode + "?access_token=" + InstagramOauth.getsInstance().getSession().getAccessToken();
         String response = HttpRequestUtil.startHttpRequest(url, TAG);
         return JsonParseUtil.parseSingleMedia(response);
     }

@@ -51,7 +51,7 @@ public class DrawerNavigationFragment extends BaseFragment implements
         mDrawerNavigationAdapter = new DrawerNavigationAdapter(getActivity());
         mListView.setAdapter(mDrawerNavigationAdapter);
 
-        InstagramSession instagramSession = InstagramOauth.getsInstance(getActivity()).getSession();
+        InstagramSession instagramSession = InstagramOauth.getsInstance().getSession();
         if (instagramSession != null && instagramSession.isActive() && instagramSession.getUser() != null)
         {
             InstagramUser owner = instagramSession.getUser();
@@ -73,7 +73,7 @@ public class DrawerNavigationFragment extends BaseFragment implements
         {
             case R.id.user_photo:
             case R.id.username:
-                InstagramUser user = InstagramOauth.getsInstance(getActivity()).getSession().getUser();
+                InstagramUser user = InstagramOauth.getsInstance().getSession().getUser();
                 UserDetailActivity.startActivity(getActivity(), user.id);
                 break;
         }

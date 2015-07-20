@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
@@ -38,6 +39,8 @@ public class UserDetailFragment extends BaseFragment implements
     private String mUserId;
     private String mPaginationUrl;
     private int mMediaCount;
+    private int mPosition = ListView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -105,6 +108,11 @@ public class UserDetailFragment extends BaseFragment implements
         AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
 
         fetchUserInfo();
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
+        {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            Log.d(TAG, "onCreateView: position is " + mPosition);
+        }
         return rootView;
     }
 
@@ -179,6 +187,18 @@ public class UserDetailFragment extends BaseFragment implements
             mPaginationUrl = paginationUrl;
         }
     };
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        mPosition = mStaggeredGridView.getFirstVisiblePosition();
+        outState.putInt(SELECTED_KEY, mPosition);
+        Log.d(TAG, "onSaveInstanceState: position is " + mPosition);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -260,9 +280,15 @@ public class UserDetailFragment extends BaseFragment implements
                 break;
             case MEDIA_NEAR_LOADER:
                 mUserMediaAdapter.swapCursor(data);
+                if (mPosition != ListView.INVALID_POSITION)
+                {
+                    // If we don't need to restart the loader, and there's a desired position to restore
+                    // to, do so now.
+                    mStaggeredGridView.smoothScrollToPosition(mPosition);
+                    Log.d(TAG, "onLoadFinished: position is " + mPosition);
+                }
                 break;
         }
-
     }
 
     @Override

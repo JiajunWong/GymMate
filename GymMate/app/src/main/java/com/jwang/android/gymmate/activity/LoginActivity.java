@@ -93,7 +93,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
         {
             case R.id.tv_log_in:
                 //show instagram log in screen.
-                mInstagramOauth.authorize(mAuthListener);
+                mInstagramOauth.authorize(this, mAuthListener);
                 break;
         }
     }

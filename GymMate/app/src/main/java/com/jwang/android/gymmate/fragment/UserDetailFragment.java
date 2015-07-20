@@ -21,7 +21,7 @@ import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnFetchUserInfoFinishedListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
 import com.jwang.android.gymmate.task.FetchUserMediaTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
@@ -129,7 +129,7 @@ public class UserDetailFragment extends BaseFragment implements
                 if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchUserMediaTask == null || mFetchUserMediaTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
                     mFetchUserMediaTask = new FetchUserMediaTask(getActivity());
-                    mFetchUserMediaTask.setOnFetchUserInfoFinishedListener(mOnFetchUserInfoFinishedListener);
+                    mFetchUserMediaTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
                     mFetchUserMediaTask.execute(mPaginationUrl);
                 }
             }
@@ -167,11 +167,11 @@ public class UserDetailFragment extends BaseFragment implements
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
         FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
-        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchUserInfoFinishedListener);
+        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
         fetchUserProfileTask.execute(mUserId);
     }
 
-    private OnFetchUserInfoFinishedListener mOnFetchUserInfoFinishedListener = new OnFetchUserInfoFinishedListener()
+    private OnFetchMediaPaginationFinishListener mOnFetchMediaPaginationFinishListener = new OnFetchMediaPaginationFinishListener()
     {
         @Override
         public void onFetchFinished(String paginationUrl)

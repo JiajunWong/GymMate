@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.fragment.MediaListFragment;
-import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.task.FetchPopularMediaTask;
@@ -51,11 +51,11 @@ public class MediaListActivity extends BaseActivity implements
             finish();
         }
         mFetchPopularMediaTask = new FetchPopularMediaTask(this);
-        mFetchPopularMediaTask.setOnFetchFinishedListener(mOnFetchFinishedListener);
+        mFetchPopularMediaTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
         mFetchPopularMediaTask.execute(mUrl);
     }
 
-    private OnFetchFinishedListener mOnFetchFinishedListener = new OnFetchFinishedListener()
+    private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = new OnFetchMediaArrayFinishListener()
     {
         @Override
         public void onFetchFinished(ArrayList<ModelMedia> medias)

@@ -5,8 +5,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
-import com.jwang.android.gymmate.interfaces.OnFetchUserLikedFinishedListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayAndPaginationFinishListener;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 
@@ -18,7 +17,7 @@ public class FetchUserLikedMediaTask extends
         AsyncTask<String, Void, JsonParseUtil.ResultWrapper>
 {
     private static final String TAG = FetchUserLikedMediaTask.class.getSimpleName();
-    private OnFetchUserLikedFinishedListener mOnFetchFinishedListener = OnFetchUserLikedFinishedListener.NO_OP;
+    private OnFetchMediaArrayAndPaginationFinishListener mOnFetchFinishedListener = OnFetchMediaArrayAndPaginationFinishListener.NO_OP;
     private Context mContext;
 
     public FetchUserLikedMediaTask(Context context)
@@ -26,7 +25,7 @@ public class FetchUserLikedMediaTask extends
         mContext = context;
     }
 
-    public void setOnFetchFinishedListener(OnFetchUserLikedFinishedListener onFetchFinishedListener)
+    public void setOnFetchFinishedListener(OnFetchMediaArrayAndPaginationFinishListener onFetchFinishedListener)
     {
         mOnFetchFinishedListener = onFetchFinishedListener;
     }

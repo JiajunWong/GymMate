@@ -5,9 +5,8 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.jwang.android.gymmate.interfaces.OnFetchUserInfoFinishedListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
-import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 
 /**
@@ -17,16 +16,16 @@ public class FetchUserMediaTask extends AsyncTask<String, Void, String>
 {
     private static final String TAG = FetchUserMediaTask.class.getSimpleName();
     private Context mContext;
-    private OnFetchUserInfoFinishedListener mOnFetchUserInfoFinishedListener = OnFetchUserInfoFinishedListener.NO_OP;
+    private OnFetchMediaPaginationFinishListener mOnFetchMediaPaginationFinishListener = OnFetchMediaPaginationFinishListener.NO_OP;
 
     public FetchUserMediaTask(Context context)
     {
         mContext = context;
     }
 
-    public void setOnFetchUserInfoFinishedListener(OnFetchUserInfoFinishedListener listener)
+    public void setOnFetchUserInfoFinishedListener(OnFetchMediaPaginationFinishListener listener)
     {
-        mOnFetchUserInfoFinishedListener = listener;
+        mOnFetchMediaPaginationFinishListener = listener;
     }
 
     @Override
@@ -46,6 +45,6 @@ public class FetchUserMediaTask extends AsyncTask<String, Void, String>
     protected void onPostExecute(String s)
     {
         super.onPostExecute(s);
-        mOnFetchUserInfoFinishedListener.onFetchFinished(s);
+        mOnFetchMediaPaginationFinishListener.onFetchFinished(s);
     }
 }

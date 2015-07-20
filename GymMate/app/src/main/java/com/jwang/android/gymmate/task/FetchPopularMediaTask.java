@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.jwang.android.gymmate.interfaces.OnFetchFinishedListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
@@ -20,7 +20,7 @@ public class FetchPopularMediaTask extends
         AsyncTask<String, Void, ArrayList<ModelMedia>>
 {
     private static final String TAG = FetchPopularMediaTask.class.getSimpleName();
-    private OnFetchFinishedListener mOnFetchFinishedListener = OnFetchFinishedListener.NO_OP;
+    private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = OnFetchMediaArrayFinishListener.NO_OP;
     private Context mContext;
 
     public FetchPopularMediaTask(Context context)
@@ -28,9 +28,9 @@ public class FetchPopularMediaTask extends
         mContext = context;
     }
 
-    public void setOnFetchFinishedListener(OnFetchFinishedListener onFetchFinishedListener)
+    public void setOnFetchFinishedListener(OnFetchMediaArrayFinishListener onFetchMediaArrayFinishListener)
     {
-        mOnFetchFinishedListener = onFetchFinishedListener;
+        mOnFetchMediaArrayFinishListener = onFetchMediaArrayFinishListener;
     }
 
     @Override
@@ -51,6 +51,6 @@ public class FetchPopularMediaTask extends
     protected void onPostExecute(ArrayList<ModelMedia> medias)
     {
         super.onPostExecute(medias);
-        mOnFetchFinishedListener.onFetchFinished(medias);
+        mOnFetchMediaArrayFinishListener.onFetchFinished(medias);
     }
 }

@@ -10,13 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/media_image"
+        <fragment
+            android:id="@+id/fragment_media_detail"
+            android:name="com.jwang.android.gymmate.fragment.MediaDetailFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:transitionName="@string/transition_name_media" />
+            android:layout_height="match_parent" />
 
         <ImageView
             android:layout_width="match_parent"

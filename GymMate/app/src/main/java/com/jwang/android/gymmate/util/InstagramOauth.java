@@ -39,8 +39,8 @@ public class InstagramOauth
         return mInstagram.getSession();
     }
 
-    public void authorize(Instagram.InstagramAuthListener listener)
+    public void authorize(Context context, Instagram.InstagramAuthListener listener)
     {
-        mInstagram.authorize(listener);
+        mInstagram.authorize(context, listener);
     }
 }

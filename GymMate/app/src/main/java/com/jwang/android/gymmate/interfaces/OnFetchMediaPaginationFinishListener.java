@@ -1,15 +1,11 @@
 package com.jwang.android.gymmate.interfaces;
 
-import com.jwang.android.gymmate.model.ModelMedia;
-
-import java.util.ArrayList;
-
 /**
  * Created by jiajunwang on 7/16/15.
  */
-public interface OnFetchUserInfoFinishedListener
+public interface OnFetchMediaPaginationFinishListener
 {
-    public static OnFetchUserInfoFinishedListener NO_OP = new OnFetchUserInfoFinishedListener()
+    public static OnFetchMediaPaginationFinishListener NO_OP = new OnFetchMediaPaginationFinishListener()
     {
         @Override
         public void onFetchFinished(String paginationUrl)

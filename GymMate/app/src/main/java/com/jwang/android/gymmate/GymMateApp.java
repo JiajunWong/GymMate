@@ -2,7 +2,9 @@ package com.jwang.android.gymmate;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.crashlytics.android.Crashlytics;
+
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -16,20 +18,17 @@ public class GymMateApp extends Application
     public GymMateApp()
     {
         super();
+        sInstance = this;
     }
 
     public static GymMateApp getInstance()
     {
-        if (sInstance == null)
-        {
-            sInstance = new GymMateApp();
-        }
         return sInstance;
     }
 
-    public Context getContext()
+    public static Context getContext()
     {
-        return sInstance.mContext;
+        return getInstance().mContext;
     }
 
     @Override

@@ -5,6 +5,11 @@
     <dimen name="default_elevation">8dp</dimen>
     <dimen name="cardview_item_margin">8dp</dimen>
 
+    <!-- Log in -->
+    <dimen name="login_btn_bottom_margin">80dp</dimen>
+    <dimen name="login_title_top_margin">@dimen/login_btn_bottom_margin</dimen>
+    <dimen name="login_btn_height">40dp</dimen>
+
     <dimen name="user_profile_avatar_size">88dp</dimen>
     <dimen name="fake_header_height">200dp</dimen>
     <dimen name="drawer_left_width">280dp</dimen>

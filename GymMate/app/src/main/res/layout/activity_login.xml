@@ -9,7 +9,7 @@
     <com.jwang.android.gymmate.view.CustomizableTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/login_title_top_margin"
         android:gravity="center"
         android:text="@string/app_name"
         android:textColor="@android:color/white"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="@dimen/login_btn_bottom_margin"
         android:layout_marginLeft="@dimen/horizontal_margin"
         android:layout_marginRight="@dimen/horizontal_margin"
         android:gravity="center">
@@ -29,7 +29,7 @@
         <LinearLayout
             android:id="@+id/tv_log_in"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/login_btn_height"
             android:background="@drawable/touch_selector"
             android:elevation="2dp"
             android:gravity="center"

@@ -1,9 +1,19 @@
 package com.jwang.android.gymmate.util;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.MainNavigationActivity;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -12,7 +22,6 @@ import com.loopj.android.http.SyncHttpClient;
 import org.apache.http.Header;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -22,6 +31,8 @@ import java.util.HashSet;
 public class MediaWorker
 {
     private static final String TAG = MediaWorker.class.getSimpleName();
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int MEDIA_NOTIFICATION_ID = 3004;
     private static MediaWorker sMediaWorker;
     private Context mContext;
     private HashSet<String> mGymMediaPaginationUrls;
@@ -115,8 +126,11 @@ public class MediaWorker
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            String pagination = JsonParseUtil.parseMediaGetPagination(mContext, popularJsonStr, true);
-                            mGymMediaPaginationUrls.add(pagination);
+                            boolean b = JsonParseUtil.parseMediaGetPagination(mContext, popularJsonStr, mGymMediaPaginationUrls);
+                            if (b)
+                            {
+                                notifyMedia();
+                            }
                         }
                     }
 
@@ -132,5 +146,37 @@ public class MediaWorker
             {
             }
         });
+    }
+
+    private void notifyMedia()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String lastNotificationKey = mContext.getString(R.string.pref_last_notification);
+        long lastSync = prefs.getLong(lastNotificationKey, 0);
+
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS)
+        {
+            Resources resources = mContext.getResources();
+            String title = mContext.getString(R.string.app_name);
+            String contentText = mContext.getString(R.string.notification_content);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setColor(resources.getColor(R.color.primary_color)).setSmallIcon(R.drawable.ic_launcher).setContentTitle(title).setContentText(contentText);
+
+            Intent resultIntent = new Intent(mContext, MainNavigationActivity.class);
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+
+            NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            // MEDIA_NOTIFICATION_ID allows you to update the notification later on.
+            mNotificationManager.notify(MEDIA_NOTIFICATION_ID, mBuilder.build());
+
+            //refreshing last sync
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(lastNotificationKey, System.currentTimeMillis());
+            editor.commit();
+        }
     }
 }

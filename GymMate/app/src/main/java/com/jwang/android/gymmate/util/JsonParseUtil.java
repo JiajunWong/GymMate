@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -214,20 +213,6 @@ public class JsonParseUtil
         }
         Log.w(TAG, "***parseMediaJsonAndStoreGetPagination: media number is " + medias.size());
         return parseMediaJsonGetPagination(jsonString);
-    }
-
-    public static boolean parseMediaGetPagination(Context context, final String jsonString, HashSet<String> arrayList)
-    {
-        arrayList.add(parseMediaJsonGetPagination(jsonString));
-        ArrayList<ModelMedia> medias = parseMediaJsonWithoutStoreMedia(jsonString);
-        boolean isNewAdded = false;
-        for (ModelMedia modelMedia : medias)
-        {
-            boolean b = addMediaValues(context, modelMedia);
-            isNewAdded = isNewAdded || b;
-            addUserValues(context, modelMedia);
-        }
-        return isNewAdded;
     }
 
     // Such as popular
@@ -546,9 +531,8 @@ public class JsonParseUtil
         context.getContentResolver().update(MediaContract.UserEntry.CONTENT_URI, userInfoContentValues, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelUser.getInstagramId()) });
     }
 
-    private static boolean addMediaValues(Context context, ModelMedia modelMedia)
+    private static void addMediaValues(Context context, ModelMedia modelMedia)
     {
-        boolean isAddNew = false;
         Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
         if (!mediaCursor.moveToFirst())
         {
@@ -573,9 +557,7 @@ public class JsonParseUtil
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_ENABLED, "0");
 
             context.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
-            isAddNew = true;
         }
         mediaCursor.close();
-        return isAddNew;
     }
 }

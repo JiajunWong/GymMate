@@ -34,8 +34,4 @@
     <!-- SyncAdapter related -->
     <string name="sync_account_type" translatable="false">gymmate.android.jwang.com</string>
     <string name="content_authority" translatable="false">com.jwang.android.gymmate</string>
-
-    <!-- Strings related to Notification preference -->
-    <string name="notification_content">Checkout new images!</string>
-    <string name="pref_last_notification">last_notification</string>
 </resources>

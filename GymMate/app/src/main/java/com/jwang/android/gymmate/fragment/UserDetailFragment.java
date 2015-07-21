@@ -129,6 +129,7 @@ public class UserDetailFragment extends BaseFragment implements
                 if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
                     mFetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(getActivity());
+                    mFetchMediaWithStoreAndPaginationTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
                     mFetchMediaWithStoreAndPaginationTask.execute(mPaginationUrl);
                 }
             }

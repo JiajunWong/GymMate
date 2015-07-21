@@ -1,28 +1,31 @@
 package com.jwang.android.gymmate.task;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
+import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-
 /**
  * Created by jiajunwang on 7/2/15.
  */
-public class FetchMediaWithStoreAndPaginationTask extends
-        AsyncTask<String, Void, ArrayList<ModelMedia>>
+public class FetchMediaWithStoreAndPaginationTask
+        extends
+        AsyncTask<String, Void, FetchMediaWithStoreAndPaginationTask.ResultWrapper>
 {
     private static final String TAG = FetchMediaWithStoreAndPaginationTask.class.getSimpleName();
     private Context mContext;
     private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = OnFetchMediaArrayFinishListener.NO_OP;
+    private OnFetchMediaPaginationFinishListener mOnFetchMediaPaginationFinishListener = OnFetchMediaPaginationFinishListener.NO_OP;
 
     public FetchMediaWithStoreAndPaginationTask(Context context)
     {
@@ -34,8 +37,13 @@ public class FetchMediaWithStoreAndPaginationTask extends
         mOnFetchMediaArrayFinishListener = onFetchMediaArrayFinishListener;
     }
 
+    public void setOnFetchMediaPaginationFinishListener(OnFetchMediaPaginationFinishListener onFetchMediaPaginationFinishListener)
+    {
+        mOnFetchMediaPaginationFinishListener = onFetchMediaPaginationFinishListener;
+    }
+
     @Override
-    protected ArrayList<ModelMedia> doInBackground(String... params)
+    protected ResultWrapper doInBackground(String... params)
     {
         if (params.length < 0 || TextUtils.isEmpty(params[0]))
         {
@@ -54,18 +62,48 @@ public class FetchMediaWithStoreAndPaginationTask extends
             if (iterator.hasNext())
             {
                 String paginationUrl = iterator.next();
-                String mediaRes = HttpRequestUtil.startHttpRequest(paginationUrl, TAG);
-                paginations.clear();
-                b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
+                String mediaRes = "";
+                if (!TextUtils.isEmpty(paginationUrl))
+                {
+                    try
+                    {
+                        mediaRes = HttpRequestUtil.startHttpRequest(paginationUrl, TAG);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e(TAG, e.getMessage());
+                        break;
+                    }
+                    paginations.clear();
+                    b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
-        return medias;
+        Iterator<String> iterator = paginations.iterator();
+        return new ResultWrapper(medias, iterator.next());
     }
 
     @Override
-    protected void onPostExecute(ArrayList<ModelMedia> medias)
+    protected void onPostExecute(ResultWrapper resultWrapper)
     {
-        super.onPostExecute(medias);
-        mOnFetchMediaArrayFinishListener.onFetchFinished(medias);
+        super.onPostExecute(resultWrapper);
+        mOnFetchMediaArrayFinishListener.onFetchFinished(resultWrapper.mMedias);
+        mOnFetchMediaPaginationFinishListener.onFetchFinished(resultWrapper.mPaginationUrl);
+    }
+
+    protected static class ResultWrapper
+    {
+        public ArrayList<ModelMedia> mMedias;
+        public String mPaginationUrl;
+
+        public ResultWrapper(ArrayList<ModelMedia> arrayList, String url)
+        {
+            mMedias = arrayList;
+            mPaginationUrl = url;
+        }
     }
 }

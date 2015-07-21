@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.data.MediaContract;
@@ -403,7 +404,7 @@ public class JsonParseUtil
     //parse media json and store
     public static boolean parseInstagramMediaJson(Context context, String jsonString, boolean shouldStore, ArrayList<ModelMedia> medias, HashSet<String> paginations)
     {
-        if (medias == null)
+        if (TextUtils.isEmpty(jsonString) || medias == null)
         {
             return false;
         }

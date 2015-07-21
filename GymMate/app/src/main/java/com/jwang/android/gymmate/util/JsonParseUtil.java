@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -197,18 +198,6 @@ public class JsonParseUtil
         }
 
         return modelLocation;
-    }
-
-    public static class ResultWrapper
-    {
-        public ArrayList<ModelMedia> mMedias;
-        public String mPaginationUrl;
-
-        public ResultWrapper(ArrayList<ModelMedia> arrayList, String url)
-        {
-            mMedias = arrayList;
-            mPaginationUrl = url;
-        }
     }
 
     private static String parseMediaJsonGetPagination(String jsonString)
@@ -412,10 +401,17 @@ public class JsonParseUtil
     }
 
     //parse media json and store
-    public boolean parseInstagramMediaJson(Context context, String jsonString, boolean shouldStore, ArrayList<ModelMedia> medias, ArrayList<String> paginations)
+    public static boolean parseInstagramMediaJson(Context context, String jsonString, boolean shouldStore, ArrayList<ModelMedia> medias, HashSet<String> paginations)
     {
+        if (medias == null)
+        {
+            return false;
+        }
         parseMediaJsonWithoutStoreMedia(jsonString, medias);
-        paginations.add(parseMediaJsonGetPagination(jsonString));
+        if (paginations != null)
+        {
+            paginations.add(parseMediaJsonGetPagination(jsonString));
+        }
 
         boolean isAddNew = false;
         if (shouldStore)

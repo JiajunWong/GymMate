@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.model.ModelLocation;
+import com.jwang.android.gymmate.model.ModelMedia;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
@@ -117,8 +118,7 @@ public class MediaSyncWorker
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            String pagination = JsonParseUtil.parseMediaGetPagination(mContext, popularJsonStr, true);
-                            mGymMediaPaginationUrls.add(pagination);
+                            boolean b = JsonParseUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
                         }
                     }
 

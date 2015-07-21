@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
@@ -23,7 +22,7 @@ import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
-import com.jwang.android.gymmate.task.FetchUserMediaTask;
+import com.jwang.android.gymmate.task.FetchMediaWithStoreAndPaginationTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
 import com.jwang.android.gymmate.view.HeaderGridView;
@@ -39,8 +38,6 @@ public class UserDetailFragment extends BaseFragment implements
     private String mUserId;
     private String mPaginationUrl;
     private int mMediaCount;
-    private int mPosition = ListView.INVALID_POSITION;
-    private static final String SELECTED_KEY = "selected_position";
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -57,7 +54,7 @@ public class UserDetailFragment extends BaseFragment implements
     private View mPlaceHolderView;
     private View mHeader;
 
-    private FetchUserMediaTask mFetchUserMediaTask;
+    private FetchMediaWithStoreAndPaginationTask mFetchMediaWithStoreAndPaginationTask;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -108,11 +105,6 @@ public class UserDetailFragment extends BaseFragment implements
         AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
 
         fetchUserInfo();
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
-        {
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
-            Log.d(TAG, "onCreateView: position is " + mPosition);
-        }
         return rootView;
     }
 
@@ -134,11 +126,10 @@ public class UserDetailFragment extends BaseFragment implements
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchUserMediaTask == null || mFetchUserMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
-                    mFetchUserMediaTask = new FetchUserMediaTask(getActivity());
-                    mFetchUserMediaTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
-                    mFetchUserMediaTask.execute(mPaginationUrl);
+                    mFetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(getActivity());
+                    mFetchMediaWithStoreAndPaginationTask.execute(mPaginationUrl);
                 }
             }
         });
@@ -187,18 +178,6 @@ public class UserDetailFragment extends BaseFragment implements
             mPaginationUrl = paginationUrl;
         }
     };
-
-    @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
-        // When tablets rotate, the currently selected list item needs to be saved.
-        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
-        // so check for that before storing.
-        mPosition = mStaggeredGridView.getFirstVisiblePosition();
-        outState.putInt(SELECTED_KEY, mPosition);
-        Log.d(TAG, "onSaveInstanceState: position is " + mPosition);
-        super.onSaveInstanceState(outState);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -280,13 +259,6 @@ public class UserDetailFragment extends BaseFragment implements
                 break;
             case MEDIA_NEAR_LOADER:
                 mUserMediaAdapter.swapCursor(data);
-                if (mPosition != ListView.INVALID_POSITION)
-                {
-                    // If we don't need to restart the loader, and there's a desired position to restore
-                    // to, do so now.
-                    mStaggeredGridView.smoothScrollToPosition(mPosition);
-                    Log.d(TAG, "onLoadFinished: position is " + mPosition);
-                }
                 break;
         }
     }

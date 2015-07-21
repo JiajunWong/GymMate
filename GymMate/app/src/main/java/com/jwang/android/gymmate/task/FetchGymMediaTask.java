@@ -5,12 +5,14 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.JsonParseUtil;
 import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -40,12 +42,28 @@ public class FetchGymMediaTask extends AsyncTask<String, Void, Void>
             if (!TextUtils.isEmpty(url))
             {
                 String mediaResponse = HttpRequestUtil.startHttpRequest(url, TAG);
-                String nextPaginationUrl = JsonParseUtil.parseMediaGetPagination(mContext, mediaResponse, true);
-                Log.d(TAG, "!!!!!MainGymTask: doInBackground ~ pagination url is " + nextPaginationUrl);
-                if (!TextUtils.isEmpty(nextPaginationUrl))
+//                String nextPaginationUrl = JsonParseUtil.parseMediaGetPagination(mContext, mediaResponse, true);
+//                Log.d(TAG, "!!!!!MainGymTask: doInBackground ~ pagination url is " + nextPaginationUrl);
+//                if (!TextUtils.isEmpty(nextPaginationUrl))
+//                {
+//                    newPaginationUrls.add(nextPaginationUrl);
+//                }
+                ArrayList<ModelMedia> medias = new ArrayList<>();
+                HashSet<String> paginations = new HashSet<>();
+                boolean b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
+
+                while (!b && paginations.size() > 0)
                 {
-                    newPaginationUrls.add(nextPaginationUrl);
+                    Iterator<String> iterator = paginations.iterator();
+                    if (iterator.hasNext())
+                    {
+                        String paginationUrl = iterator.next();
+                        String mediaRes = HttpRequestUtil.startHttpRequest(paginationUrl, TAG);
+                        paginations.clear();
+                        b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
+                    }
                 }
+                newPaginationUrls.addAll(paginations);
             }
         }
         paginationUrls.clear();

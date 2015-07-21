@@ -11,7 +11,7 @@ import com.jwang.android.gymmate.fragment.MediaListFragment;
 import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.task.FetchPopularMediaTask;
+import com.jwang.android.gymmate.task.FetchMediaWithStoreAndPaginationTask;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class MediaListActivity extends BaseActivity implements
         OnRefreshListener
 {
     public static final String KEY_URL = "url_key";
-    private FetchPopularMediaTask mFetchPopularMediaTask;
+    private FetchMediaWithStoreAndPaginationTask fetchMediaWithStoreAndPaginationTask;
     private String mUrl;
 
     public static void startActivity(Context context, String url)
@@ -50,9 +50,9 @@ public class MediaListActivity extends BaseActivity implements
         {
             finish();
         }
-        mFetchPopularMediaTask = new FetchPopularMediaTask(this);
-        mFetchPopularMediaTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
-        mFetchPopularMediaTask.execute(mUrl);
+        fetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(this);
+        fetchMediaWithStoreAndPaginationTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
+        fetchMediaWithStoreAndPaginationTask.execute(mUrl);
     }
 
     private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = new OnFetchMediaArrayFinishListener()
@@ -71,9 +71,9 @@ public class MediaListActivity extends BaseActivity implements
     @Override
     public void onRefresh()
     {
-        if (mFetchPopularMediaTask.getStatus() == AsyncTask.Status.FINISHED)
+        if (fetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED)
         {
-            mFetchPopularMediaTask.cancel(false);
+            fetchMediaWithStoreAndPaginationTask.cancel(false);
             setFetchTask();
         }
     }

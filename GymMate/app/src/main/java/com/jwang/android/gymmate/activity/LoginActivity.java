@@ -1,5 +1,6 @@
 package com.jwang.android.gymmate.activity;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.util.LocationUtil;
+import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import net.londatiga.android.instagram.Instagram;
 import net.londatiga.android.instagram.InstagramUser;
@@ -34,6 +36,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         updateGeoLocation();
         mInstagramOauth = InstagramOauth.getsInstance();
+        if (getIntent().getBooleanExtra(MediaSyncWorker.KEY_START_FROM_NOTIFICATION, false))
+        {
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(MediaSyncWorker.MEDIA_NOTIFICATION_ID);
+        }
+
         if (!mInstagramOauth.getSession().isActive())
         {
             //log in

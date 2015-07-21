@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.LoginActivity;
 import com.jwang.android.gymmate.activity.MediaListActivity;
+import com.jwang.android.gymmate.activity.SettingActivity;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
 
@@ -129,6 +130,9 @@ public class DrawerNavigationAdapter extends
                 MediaListActivity.startActivity(mContext, likedUrl);
                 break;
             case 4:
+                //Setting
+                Intent intent = new Intent(mContext, SettingActivity.class);
+                mContext.startActivity(intent);
                 break;
             case 5:
                 //log out

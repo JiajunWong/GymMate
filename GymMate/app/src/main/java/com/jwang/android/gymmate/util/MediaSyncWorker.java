@@ -1,9 +1,19 @@
 package com.jwang.android.gymmate.util;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.LoginActivity;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -22,6 +32,10 @@ import java.util.HashSet;
 public class MediaSyncWorker
 {
     private static final String TAG = MediaSyncWorker.class.getSimpleName();
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+
+    public static final int MEDIA_NOTIFICATION_ID = 3004;
+    public static final String KEY_START_FROM_NOTIFICATION = "start_from_notification";
     private static MediaSyncWorker sMediaSyncWorker;
     private Context mContext;
     private HashSet<String> mGymMediaPaginationUrls;
@@ -118,7 +132,11 @@ public class MediaSyncWorker
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            boolean b = JsonParseUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
+                            boolean enableNotify = JsonParseUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
+                            if (enableNotify)
+                            {
+                                notifyMedia();
+                            }
                         }
                     }
 
@@ -135,4 +153,46 @@ public class MediaSyncWorker
             }
         });
     }
+
+    private void notifyMedia()
+    {
+        //checking the last update and notify if it' the first of the day
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String displayNotificationsKey = mContext.getString(R.string.pref_enable_notifications_key);
+        boolean displayNotifications = prefs.getBoolean(displayNotificationsKey, Boolean.parseBoolean(mContext.getString(R.string.pref_enable_notifications_default)));
+
+        if (displayNotifications)
+        {
+
+            String lastNotificationKey = mContext.getString(R.string.pref_last_notification);
+            long lastSync = prefs.getLong(lastNotificationKey, System.currentTimeMillis());
+
+            if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS)
+            {
+                Resources resources = mContext.getResources();
+                String title = mContext.getString(R.string.app_name);
+                String contentText = mContext.getString(R.string.notification_content);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setColor(resources.getColor(R.color.primary_color)).setSmallIcon(R.mipmap.ic_launcher).setContentTitle(title).setContentText(contentText);
+
+                Intent resultIntent = new Intent(mContext, LoginActivity.class);
+                resultIntent.putExtra(KEY_START_FROM_NOTIFICATION, true);
+
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                mBuilder.setContentIntent(resultPendingIntent);
+
+                NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                // MEDIA_NOTIFICATION_ID allows you to update the notification later on.
+                mNotificationManager.notify(MEDIA_NOTIFICATION_ID, mBuilder.build());
+
+                //refreshing last sync
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                editor.commit();
+
+            }
+        }
+    }
+
 }

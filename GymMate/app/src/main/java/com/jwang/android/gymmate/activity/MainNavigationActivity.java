@@ -26,6 +26,7 @@ public class MainNavigationActivity extends BaseActivity
         mToolbar.setNavigationIcon(R.drawable.ic_action_navigation_menu);
         mDrawerRootLeft = findViewById(R.id.drawer_layout_left);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        MediaSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

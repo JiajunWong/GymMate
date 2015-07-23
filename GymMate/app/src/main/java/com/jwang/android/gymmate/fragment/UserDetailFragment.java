@@ -5,7 +5,6 @@ import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -124,15 +123,15 @@ public class UserDetailFragment extends BaseFragment implements
             @Override
             public void onScrolling(RecyclerView recyclerView, int dx, int dy)
             {
-                int max = mHeader.getHeight();
-                if (dy > 0)
-                {
-                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
-                }
-                else
-                {
-                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
-                }
+//                int max = mHeader.getHeight();
+//                if (dy > 0)
+//                {
+//                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
+//                }
+//                else
+//                {
+//                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
+//                }
             }
 
             @Override

@@ -115,7 +115,8 @@ public class UserDetailFragment extends BaseFragment implements
         return rootView;
     }
 
-    private void setupListView() {
+    private void setupListView()
+    {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager)
@@ -138,7 +139,9 @@ public class UserDetailFragment extends BaseFragment implements
             public void onLoadMore()
             {
                 Log.d(TAG, "onLoadMore()");
-                if (!(getLoaderManager().hasRunningLoaders()) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED) && !TextUtils.isEmpty(mPaginationUrl))
+                // if (!(getLoaderManager().hasRunningLoaders()) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED) && !TextUtils.isEmpty(mPaginationUrl))
+                //TODO: bug need to fix
+                if (!TextUtils.isEmpty(mPaginationUrl))
                 {
                     mFetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(getActivity());
                     mFetchMediaWithStoreAndPaginationTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);

@@ -4,7 +4,7 @@ package com.jwang.android.gymmate.util;
  * @author Jiajun Wang on 6/25/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class GeoLocation
+public class GeoLocationUtil
 {
     private double radLat; // latitude in radians
     private double radLon; // longitude in radians
@@ -17,7 +17,7 @@ public class GeoLocation
     private static final double MIN_LON = Math.toRadians(-180d); // -PI
     private static final double MAX_LON = Math.toRadians(180d); //  PI
 
-    private GeoLocation()
+    private GeoLocationUtil()
     {
     }
 
@@ -25,9 +25,9 @@ public class GeoLocation
      * @param latitude the latitude, in degrees.
      * @param longitude the longitude, in degrees.
      */
-    public static GeoLocation fromDegrees(double latitude, double longitude)
+    public static GeoLocationUtil fromDegrees(double latitude, double longitude)
     {
-        GeoLocation result = new GeoLocation();
+        GeoLocationUtil result = new GeoLocationUtil();
         result.radLat = Math.toRadians(latitude);
         result.radLon = Math.toRadians(longitude);
         result.degLat = latitude;
@@ -40,9 +40,9 @@ public class GeoLocation
      * @param latitude the latitude, in radians.
      * @param longitude the longitude, in radians.
      */
-    public static GeoLocation fromRadians(double latitude, double longitude)
+    public static GeoLocationUtil fromRadians(double latitude, double longitude)
     {
-        GeoLocation result = new GeoLocation();
+        GeoLocationUtil result = new GeoLocationUtil();
         result.radLat = latitude;
         result.radLon = longitude;
         result.degLat = Math.toDegrees(latitude);
@@ -104,7 +104,7 @@ public class GeoLocation
      * @return the distance, measured in the same unit as the radius
      * argument.
      */
-    public double distanceTo(GeoLocation location, double radius)
+    public double distanceTo(GeoLocationUtil location, double radius)
     {
         return Math.acos(Math.sin(radLat) * Math.sin(location.radLat) + Math.cos(radLat) * Math.cos(location.radLat) * Math.cos(radLon - location.radLon)) * radius;
     }
@@ -141,7 +141,7 @@ public class GeoLocation
      * array element.</li>
      * </ul>
      */
-    public GeoLocation[] boundingCoordinates(double distance, double radius)
+    public GeoLocationUtil[] boundingCoordinates(double distance, double radius)
     {
 
         if (radius < 0d || distance < 0d)
@@ -173,6 +173,6 @@ public class GeoLocation
             maxLon = MAX_LON;
         }
 
-        return new GeoLocation[] { fromRadians(minLat, minLon), fromRadians(maxLat, maxLon) };
+        return new GeoLocationUtil[] { fromRadians(minLat, minLon), fromRadians(maxLat, maxLon) };
     }
 }

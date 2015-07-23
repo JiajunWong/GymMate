@@ -9,7 +9,7 @@ import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.InstagramOauth;
-import com.jwang.android.gymmate.util.JsonParseUtil;
+import com.jwang.android.gymmate.util.HttpRequestResultUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,9 +48,9 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + accessToken;
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
         String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
-        JsonParseUtil.parseUserInfoJson(mContext, infoResponse);
+        HttpRequestResultUtil.parseUserInfoJson(mContext, infoResponse);
         HashSet<String> paginations = new HashSet<>();
-        JsonParseUtil.parseInstagramMediaJson(mContext, mediaResponse, true, new ArrayList<ModelMedia>(), paginations);
+        HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaResponse, true, new ArrayList<ModelMedia>(), paginations);
         Iterator<String> iterator = paginations.iterator();
         return iterator.next();
     }

@@ -83,7 +83,7 @@ public class MediaSyncWorker
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
             {
-                ArrayList<ModelLocation> locations = JsonParseUtil.parseGetGeoLocationByGoogleApiJson(new String(responseBody));
+                ArrayList<ModelLocation> locations = HttpRequestResultUtil.parseGetGeoLocationByGoogleApiJson(new String(responseBody));
                 Log.w(TAG, "***fetchInstagramMedias: Get " + locations.size() + " Locations from Google.");
 
                 for (ModelLocation location : locations)
@@ -114,7 +114,7 @@ public class MediaSyncWorker
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
             {
-                String facebookLocationId = JsonParseUtil.parseGetFaceBookLocationByGeoResultJson(new String(responseBody)).getId();
+                String facebookLocationId = HttpRequestResultUtil.parseGetFaceBookLocationByGeoResultJson(new String(responseBody)).getId();
                 Log.w(TAG, "***Facebook Id is " + facebookLocationId);
 
                 final String access_token = InstagramOauth.getsInstance().getSession().getAccessToken();
@@ -127,12 +127,12 @@ public class MediaSyncWorker
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
                     {
-                        String instagramLocationId = JsonParseUtil.parseGetInstagramLocationByFaceBookIdJson(mContext, new String(responseBody)).getId();
+                        String instagramLocationId = HttpRequestResultUtil.parseGetInstagramLocationByFaceBookIdJson(mContext, new String(responseBody)).getId();
                         Log.w(TAG, "***Instagram Id is " + instagramLocationId);
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            boolean enableNotify = JsonParseUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
+                            boolean enableNotify = HttpRequestResultUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
                             if (enableNotify)
                             {
                                 notifyMedia();

@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
-import com.jwang.android.gymmate.util.JsonParseUtil;
+import com.jwang.android.gymmate.util.HttpRequestResultUtil;
 import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class FetchGymMediaTask extends AsyncTask<String, Void, Void>
                 //                }
                 ArrayList<ModelMedia> medias = new ArrayList<>();
                 HashSet<String> paginations = new HashSet<>();
-                boolean b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
+                boolean b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
 
                 while (!b && paginations.size() > 0)
                 {
@@ -63,7 +63,7 @@ public class FetchGymMediaTask extends AsyncTask<String, Void, Void>
                         {
                             String mediaRes = HttpRequestUtil.startHttpRequest(paginationUrl, TAG);
                             paginations.clear();
-                            b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
+                            b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
                         }
                         else
                         {

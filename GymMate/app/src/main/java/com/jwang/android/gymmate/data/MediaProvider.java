@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.jwang.android.gymmate.util.AppConfig;
-import com.jwang.android.gymmate.util.GeoLocation;
+import com.jwang.android.gymmate.util.GeoLocationUtil;
 
 /**
  * Created by jiajunwang on 6/24/15.
@@ -105,8 +105,8 @@ public class MediaProvider extends ContentProvider
     private String[] getArgs(float lat, float lng)
     {
         String[] selectionArgs = new String[4];
-        GeoLocation location = GeoLocation.fromDegrees(lat, lng);
-        GeoLocation[] geoLocations = location.boundingCoordinates(AppConfig.RADIUS_FROM_DESTINATION, AppConfig.RADIUS_SPHERE);
+        GeoLocationUtil location = GeoLocationUtil.fromDegrees(lat, lng);
+        GeoLocationUtil[] geoLocations = location.boundingCoordinates(AppConfig.RADIUS_FROM_DESTINATION, AppConfig.RADIUS_SPHERE);
         selectionArgs[0] = Double.toString(geoLocations[0].getLatitudeInDegrees());
         selectionArgs[1] = Double.toString(geoLocations[1].getLatitudeInDegrees());
         selectionArgs[2] = Double.toString(geoLocations[0].getLongitudeInDegrees());

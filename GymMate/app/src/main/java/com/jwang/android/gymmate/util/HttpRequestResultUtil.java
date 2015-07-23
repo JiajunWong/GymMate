@@ -21,9 +21,9 @@ import java.util.HashSet;
  * @author Jiajun Wang on 6/24/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class JsonParseUtil
+public class HttpRequestResultUtil
 {
-    private static final String TAG = JsonParseUtil.class.getSimpleName();
+    private static final String TAG = HttpRequestResultUtil.class.getSimpleName();
 
     public static ArrayList<ModelLocation> parseGetGeoLocationByGoogleApiJson(String jsonString)
     {

@@ -1,9 +1,5 @@
 package com.jwang.android.gymmate.task;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -13,7 +9,11 @@ import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
-import com.jwang.android.gymmate.util.JsonParseUtil;
+import com.jwang.android.gymmate.util.HttpRequestResultUtil;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -54,7 +54,7 @@ public class FetchMediaWithStoreAndPaginationTask
         String mediaResponse = HttpRequestUtil.startHttpRequest(params[0], TAG);
         ArrayList<ModelMedia> medias = new ArrayList<>();
         HashSet<String> paginations = new HashSet<>();
-        boolean b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
+        boolean b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
 
         while (!b && paginations.size() > 0)
         {
@@ -75,7 +75,7 @@ public class FetchMediaWithStoreAndPaginationTask
                         break;
                     }
                     paginations.clear();
-                    b = JsonParseUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
+                    b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
                 }
                 else
                 {

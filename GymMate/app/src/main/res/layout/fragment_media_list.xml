@@ -4,18 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.etsy.android.grid.StaggeredGridView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_medias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            app:column_count_landscape="@integer/column_count_landscape"
-            app:column_count_portrait="@integer/column_count_portrait"
-            app:item_margin="@dimen/cardview_item_margin" />
+            android:background="#e5e5e5" />
     </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

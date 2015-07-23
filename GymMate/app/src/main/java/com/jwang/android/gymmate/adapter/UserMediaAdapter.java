@@ -2,6 +2,8 @@ package com.jwang.android.gymmate.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,72 +19,95 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by jiajunwang on 7/12/15.
  */
-public class UserMediaAdapter extends CursorAdapter implements
-        View.OnClickListener
+public class UserMediaAdapter extends
+        RecyclerView.Adapter<UserMediaAdapter.UserMediaViewHolder>
 {
-    private Context mContext;
+    private @NonNull Context mContext;
+    private Cursor mCursor;
 
-    public UserMediaAdapter(Context context, Cursor c, int flags)
+    public UserMediaAdapter(Context context)
     {
-        super(context, c, flags);
         mContext = context;
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent)
+    public UserMediaViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
-        int layoutId = R.layout.list_item_user_media_grid;
-        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag(viewHolder);
-        viewHolder.mImageView.setOnClickListener(this);
-        viewHolder.mImageView.setTag(viewHolder);
-        return view;
-    }
-
-    @Override
-    public void bindView(View view, Context context, Cursor cursor)
-    {
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        int image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
-        if (TextUtils.isEmpty(cursor.getString(image_index)))
+        if (viewGroup instanceof RecyclerView)
         {
-            Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
+            int layoutId = R.layout.list_item_user_media_grid;
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutId, viewGroup, false);
+            view.setFocusable(true);
+            return new UserMediaViewHolder(view);
         }
         else
         {
-            image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
-            Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
+            throw new RuntimeException("Not bound to RecyclerView");
         }
-
-        //set media id and owner id;
-        int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
-        viewHolder.mMediaId = cursor.getString(media_id_index);
     }
 
     @Override
-    public void onClick(View v)
+    public void onBindViewHolder(UserMediaViewHolder holder, int position)
     {
-        switch (v.getId())
+        mCursor.moveToPosition(position);
+        int image_index = mCursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
+        if (TextUtils.isEmpty(mCursor.getString(image_index)))
         {
-            case R.id.user_media:
-                ViewHolder viewHolder = (ViewHolder) v.getTag();
-                if (!TextUtils.isEmpty(viewHolder.mMediaId))
-                {
-                    MediaDetailActivity.startActivity(mContext, viewHolder.mImageView, viewHolder.mMediaId);
-                }
-                break;
+            Picasso.with(mContext).load(mCursor.getString(image_index)).into(holder.mImageView);
+        }
+        else
+        {
+            image_index = mCursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
+            Picasso.with(mContext).load(mCursor.getString(image_index)).into(holder.mImageView);
         }
     }
 
-    public class ViewHolder
+    @Override
+    public int getItemCount()
+    {
+        if (mCursor == null)
+        {
+            return 0;
+        }
+        return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor)
+    {
+        mCursor = newCursor;
+        notifyDataSetChanged();
+        //        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    public Cursor getCursor()
+    {
+        return mCursor;
+    }
+
+    public class UserMediaViewHolder extends RecyclerView.ViewHolder implements
+            View.OnClickListener
     {
         public ImageView mImageView;
-        public String mMediaId;
 
-        public ViewHolder(View v)
+        public UserMediaViewHolder(View v)
         {
+            super(v);
             mImageView = (ImageView) v.findViewById(R.id.user_media);
+            mImageView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view)
+        {
+            switch (view.getId())
+            {
+                case R.id.user_media:
+                    int adapterPosition = getAdapterPosition();
+                    mCursor.moveToPosition(adapterPosition);
+                    int InstagtamIdColumnIndex = mCursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
+                    MediaDetailActivity.startActivity(mContext, mImageView, mCursor.getString(InstagtamIdColumnIndex));
+                    break;
+            }
         }
     }
 }

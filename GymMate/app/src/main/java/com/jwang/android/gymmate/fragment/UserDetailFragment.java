@@ -2,18 +2,19 @@ package com.jwang.android.gymmate.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +26,6 @@ import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener
 import com.jwang.android.gymmate.task.FetchMediaWithStoreAndPaginationTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
-import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -45,7 +45,7 @@ public class UserDetailFragment extends BaseFragment implements
     private TextView mFollowersCountTextView;
     private TextView mFollowingCountTextView;
     private ImageView mUserAvatarImageView;
-    private HeaderGridView mStaggeredGridView;
+    private RecyclerView mRecyclerView;
     private View mBgView;
     private UserMediaAdapter mUserMediaAdapter;
 
@@ -92,11 +92,13 @@ public class UserDetailFragment extends BaseFragment implements
         mPostsCountTextView = (TextView) rootView.findViewById(R.id.post_count);
         mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
-        mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_item_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mBgView = rootView.findViewById(R.id.container);
         mHeader = rootView.findViewById(R.id.user_profile_root);
 
-        mUserMediaAdapter = new UserMediaAdapter(getActivity(), null, 0);
+        mUserMediaAdapter = new UserMediaAdapter(getActivity());
 
         mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
         mMinHeaderTranslation = -mHeaderHeight;
@@ -110,52 +112,48 @@ public class UserDetailFragment extends BaseFragment implements
 
     private void setupListView()
     {
-        mPlaceHolderView = getLayoutInflater(getArguments()).inflate(R.layout.view_header_placeholder, mStaggeredGridView, false);
-        mStaggeredGridView.addHeaderView(mPlaceHolderView);
-        mStaggeredGridView.setOnScrollListener(new AbsListView.OnScrollListener()
+        mPlaceHolderView = getLayoutInflater(getArguments()).inflate(R.layout.view_header_placeholder, mRecyclerView, false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mUserMediaAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
             {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                int scrollY = getScrollY();
-                //sticky actionbar
-                mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
-                int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && !TextUtils.isEmpty(mPaginationUrl) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED))
+                super.onScrolled(recyclerView, dx, dy);
+                int max = mHeader.getHeight();
+                if (dy > 0)
                 {
-                    mFetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(getActivity());
-                    mFetchMediaWithStoreAndPaginationTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
-                    mFetchMediaWithStoreAndPaginationTask.execute(mPaginationUrl);
+                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
+                }
+                else
+                {
+                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
                 }
             }
         });
-        mStaggeredGridView.setAdapter(mUserMediaAdapter);
     }
 
-    public int getScrollY()
-    {
-        View c = mStaggeredGridView.getChildAt(0);
-        if (c == null)
-        {
-            return 0;
-        }
-
-        int firstVisiblePosition = mStaggeredGridView.getFirstVisiblePosition();
-        int top = c.getTop();
-
-        int headerHeight = 0;
-        if (firstVisiblePosition >= 1)
-        {
-            headerHeight = mPlaceHolderView.getHeight();
-        }
-
-        return -top + firstVisiblePosition * c.getHeight() + headerHeight;
-    }
+    //    public int getScrollY()
+    //    {
+    //        View c = mRecyclerView.getChildAt(0);
+    //        if (c == null)
+    //        {
+    //            return 0;
+    //        }
+    //
+    //        int firstVisiblePosition = mRecyclerView.getFirstVisiblePosition();
+    //        int top = c.getTop();
+    //
+    //        int headerHeight = 0;
+    //        if (firstVisiblePosition >= 1)
+    //        {
+    //            headerHeight = mPlaceHolderView.getHeight();
+    //        }
+    //
+    //        return -top + firstVisiblePosition * c.getHeight() + headerHeight;
+    //    }
 
     private void fetchUserInfo()
     {
@@ -197,7 +195,7 @@ public class UserDetailFragment extends BaseFragment implements
                 Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             case MEDIA_NEAR_LOADER:
-//                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
+                //                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
                 Uri uri1 = MediaContract.MediaEntry.buildMediaWithOwnerId(mUserId);
                 return new CursorLoader(getActivity(), uri1, null, null, null, null);
             default:

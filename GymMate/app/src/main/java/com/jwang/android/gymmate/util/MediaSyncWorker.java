@@ -15,7 +15,6 @@ import android.util.Log;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.LoginActivity;
 import com.jwang.android.gymmate.model.ModelLocation;
-import com.jwang.android.gymmate.model.ModelMedia;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
@@ -23,7 +22,7 @@ import com.loopj.android.http.SyncHttpClient;
 import org.apache.http.Header;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 /**
  * @author Jiajun Wang on 7/16/15
@@ -38,12 +37,12 @@ public class MediaSyncWorker
     public static final String KEY_START_FROM_NOTIFICATION = "start_from_notification";
     private static MediaSyncWorker sMediaSyncWorker;
     private Context mContext;
-    private HashSet<String> mGymMediaPaginationUrls;
+    private HashMap<String, String> mMinTimeStampsMap;
 
     private MediaSyncWorker(Context context)
     {
         mContext = context;
-        mGymMediaPaginationUrls = new HashSet<>();
+        mMinTimeStampsMap = new HashMap<>();
     }
 
     public static MediaSyncWorker getInstance(Context context)
@@ -63,9 +62,9 @@ public class MediaSyncWorker
         }
     }
 
-    public HashSet<String> getPaginationUrls()
+    public HashMap<String, String> getTimeStamps()
     {
-        return mGymMediaPaginationUrls;
+        return mMinTimeStampsMap;
     }
 
     private void fetchLocationsFromGoogle(String[] location)
@@ -132,7 +131,12 @@ public class MediaSyncWorker
                         if (!TextUtils.isEmpty(instagramLocationId))
                         {
                             String popularJsonStr = HttpRequestUtil.startHttpRequest("https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token, TAG);
-                            boolean enableNotify = HttpRequestResultUtil.parseInstagramMediaJson(mContext, popularJsonStr, true, new ArrayList<ModelMedia>(), mGymMediaPaginationUrls);
+                            ArrayList<String> timeStamps = new ArrayList<>();
+                            boolean enableNotify = HttpRequestResultUtil.addMediaToDB(mContext, popularJsonStr, HttpRequestResultUtil.RequestMediaType.LOCATION, instagramLocationId, true, null, timeStamps);
+                            if (!timeStamps.isEmpty())
+                            {
+                                mMinTimeStampsMap.put(instagramLocationId, timeStamps.get(0));
+                            }
                             if (enableNotify)
                             {
                                 notifyMedia();
@@ -185,13 +189,11 @@ public class MediaSyncWorker
                 NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 // MEDIA_NOTIFICATION_ID allows you to update the notification later on.
                 mNotificationManager.notify(MEDIA_NOTIFICATION_ID, mBuilder.build());
-
-                //refreshing last sync
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putLong(lastNotificationKey, System.currentTimeMillis());
-                editor.commit();
-
             }
+            //refreshing last sync
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(lastNotificationKey, System.currentTimeMillis());
+            editor.commit();
         }
     }
 

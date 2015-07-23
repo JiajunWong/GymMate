@@ -5,15 +5,12 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
-import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
+import com.jwang.android.gymmate.util.HttpRequestResultUtil;
 import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.InstagramOauth;
-import com.jwang.android.gymmate.util.HttpRequestResultUtil;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -22,16 +19,16 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
 {
     private static final String TAG = FetchUserProfileTask.class.getSimpleName();
     private Context mContext;
-    private OnFetchMediaPaginationFinishListener mOnFetchMediaPaginationFinishListener = OnFetchMediaPaginationFinishListener.NO_OP;
+    private OnRequestMediaFinishWithTimeStampListener mOnRequestMediaFinishWithTimeStampListener = OnRequestMediaFinishWithTimeStampListener.NO_OP;
 
     public FetchUserProfileTask(Context context)
     {
         mContext = context;
     }
 
-    public void setOnFetchUserInfoFinishedListener(OnFetchMediaPaginationFinishListener listener)
+    public void setOnFetchUserInfoFinishedListener(OnRequestMediaFinishWithTimeStampListener listener)
     {
-        mOnFetchMediaPaginationFinishListener = listener;
+        mOnRequestMediaFinishWithTimeStampListener = listener;
     }
 
     @Override
@@ -46,19 +43,27 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
         String accessToken = InstagramOauth.getsInstance().getSession().getAccessToken();
         String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + accessToken + "&count=20";
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + accessToken;
+
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
-        String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
         HttpRequestResultUtil.parseUserInfoJson(mContext, infoResponse);
-        HashSet<String> paginations = new HashSet<>();
-        HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaResponse, true, new ArrayList<ModelMedia>(), paginations);
-        Iterator<String> iterator = paginations.iterator();
-        return iterator.next();
+
+        String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
+        ArrayList<String> minCreateTimes = new ArrayList<>();
+        HttpRequestResultUtil.addMediaToDB(mContext, mediaResponse, HttpRequestResultUtil.RequestMediaType.USER, instagramId, true, null, minCreateTimes);
+        if (minCreateTimes.isEmpty())
+        {
+            return null;
+        }
+        return minCreateTimes.get(0);
     }
 
     @Override
     protected void onPostExecute(String s)
     {
         super.onPostExecute(s);
-        mOnFetchMediaPaginationFinishListener.onFetchFinished(s);
+        if (!TextUtils.isEmpty(s))
+        {
+            mOnRequestMediaFinishWithTimeStampListener.onFetchFinished(s);
+        }
     }
 }

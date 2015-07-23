@@ -2,16 +2,15 @@ package com.jwang.android.gymmate.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.HttpRequestResultUtil;
+import com.jwang.android.gymmate.util.HttpRequestUtil;
+import com.jwang.android.gymmate.util.InstagramOauth;
 import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -30,52 +29,31 @@ public class FetchGymMediaTask extends AsyncTask<String, Void, Void>
     @Override
     protected Void doInBackground(String... params)
     {
-        HashSet<String> paginationUrls = MediaSyncWorker.getInstance(mContext).getPaginationUrls();
-        ArrayList<String> newPaginationUrls = new ArrayList<>();
-        if (paginationUrls.size() == 0)
+        HashMap<String, String> timeStampHashMap = MediaSyncWorker.getInstance(mContext).getTimeStamps();
+        HashMap<String, String> newTimeStampHashMap = new HashMap<>();
+        if (timeStampHashMap.isEmpty())
         {
-            Log.e(TAG, "doInBackground: pagination url is null!");
+            Log.e(TAG, "FetchGymMediaTask -- doInBackground: timeStamps is null!");
             return null;
         }
-        for (String url : paginationUrls)
+        Iterator<String> iterator = timeStampHashMap.keySet().iterator();
+        while (iterator.hasNext())
         {
-            if (!TextUtils.isEmpty(url))
-            {
-                String mediaResponse = HttpRequestUtil.startHttpRequest(url, TAG);
-                //                String nextPaginationUrl = JsonParseUtil.parseMediaGetPagination(mContext, mediaResponse, true);
-                //                Log.d(TAG, "!!!!!MainGymTask: doInBackground ~ pagination url is " + nextPaginationUrl);
-                //                if (!TextUtils.isEmpty(nextPaginationUrl))
-                //                {
-                //                    newPaginationUrls.add(nextPaginationUrl);
-                //                }
-                ArrayList<ModelMedia> medias = new ArrayList<>();
-                HashSet<String> paginations = new HashSet<>();
-                boolean b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaResponse, true, medias, paginations);
+            String instagramLocationId = iterator.next();
+            String timeStamps = timeStampHashMap.get(instagramLocationId);
+            String access_token = InstagramOauth.getsInstance().getSession().getAccessToken();
+            String url = "https://api.instagram.com/v1/locations/" + instagramLocationId + "/media/recent?access_token=" + access_token + "&max_timestamp=" + timeStamps;
+            String mediaResponse = HttpRequestUtil.startHttpRequest(url, TAG);
 
-                while (!b && paginations.size() > 0)
-                {
-                    //TODO: bug?
-                    Iterator<String> iterator = paginations.iterator();
-                    if (iterator.hasNext())
-                    {
-                        String paginationUrl = iterator.next();
-                        if (!TextUtils.isEmpty(paginationUrl))
-                        {
-                            String mediaRes = HttpRequestUtil.startHttpRequest(paginationUrl, TAG);
-                            paginations.clear();
-                            b = HttpRequestResultUtil.parseInstagramMediaJson(mContext, mediaRes, true, medias, paginations);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                newPaginationUrls.addAll(paginations);
+            ArrayList<String> minTimeStamps = new ArrayList<>();
+            HttpRequestResultUtil.addMediaToDB(mContext, mediaResponse, HttpRequestResultUtil.RequestMediaType.LOCATION, instagramLocationId, true, null, minTimeStamps);
+            if (!minTimeStamps.isEmpty())
+            {
+                newTimeStampHashMap.put(instagramLocationId, minTimeStamps.get(0));
             }
         }
-        paginationUrls.clear();
-        paginationUrls.addAll(newPaginationUrls);
+        timeStampHashMap.clear();
+        timeStampHashMap.putAll(newTimeStampHashMap);
         return null;
     }
 }

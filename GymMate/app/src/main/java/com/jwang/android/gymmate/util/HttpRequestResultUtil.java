@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -24,6 +24,12 @@ import java.util.HashSet;
 public class HttpRequestResultUtil
 {
     private static final String TAG = HttpRequestResultUtil.class.getSimpleName();
+
+    public static enum RequestMediaType
+    {
+        LOCATION,
+        USER
+    }
 
     public static ArrayList<ModelLocation> parseGetGeoLocationByGoogleApiJson(String jsonString)
     {
@@ -58,7 +64,7 @@ public class HttpRequestResultUtil
                         }
                     }
                     locations.add(modelLocation);
-                    if (i == 3)
+                    if (i == 5)
                     {
                         break;
                     }
@@ -201,6 +207,144 @@ public class HttpRequestResultUtil
         return modelLocation;
     }
 
+    public static ModelMedia parseSingleMedia(String jsonString)
+    {
+        JSONObject mediaJsonObject;
+        ModelMedia modelMedia = new ModelMedia();
+        try
+        {
+            mediaJsonObject = new JSONObject(jsonString);
+            if (mediaJsonObject.has("data"))
+            {
+                JSONObject dataJsonObject = mediaJsonObject.getJSONObject("data");
+                modelMedia = parseMediaJsonObject(dataJsonObject);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "parseMediaJson ERROR!!: " + e.toString());
+        }
+        return modelMedia;
+    }
+
+    /**
+     * @param context
+     * @param jsonString
+     * @param shouldStore
+     * @param medias
+     * @param minTimeStamps
+     * @return
+     */
+    public static boolean addMediaToDB(Context context, String jsonString, RequestMediaType type, String id, boolean shouldStore, ArrayList<ModelMedia> medias, ArrayList<String> minTimeStamps)
+    {
+        if (TextUtils.isEmpty(jsonString))
+        {
+            return false;
+        }
+
+        ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
+        parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
+
+        boolean isAddNew = false;
+        if (shouldStore)
+        {
+            for (ModelMedia modelMedia : newAddInMedias)
+            {
+                boolean b = addMediaValues(context, modelMedia);
+                addUserValues(context, modelMedia);
+                isAddNew = isAddNew || b;
+            }
+
+            if (isAddNew) // there is a gap, return min from medias array
+            {
+                long minCreateTime = Long.MAX_VALUE;
+                for (ModelMedia modelMedia : newAddInMedias)
+                {
+                    if (minCreateTime < modelMedia.getCreateTime())
+                    {
+                        minCreateTime = modelMedia.getCreateTime();
+                    }
+                }
+                if (minTimeStamps != null && minCreateTime != Long.MAX_VALUE)
+                {
+                    minTimeStamps.add(Long.toString(minCreateTime));
+                    Log.d(TAG, "#@@@@@# addMediaToDB -- return min time from medias array, and min time is " + minCreateTime);
+                }
+            }
+            else
+            // all medias has already in the db, return min from db
+            {
+                String minCreateTime = null;
+                switch (type)
+                {
+                    case LOCATION:
+                    {
+                        minCreateTime = minTimeStampByLocationId(context, id);
+                        break;
+                    }
+                    case USER:
+                    {
+                        minCreateTime = minTimeStampByUserId(context, id);
+                        break;
+                    }
+                }
+                if (!TextUtils.isEmpty(minCreateTime))
+                {
+                    Log.d(TAG, "#@@@@@# addMediaToDB -- return min time from db, and min time is " + minCreateTime);
+                    minTimeStamps.add(minCreateTime);
+                }
+            }
+        }
+
+        if (medias != null)
+        {
+            medias.addAll(newAddInMedias);
+        }
+
+        return isAddNew;
+    }
+
+    // -------------------------------------------------------------------------------------------------
+    private static String minTimeStampByUserId(Context context, String id)
+    {
+        Uri uri = MediaContract.MediaEntry.CONTENT_URI;
+        String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
+        String selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ?";
+        String[] selectionArgs = { id };
+        String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " ASC LIMIT 1";
+        Cursor cursor = context.getContentResolver().query(uri, PROJECTION, selection, selectionArgs, sortOrder);
+        if (cursor != null && cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
+            String date = cursor.getString(index_create_time);
+            if (!TextUtils.isEmpty(date))
+                Log.w(TAG, date);
+            cursor.close();
+            return date;
+        }
+        return null;
+    }
+
+    private static String minTimeStampByLocationId(Context context, String id)
+    {
+        Uri uri = MediaContract.MediaEntry.CONTENT_URI;
+        String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
+        String selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ?";
+        String[] selectionArgs = { id };
+        String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " ASC LIMIT 1";
+        Cursor cursor = context.getContentResolver().query(uri, PROJECTION, selection, selectionArgs, sortOrder);
+        if (cursor != null && cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
+            String date = cursor.getString(index_create_time);
+            cursor.close();
+            return date;
+        }
+        return null;
+    }
+
     private static String parseMediaJsonGetPagination(String jsonString)
     {
         String nextUrl = "";
@@ -249,26 +393,6 @@ public class HttpRequestResultUtil
             Log.e(TAG, "parseMediaJson ERROR!!: " + e.toString());
         }
         return medias;
-    }
-
-    public static ModelMedia parseSingleMedia(String jsonString)
-    {
-        JSONObject mediaJsonObject;
-        ModelMedia modelMedia = new ModelMedia();
-        try
-        {
-            mediaJsonObject = new JSONObject(jsonString);
-            if (mediaJsonObject.has("data"))
-            {
-                JSONObject dataJsonObject = mediaJsonObject.getJSONObject("data");
-                modelMedia = parseMediaJsonObject(dataJsonObject);
-            }
-        }
-        catch (Exception e)
-        {
-            Log.e(TAG, "parseMediaJson ERROR!!: " + e.toString());
-        }
-        return modelMedia;
     }
 
     private static ModelMedia parseMediaJsonObject(JSONObject mediaObject)
@@ -401,32 +525,6 @@ public class HttpRequestResultUtil
         return modelMedia;
     }
 
-    //parse media json and store
-    public static boolean parseInstagramMediaJson(Context context, String jsonString, boolean shouldStore, ArrayList<ModelMedia> medias, HashSet<String> paginations)
-    {
-        if (TextUtils.isEmpty(jsonString) || medias == null)
-        {
-            return false;
-        }
-        parseMediaJsonWithoutStoreMedia(jsonString, medias);
-        if (paginations != null)
-        {
-            paginations.add(parseMediaJsonGetPagination(jsonString));
-        }
-
-        boolean isAddNew = false;
-        if (shouldStore)
-        {
-            for (ModelMedia modelMedia : medias)
-            {
-                boolean b = addMediaValues(context, modelMedia);
-                addUserValues(context, modelMedia);
-                isAddNew = isAddNew || b;
-            }
-        }
-        return isAddNew;
-    }
-
     private static void addUserValues(Context context, ModelMedia modelMedia)
     {
 
@@ -475,7 +573,7 @@ public class HttpRequestResultUtil
 
     private static boolean addMediaValues(Context context, ModelMedia modelMedia)
     {
-        boolean isAddNew = false;
+        boolean isNew = false;
         Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
         if (!mediaCursor.moveToFirst())
         {
@@ -500,9 +598,9 @@ public class HttpRequestResultUtil
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_ENABLED, "0");
 
             context.getContentResolver().insert(MediaContract.MediaEntry.CONTENT_URI, mediaContentValues);
-            isAddNew = true;
+            isNew = true;
         }
         mediaCursor.close();
-        return isAddNew;
+        return isNew;
     }
 }

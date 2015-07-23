@@ -1,10 +1,8 @@
 package com.jwang.android.gymmate.fragment;
 
-import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
-
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -28,11 +26,14 @@ import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.UserMediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.EndlessRecyclerOnScrollListener;
-import com.jwang.android.gymmate.interfaces.OnFetchMediaPaginationFinishListener;
-import com.jwang.android.gymmate.task.FetchMediaWithStoreAndPaginationTask;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
+import com.jwang.android.gymmate.task.RequestUserMediaTask;
 import com.jwang.android.gymmate.task.FetchUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
 import com.squareup.picasso.Picasso;
+
+import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -42,7 +43,7 @@ public class UserDetailFragment extends BaseFragment implements
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
-    private String mPaginationUrl;
+    private String mTimeStamp;
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -55,7 +56,7 @@ public class UserDetailFragment extends BaseFragment implements
     private LinearLayoutManager mLinearLayoutManager;
     private View mHeader;
 
-    private FetchMediaWithStoreAndPaginationTask mFetchMediaWithStoreAndPaginationTask;
+    private RequestUserMediaTask mRequestUserMediaTask;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -123,28 +124,26 @@ public class UserDetailFragment extends BaseFragment implements
             @Override
             public void onScrolling(RecyclerView recyclerView, int dx, int dy)
             {
-//                int max = mHeader.getHeight();
-//                if (dy > 0)
-//                {
-//                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
-//                }
-//                else
-//                {
-//                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
-//                }
+                //                int max = mHeader.getHeight();
+                //                if (dy > 0)
+                //                {
+                //                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
+                //                }
+                //                else
+                //                {
+                //                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
+                //                }
             }
 
             @Override
             public void onLoadMore()
             {
                 Log.d(TAG, "onLoadMore()");
-                // if (!(getLoaderManager().hasRunningLoaders()) && (mFetchMediaWithStoreAndPaginationTask == null || mFetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED) && !TextUtils.isEmpty(mPaginationUrl))
-                //TODO: bug need to fix
-                if (!TextUtils.isEmpty(mPaginationUrl))
+                if (!(getLoaderManager().hasRunningLoaders()) && (mRequestUserMediaTask == null || mRequestUserMediaTask.getStatus() == AsyncTask.Status.FINISHED) && !TextUtils.isEmpty(mTimeStamp))
                 {
-                    mFetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(getActivity());
-                    mFetchMediaWithStoreAndPaginationTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
-                    mFetchMediaWithStoreAndPaginationTask.execute(mPaginationUrl);
+                    mRequestUserMediaTask = new RequestUserMediaTask(getActivity());
+                    mRequestUserMediaTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
+                    mRequestUserMediaTask.execute(mTimeStamp);
                 }
             }
         });
@@ -164,13 +163,13 @@ public class UserDetailFragment extends BaseFragment implements
         fetchUserProfileTask.execute(mUserId);
     }
 
-    private OnFetchMediaPaginationFinishListener mOnFetchMediaPaginationFinishListener = new OnFetchMediaPaginationFinishListener()
+    private OnRequestMediaFinishWithTimeStampListener mOnFetchMediaPaginationFinishListener = new OnRequestMediaFinishWithTimeStampListener()
     {
         @Override
         public void onFetchFinished(String paginationUrl)
         {
-            mPaginationUrl = paginationUrl;
-            Log.d(TAG, "mOnFetchMediaPaginationFinishListener: mPaginationUrl is " + mPaginationUrl);
+            mTimeStamp = paginationUrl;
+            Log.d(TAG, "mOnFetchMediaPaginationFinishListener: mTimeStamp is " + mTimeStamp);
         }
     };
 

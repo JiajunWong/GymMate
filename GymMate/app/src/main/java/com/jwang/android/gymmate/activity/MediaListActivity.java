@@ -11,7 +11,7 @@ import com.jwang.android.gymmate.fragment.MediaListFragment;
 import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.task.FetchMediaWithStoreAndPaginationTask;
+import com.jwang.android.gymmate.task.RequestUserMediaTask;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class MediaListActivity extends BaseActivity implements
         OnRefreshListener
 {
     public static final String KEY_URL = "url_key";
-    private FetchMediaWithStoreAndPaginationTask fetchMediaWithStoreAndPaginationTask;
+    private RequestUserMediaTask requestUserMediaTask;
     private String mUrl;
 
     public static void startActivity(Context context, String url)
@@ -50,9 +50,9 @@ public class MediaListActivity extends BaseActivity implements
         {
             finish();
         }
-        fetchMediaWithStoreAndPaginationTask = new FetchMediaWithStoreAndPaginationTask(this);
-        fetchMediaWithStoreAndPaginationTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
-        fetchMediaWithStoreAndPaginationTask.execute(mUrl);
+        requestUserMediaTask = new RequestUserMediaTask(this);
+        requestUserMediaTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
+        requestUserMediaTask.execute(mUrl);
     }
 
     private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = new OnFetchMediaArrayFinishListener()
@@ -71,9 +71,9 @@ public class MediaListActivity extends BaseActivity implements
     @Override
     public void onRefresh()
     {
-        if (fetchMediaWithStoreAndPaginationTask.getStatus() == AsyncTask.Status.FINISHED)
+        if (requestUserMediaTask.getStatus() == AsyncTask.Status.FINISHED)
         {
-            fetchMediaWithStoreAndPaginationTask.cancel(false);
+            requestUserMediaTask.cancel(false);
             setFetchTask();
         }
     }

@@ -1,5 +1,8 @@
 package com.jwang.android.gymmate.fragment;
 
+import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
+
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -97,6 +101,12 @@ public class UserDetailFragment extends BaseFragment implements
         View mBgView = rootView.findViewById(R.id.container);
         mHeader = rootView.findViewById(R.id.user_profile_root);
         mUserMediaAdapter = new UserMediaAdapter(getActivity());
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mUserMediaAdapter);
+        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+        scaleAdapter.setFirstOnly(false);
+        scaleAdapter.setInterpolator(new AnticipateInterpolator());
+        mRecyclerView.setAdapter(scaleAdapter);
+
         setupListView();
 
         AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
@@ -105,10 +115,8 @@ public class UserDetailFragment extends BaseFragment implements
         return rootView;
     }
 
-    private void setupListView()
-    {
+    private void setupListView() {
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(mUserMediaAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager)
         {

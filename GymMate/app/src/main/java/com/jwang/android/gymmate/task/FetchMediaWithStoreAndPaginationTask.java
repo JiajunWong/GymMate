@@ -91,6 +91,10 @@ public class FetchMediaWithStoreAndPaginationTask
     protected void onPostExecute(ResultWrapper resultWrapper)
     {
         super.onPostExecute(resultWrapper);
+        if (resultWrapper == null)
+        {
+            return;
+        }
         mOnFetchMediaArrayFinishListener.onFetchFinished(resultWrapper.mMedias);
         mOnFetchMediaPaginationFinishListener.onFetchFinished(resultWrapper.mPaginationUrl);
     }

@@ -8,9 +8,9 @@ import java.util.ArrayList;
  * @author Jiajun Wang on 7/14/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public interface OnFetchMediaArrayFinishListener
+public interface OnRequestMediaFinishWithArrayListener
 {
-    public static OnFetchMediaArrayFinishListener NO_OP = new OnFetchMediaArrayFinishListener()
+    public static OnRequestMediaFinishWithArrayListener NO_OP = new OnRequestMediaFinishWithArrayListener()
     {
         @Override
         public void onFetchFinished(ArrayList<ModelMedia> medias)

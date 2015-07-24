@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.data.MediaContract;
@@ -27,7 +26,6 @@ import com.jwang.android.gymmate.interfaces.OnFetchMediaObjectFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
 import com.jwang.android.gymmate.task.FetchMediaByShortCode;
 import com.jwang.android.gymmate.util.InstagramOauth;
-import com.squareup.picasso.Picasso;
 
 /**
  * @author Jiajun Wang on 7/13/15
@@ -185,7 +183,7 @@ public class MediaDetailActivity extends BaseActivity implements
         {
             ModelMedia modelMedia = new ModelMedia();
             int indexImage = data.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
-            int indexLink = data.getColumnIndex(MediaContract.MediaEntry.COLUMN_LINK);
+            int indexLink = data.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_LINK);
             int indexLowResImage = data.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
             if (!TextUtils.isEmpty(data.getString(indexImage)))
             {

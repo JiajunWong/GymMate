@@ -96,14 +96,14 @@ public class MediaContract
 
         //Schema
         //TODO: will support comment and likes in future.
-        public static final String COLUMN_TAGS = "tags";
-        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_MEDIA_TAGS = "tags";
+        public static final String COLUMN_MEDIA_TYPE = "type";
         public static final String COLUMN_LOCATION_LATITUDE = "location_latitude";
         public static final String COLUMN_LOCATION_LONGITUDE = "location_longitude";
         public static final String COLUMN_LOCATION_INSTAGRAM_ID = "media_location_instagram_id";
         public static final String COLUMN_LOCATION_NAME = "media_location_name";
         public static final String COLUMN_CREATE_TIME = "create_time";
-        public static final String COLUMN_LINK = "link";
+        public static final String COLUMN_MEDIA_LINK = "link";
         public static final String COLUMN_MEDIA_OWNER_ID = "owner_id";
         public static final String COLUMN_MEDIA_INSTAGRAM_ID = "media_instagram_id";
         public static final String COLUMN_MEDIA_IMAGE_LOW = "media_image_low";

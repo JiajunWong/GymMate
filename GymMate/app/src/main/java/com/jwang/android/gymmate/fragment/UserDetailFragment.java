@@ -28,7 +28,7 @@ import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.EndlessRecyclerOnScrollListener;
 import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
 import com.jwang.android.gymmate.task.RequestUserMediaTask;
-import com.jwang.android.gymmate.task.FetchUserProfileTask;
+import com.jwang.android.gymmate.task.RequestUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
 import com.squareup.picasso.Picasso;
 
@@ -143,7 +143,7 @@ public class UserDetailFragment extends BaseFragment implements
                 {
                     mRequestUserMediaTask = new RequestUserMediaTask(getActivity());
                     mRequestUserMediaTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
-                    mRequestUserMediaTask.execute(mTimeStamp);
+                    mRequestUserMediaTask.execute(mUserId, mTimeStamp);
                 }
             }
         });
@@ -158,9 +158,9 @@ public class UserDetailFragment extends BaseFragment implements
         }
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
-        FetchUserProfileTask fetchUserProfileTask = new FetchUserProfileTask(getActivity());
-        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
-        fetchUserProfileTask.execute(mUserId);
+        RequestUserProfileTask requestUserProfileTask = new RequestUserProfileTask(getActivity());
+        requestUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
+        requestUserProfileTask.execute(mUserId);
     }
 
     private OnRequestMediaFinishWithTimeStampListener mOnFetchMediaPaginationFinishListener = new OnRequestMediaFinishWithTimeStampListener()

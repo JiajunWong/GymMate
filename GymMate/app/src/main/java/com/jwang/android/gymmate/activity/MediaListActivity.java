@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.fragment.MediaListFragment;
-import com.jwang.android.gymmate.interfaces.OnFetchMediaArrayFinishListener;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithArrayListener;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.task.RequestUserMediaTask;
+import com.jwang.android.gymmate.task.RequestMediaTask;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,8 @@ public class MediaListActivity extends BaseActivity implements
         OnRefreshListener
 {
     public static final String KEY_URL = "url_key";
-    private RequestUserMediaTask requestUserMediaTask;
+    private RequestMediaTask requestUserMediaTask;
+    private MediaListFragment mMediaListFragment;
     private String mUrl;
 
     public static void startActivity(Context context, String url)
@@ -39,6 +41,10 @@ public class MediaListActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_list);
         setDisplayHomeAsUpEnabled(true);
+        mMediaListFragment = new MediaListFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.container, mMediaListFragment);
+        fragmentTransaction.commit();
 
         setFetchTask();
     }
@@ -50,20 +56,19 @@ public class MediaListActivity extends BaseActivity implements
         {
             finish();
         }
-        requestUserMediaTask = new RequestUserMediaTask(this);
-        requestUserMediaTask.setOnFetchFinishedListener(mOnFetchMediaArrayFinishListener);
+        requestUserMediaTask = new RequestMediaTask(this);
+        requestUserMediaTask.setOnFetchFinishedListener(mOnRequestMediaFinishWithArrayListener);
         requestUserMediaTask.execute(mUrl);
     }
 
-    private OnFetchMediaArrayFinishListener mOnFetchMediaArrayFinishListener = new OnFetchMediaArrayFinishListener()
+    private OnRequestMediaFinishWithArrayListener mOnRequestMediaFinishWithArrayListener = new OnRequestMediaFinishWithArrayListener()
     {
         @Override
         public void onFetchFinished(ArrayList<ModelMedia> medias)
         {
             if (medias != null)
             {
-                MediaListFragment mediaListFragment = (MediaListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_media_list);
-                mediaListFragment.setModelMedias(medias);
+                mMediaListFragment.setModelMedias(medias);
             }
         }
     };

@@ -15,13 +15,13 @@ import java.util.ArrayList;
 /**
  * Created by jiajunwang on 7/2/15.
  */
-public class FetchUserProfileTask extends AsyncTask<String, Void, String>
+public class RequestUserProfileTask extends AsyncTask<String, Void, String>
 {
-    private static final String TAG = FetchUserProfileTask.class.getSimpleName();
+    private static final String TAG = RequestUserProfileTask.class.getSimpleName();
     private Context mContext;
     private OnRequestMediaFinishWithTimeStampListener mOnRequestMediaFinishWithTimeStampListener = OnRequestMediaFinishWithTimeStampListener.NO_OP;
 
-    public FetchUserProfileTask(Context context)
+    public RequestUserProfileTask(Context context)
     {
         mContext = context;
     }
@@ -40,6 +40,7 @@ public class FetchUserProfileTask extends AsyncTask<String, Void, String>
             return null;
         }
         String instagramId = params[0];
+        Log.d(TAG, "RequestUserProfileTask - doInBackground: user id is " + instagramId);
         String accessToken = InstagramOauth.getsInstance().getSession().getAccessToken();
         String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + accessToken + "&count=20";
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + accessToken;

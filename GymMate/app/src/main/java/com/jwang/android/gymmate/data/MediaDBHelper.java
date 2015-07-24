@@ -47,14 +47,14 @@ public class MediaDBHelper extends SQLiteOpenHelper
 
         final String SQL_CREATE_MEDIA_TABLE = "CREATE TABLE " + MediaContract.MediaEntry.TABLE_NAME + " (" +
                 MediaContract.MediaEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MediaContract.MediaEntry.COLUMN_TAGS + " TEXT, " +
-                MediaContract.MediaEntry.COLUMN_TYPE + " TEXT, " +
+                MediaContract.MediaEntry.COLUMN_MEDIA_TAGS + " TEXT, " +
+                MediaContract.MediaEntry.COLUMN_MEDIA_TYPE + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE + " REAL, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE + " REAL, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " BIGINT, " +
                 MediaContract.MediaEntry.COLUMN_LOCATION_NAME + " TEXT, " +
                 MediaContract.MediaEntry.COLUMN_CREATE_TIME + " INTEGER NOT NULL, " +
-                MediaContract.MediaEntry.COLUMN_LINK + " TEXT NOT NULL, " +
+                MediaContract.MediaEntry.COLUMN_MEDIA_LINK + " TEXT NOT NULL, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " INTEGER NOT NULL, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " TEXT NOT NULL, " +
                 MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW + " TEXT, " +

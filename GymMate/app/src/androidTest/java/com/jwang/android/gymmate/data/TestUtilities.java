@@ -46,12 +46,12 @@ public class TestUtilities extends AndroidTestCase
     static ContentValues createMediaValues()
     {
         ContentValues mediaValues = new ContentValues();
-        mediaValues.put(MediaContract.MediaEntry.COLUMN_TAGS, "highresaudio");
-        mediaValues.put(MediaContract.MediaEntry.COLUMN_TYPE, "image");
+        mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_TAGS, "highresaudio");
+        mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_TYPE, "image");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE, 37.551492951);
         mediaValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, -122.315159747);
         mediaValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, 1435609196);
-        mediaValues.put(MediaContract.MediaEntry.COLUMN_LINK, "https://instagram.com/p/4hreiusTAP/");
+        mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_LINK, "https://instagram.com/p/4hreiusTAP/");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s320x320/e15/11337199_1040192862665131_775189267_n.jpg");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_THUMBNAIL, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s150x150/e15/11337199_1040192862665131_775189267_n.jpg");
         mediaValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11337199_1040192862665131_775189267_n.jpg");

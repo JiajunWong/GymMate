@@ -22,8 +22,8 @@ public class AppConfig
     public static final String FACEBOOK_ACCESS_TOKEN = "425103717696529|1b77655dba1ccc2ed88fad1f9a932d7b";
 
     public static final String INSTAGRAM_LOCATION_ENDPOINT = "https://api.instagram.com/v1/locations/search";
-    public static final String INSTAGRAM_POPULAR_ENDPOINT = "https://api.instagram.com/v1/media/popular?access_token=";
+    public static final String INSTAGRAM_POPULAR_ENDPOINT = "https://api.instagram.com/v1/tags/pilates/media/recent?access_token=";
     public static final String INSTAGRAM_LIKED_ENDPOINT = "https://api.instagram.com/v1/users/self/media/liked?access_token=";
-    public static final String INSTAGRAM_USER_MEDIA_ENDPOINT = "https://api.instagram.com/v1/users/self/media/recent/?access_token=";
+    public static final String INSTAGRAM_USER_FEED_MEDIA_ENDPOINT = "https://api.instagram.com/v1/users/self/feed?access_token=";
     public static final String INSTAGRAM_MEDIA_SHORT_CODE_ENDPOINT = "https://api.instagram.com/v1/media/shortcode/";
 }

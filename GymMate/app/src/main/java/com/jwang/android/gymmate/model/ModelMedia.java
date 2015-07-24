@@ -1,5 +1,10 @@
 package com.jwang.android.gymmate.model;
 
+import android.database.Cursor;
+import android.text.TextUtils;
+
+import com.jwang.android.gymmate.data.MediaContract;
+
 import java.util.ArrayList;
 
 /**
@@ -28,9 +33,7 @@ public class ModelMedia
     private String mVideoLowBandwidth;
     private String mVideoStandardRes;
     private String mVideoLowRes;
-
     private String mCaptionText;
-
     private ModelUser mOwner;
 
     public ModelMedia()
@@ -220,5 +223,117 @@ public class ModelMedia
     public void setOwner(ModelUser modelUser)
     {
         this.mOwner = modelUser;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof ModelMedia)
+        {
+            ModelMedia modelMedia = (ModelMedia) o;
+            if (TextUtils.isEmpty(modelMedia.getInstagramId()) || TextUtils.isEmpty(getInstagramId()))
+            {
+                return false;
+            }
+            if (modelMedia.getInstagramId().equals(getInstagramId()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return 0;
+    }
+
+    public static ArrayList<ModelMedia> getMedias(Cursor cursor)
+    {
+        ArrayList<ModelMedia> medias = new ArrayList<>();
+        ModelMedia modelMedia;
+        while (cursor.moveToNext())
+        {
+            modelMedia = new ModelMedia();
+            int indexInstagramId = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
+            modelMedia.setInstagramId(cursor.getString(indexInstagramId));
+
+            //TODO: missing tags
+            int indexType = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_TYPE);
+            modelMedia.setType(cursor.getString(indexType));
+
+            int indexLocationLng = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE);
+            modelMedia.setLocationLong(cursor.getString(indexLocationLng));
+
+            int indexLocationLat = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE);
+            modelMedia.setLocationLat(cursor.getString(indexLocationLat));
+
+            int indexLocationId = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID);
+            modelMedia.setLocationId(cursor.getString(indexLocationId));
+
+            int indexLocationName = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_NAME);
+            modelMedia.setLocationName(cursor.getString(indexLocationName));
+
+            int indexCreateTime = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
+            modelMedia.setCreateTime(cursor.getShort(indexCreateTime));
+
+            int indexLink = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_LINK);
+            modelMedia.setLink(cursor.getString(indexLink));
+
+            int indexImageLow = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
+            modelMedia.setImageLowRes(cursor.getString(indexImageLow));
+
+            int indexImageThumbnail = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_THUMBNAIL);
+            modelMedia.setImageThumbnail(cursor.getString(indexImageThumbnail));
+
+            int indexImageHigh = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
+            modelMedia.setImageHighRes(cursor.getString(indexImageHigh));
+
+            int indexVideoLow = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_RES);
+            modelMedia.setVideoLowRes(cursor.getString(indexVideoLow));
+
+            int indexVideoLowBrand = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_LOW_BANDWIDTH);
+            modelMedia.setVideoLowBandwidth(cursor.getString(indexVideoLowBrand));
+
+            int indexVideoHigh = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_VIDEO_STANDARD_RES);
+            modelMedia.setVideoStandardRes(cursor.getString(indexVideoHigh));
+
+            int indexCaptionText = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT);
+            modelMedia.setCaptionText(cursor.getString(indexCaptionText));
+
+            ModelUser modelUser = new ModelUser();
+            int indexUserInstagramId = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_INSTAGRAM_ID);
+            if (indexUserInstagramId != -1)
+            {
+                modelUser.setInstagramId(cursor.getLong(indexUserInstagramId));
+
+                int indexUserName = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_USERNAME);
+                modelUser.setUserName(cursor.getString(indexUserName));
+
+                int indexProfilePic = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE);
+                modelUser.setProfilePicture(cursor.getString(indexProfilePic));
+
+                int indexFullName = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_FULL_NAME);
+                modelUser.setFullName(cursor.getString(indexFullName));
+
+                int indexMediaCount = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_MEDIA_COUNT);
+                modelUser.setMediaCount(cursor.getInt(indexMediaCount));
+
+                int indexFollowedByCount = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT);
+                modelUser.setFollowedByCount(cursor.getInt(indexFollowedByCount));
+
+                int indexFollowsCount = cursor.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);
+                modelUser.setFollowsCount(cursor.getInt(indexFollowsCount));
+
+                modelMedia.setOwner(modelUser);
+            }
+            medias.add(modelMedia);
+        }
+        return medias;
     }
 }

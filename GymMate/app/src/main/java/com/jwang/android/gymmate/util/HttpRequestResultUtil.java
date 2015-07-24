@@ -578,14 +578,14 @@ public class HttpRequestResultUtil
         if (!mediaCursor.moveToFirst())
         {
             ContentValues mediaContentValues = new ContentValues();
-            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TAGS, modelMedia.getTagString());
-            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_TYPE, modelMedia.getType());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_TAGS, modelMedia.getTagString());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_TYPE, modelMedia.getType());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LATITUDE, modelMedia.getLocationLat());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_LONGITUDE, modelMedia.getLocationLong());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID, modelMedia.getLocationId());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LOCATION_NAME, modelMedia.getLocationName());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_CREATE_TIME, modelMedia.getCreateTime());
-            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_LINK, modelMedia.getLink());
+            mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_LINK, modelMedia.getLink());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW, modelMedia.getImageLowRes());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_THUMBNAIL, modelMedia.getImageThumbnail());
             mediaContentValues.put(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD, modelMedia.getImageHighRes());

@@ -118,7 +118,7 @@ public class DrawerNavigationAdapter extends
         switch (position)
         {
             case 0:
-                String userMediaUrl = AppConfig.INSTAGRAM_USER_MEDIA_ENDPOINT + accessToken;
+                String userMediaUrl = AppConfig.INSTAGRAM_USER_FEED_MEDIA_ENDPOINT + accessToken;
                 MediaListActivity.startActivity(mContext, userMediaUrl);
                 break;
             case 1:

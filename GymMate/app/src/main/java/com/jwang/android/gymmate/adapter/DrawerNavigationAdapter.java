@@ -180,8 +180,8 @@ public class DrawerNavigationAdapter extends
 
     private void setupMenuItems()
     {
-        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_feed, mContext.getString(R.string.my_recent)));
         menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_popular, mContext.getString(R.string.popular)));
+        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_feed, mContext.getString(R.string.my_recent)));
         menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_likes, mContext.getString(R.string.likes)));
         menuItems.add(GlobalMenuItem.dividerMenuItem());
         menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.action_settings)));

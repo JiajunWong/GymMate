@@ -296,8 +296,12 @@ public class HttpRequestResultUtil
                 }
                 if (!TextUtils.isEmpty(minCreateTime))
                 {
-                    Log.d(TAG, "#@@@@@# addMediaToDB -- return min time from db, and min time is " + minCreateTime);
+                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is " + minCreateTime);
                     minTimeStamps.add(minCreateTime);
+                }
+                else
+                {
+                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is null!!!!");
                 }
             }
         }

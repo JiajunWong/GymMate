@@ -2,5 +2,7 @@
 <resources>
 
     <integer name="column_count">2</integer>
+    <integer name="column_count_landscape">3</integer>
+    <integer name="column_count_portrait">2</integer>
 
 </resources>

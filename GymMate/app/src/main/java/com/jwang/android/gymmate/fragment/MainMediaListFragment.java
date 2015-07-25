@@ -13,26 +13,23 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.adapter.MediaAdapter;
+import com.jwang.android.gymmate.adapter.MediaCursorAdapter;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.EndlessRecyclerOnScrollListener;
 import com.jwang.android.gymmate.task.FetchGymMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.LocationUtil;
@@ -49,10 +46,9 @@ public class MainMediaListFragment extends BaseFragment implements
     private static final String TAG = MainMediaListFragment.class.getSimpleName();
 
     private View mRootView;
-    private RecyclerView mRecyclerView;
+    private StaggeredGridView mGridView;
     private SwipeRefreshLayout swipeContainer;
-    private MediaAdapter mMediaAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    private MediaCursorAdapter mMediaAdapter;
 
     private int mPosition = ListView.INVALID_POSITION;
     private FetchGymMediaTask mFetchGymMediaTask;
@@ -73,40 +69,10 @@ public class MainMediaListFragment extends BaseFragment implements
         mRootView = inflater.inflate(R.layout.fragment_media_list, container, false);
         swipeContainer = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipeContainer);
 
-        mMediaAdapter = new MediaAdapter(getActivity());
-        mLinearLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.column_count));
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.lv_medias);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mRecyclerView.setAdapter(mMediaAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager)
-        {
-            @Override
-            public void onScrolling(RecyclerView recyclerView, int dx, int dy)
-            {
-                int firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-                int totalItemCount = mLinearLayoutManager.getItemCount();
-                if (firstVisibleItem == 0 && (recyclerView.getChildAt(firstVisibleItem) != null && recyclerView.getChildAt(firstVisibleItem).getTop() >= 0) || totalItemCount == 0)
-                {
-                    swipeContainer.setEnabled(true);
-                }
-                else
-                {
-                    swipeContainer.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onLoadMore()
-            {
-                if (!(getLoaderManager().hasRunningLoaders()) && (mFetchGymMediaTask == null || mFetchGymMediaTask.getStatus() == AsyncTask.Status.FINISHED))
-                {
-                    mFetchGymMediaTask = new FetchGymMediaTask(getActivity());
-                    mFetchGymMediaTask.execute();
-                }
-            }
-        });
+        mMediaAdapter = new MediaCursorAdapter(getActivity(), null, 0);
+        mGridView = (StaggeredGridView) mRootView.findViewById(R.id.lv_medias);
+        mGridView.setAdapter(mMediaAdapter);
+        mGridView.setOnScrollListener(mOnScrollListener);
         swipeContainer.setOnRefreshListener(mOnRefreshListener);
         swipeContainer.setColorSchemeResources(R.color.holo_red_light, R.color.holo_blue_bright, R.color.holo_green_light, R.color.holo_orange_light);
 
@@ -150,6 +116,34 @@ public class MainMediaListFragment extends BaseFragment implements
         getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
     }
 
+    AbsListView.OnScrollListener mOnScrollListener = new AbsListView.OnScrollListener()
+    {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState)
+        {
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+        {
+            if ((view.getFirstVisiblePosition() == 0 && (view.getChildAt(0) != null && view.getChildAt(0).getTop() >= 0)) || totalItemCount == 0)
+            {
+                swipeContainer.setEnabled(true);
+            }
+            else
+            {
+                swipeContainer.setEnabled(false);
+            }
+
+            int lastInScreen = firstVisibleItem + visibleItemCount;
+            if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && (mFetchGymMediaTask == null || mFetchGymMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+            {
+                mFetchGymMediaTask = new FetchGymMediaTask(getActivity());
+                mFetchGymMediaTask.execute();
+            }
+        }
+    };
+
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
@@ -186,7 +180,7 @@ public class MainMediaListFragment extends BaseFragment implements
         {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
-            mRecyclerView.smoothScrollToPosition(mPosition);
+            mGridView.smoothScrollToPosition(mPosition);
         }
     }
 

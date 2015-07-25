@@ -38,7 +38,6 @@ public class MediaAdapter extends
     {
         mCursor = newCursor;
         notifyDataSetChanged();
-        //        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public Cursor getCursor()

@@ -13,7 +13,6 @@ public abstract class EndlessRecyclerOnScrollListener extends
 
     private int previousTotal = 0; // The total number of items in the dataset after the last load
     private boolean loading = true; // True if we are still waiting for the last set of data to load.
-    private int visibleThreshold = 3; // The minimum amount of items to have below your current scroll position before loading more.
     int firstVisibleItem, visibleItemCount, totalItemCount;
 
     private LinearLayoutManager mLinearLayoutManager;
@@ -41,6 +40,7 @@ public abstract class EndlessRecyclerOnScrollListener extends
                 previousTotal = totalItemCount;
             }
         }
+        int visibleThreshold = 0;
         if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold))
         {
             // End has been reached

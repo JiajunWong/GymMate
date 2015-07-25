@@ -18,14 +18,15 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by jiajunwang on 7/12/15.
  */
-public class UserMediaAdapter extends
-        RecyclerView.Adapter<UserMediaAdapter.UserMediaViewHolder>
+public class UserMediaRecyclerAdapter extends
+        CursorRecyclerViewAdapter<UserMediaRecyclerAdapter.UserMediaViewHolder>
 {
     private @NonNull Context mContext;
     private Cursor mCursor;
 
-    public UserMediaAdapter(Context context)
+    public UserMediaRecyclerAdapter(Context context, Cursor cursor)
     {
+        super(context, cursor);
         mContext = context;
     }
 
@@ -46,41 +47,19 @@ public class UserMediaAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(UserMediaViewHolder holder, int position)
+    public void onBindViewHolder(UserMediaViewHolder holder, Cursor cursor)
     {
-        mCursor.moveToPosition(position);
-        int image_index = mCursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
-        if (TextUtils.isEmpty(mCursor.getString(image_index)))
+        int image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_STANDARD);
+        if (TextUtils.isEmpty(cursor.getString(image_index)))
         {
-            Picasso.with(mContext).load(mCursor.getString(image_index)).into(holder.mImageView);
+            Picasso.with(mContext).load(cursor.getString(image_index)).into(holder.mImageView);
         }
         else
         {
-            image_index = mCursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
-            Picasso.with(mContext).load(mCursor.getString(image_index)).into(holder.mImageView);
+            image_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_IMAGE_LOW);
+            Picasso.with(mContext).load(cursor.getString(image_index)).into(holder.mImageView);
         }
-    }
 
-    @Override
-    public int getItemCount()
-    {
-        if (mCursor == null)
-        {
-            return 0;
-        }
-        return mCursor.getCount();
-    }
-
-    public void swapCursor(Cursor newCursor)
-    {
-        mCursor = newCursor;
-        notifyDataSetChanged();
-        //        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
-    }
-
-    public Cursor getCursor()
-    {
-        return mCursor;
     }
 
     public class UserMediaViewHolder extends RecyclerView.ViewHolder implements

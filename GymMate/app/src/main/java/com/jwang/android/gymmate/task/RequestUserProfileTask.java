@@ -53,8 +53,10 @@ public class RequestUserProfileTask extends AsyncTask<String, Void, String>
         HttpRequestResultUtil.addMediaToDB(mContext, mediaResponse, HttpRequestResultUtil.RequestMediaType.USER, instagramId, true, null, minCreateTimes);
         if (minCreateTimes.isEmpty())
         {
+            Log.d(TAG, "RequestUserProfileTask -- doInBackground: minCreateTimes is empty.");
             return null;
         }
+        Log.d(TAG, "RequestUserProfileTask -- doInBackground: minCreateTimes is " + minCreateTimes.get(0));
         return minCreateTimes.get(0);
     }
 

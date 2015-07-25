@@ -239,9 +239,11 @@ public class HttpRequestResultUtil
     {
         if (TextUtils.isEmpty(jsonString))
         {
+            Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: jsonString is null!");
             return false;
         }
 
+        Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: id is " + id);
         ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
         parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
 
@@ -260,7 +262,7 @@ public class HttpRequestResultUtil
                 long minCreateTime = Long.MAX_VALUE;
                 for (ModelMedia modelMedia : newAddInMedias)
                 {
-                    if (minCreateTime < modelMedia.getCreateTime())
+                    if (minCreateTime > modelMedia.getCreateTime())
                     {
                         minCreateTime = modelMedia.getCreateTime();
                     }
@@ -268,7 +270,11 @@ public class HttpRequestResultUtil
                 if (minTimeStamps != null && minCreateTime != Long.MAX_VALUE)
                 {
                     minTimeStamps.add(Long.toString(minCreateTime));
-                    Log.d(TAG, "#@@@@@# addMediaToDB -- return min time from medias array, and min time is " + minCreateTime);
+                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is " + minCreateTime);
+                }
+                else
+                {
+                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is null!!!!!");
                 }
             }
             else

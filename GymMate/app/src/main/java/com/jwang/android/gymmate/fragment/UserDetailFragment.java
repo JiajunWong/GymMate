@@ -8,32 +8,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnticipateInterpolator;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
-import com.jwang.android.gymmate.adapter.UserMediaAdapter;
+import com.jwang.android.gymmate.adapter.UserMediaCursorAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.EndlessRecyclerOnScrollListener;
 import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
 import com.jwang.android.gymmate.task.RequestUserMediaTask;
 import com.jwang.android.gymmate.task.RequestUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
+import com.jwang.android.gymmate.view.HeaderGridView;
 import com.squareup.picasso.Picasso;
 
-import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
+import java.util.ArrayList;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -43,7 +38,8 @@ public class UserDetailFragment extends BaseFragment implements
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
-    private String mTimeStamp;
+    private int mMediaCount;
+    private ArrayList<String> mTimeStamps = new ArrayList<>();
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -51,9 +47,13 @@ public class UserDetailFragment extends BaseFragment implements
     private TextView mFollowersCountTextView;
     private TextView mFollowingCountTextView;
     private ImageView mUserAvatarImageView;
-    private RecyclerView mRecyclerView;
-    private UserMediaAdapter mUserMediaAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    private HeaderGridView mStaggeredGridView;
+    private View mBgView;
+    private UserMediaCursorAdapter mUserMediaAdapter;
+
+    private int mHeaderHeight;
+    private int mMinHeaderTranslation;
+    private View mPlaceHolderView;
     private View mHeader;
 
     private RequestUserMediaTask mRequestUserMediaTask;
@@ -94,19 +94,14 @@ public class UserDetailFragment extends BaseFragment implements
         mPostsCountTextView = (TextView) rootView.findViewById(R.id.post_count);
         mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
-
-        mLinearLayoutManager = new GridLayoutManager(getActivity(), 3);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_item_view);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        View mBgView = rootView.findViewById(R.id.container);
+        mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
+        mBgView = rootView.findViewById(R.id.container);
         mHeader = rootView.findViewById(R.id.user_profile_root);
-        mUserMediaAdapter = new UserMediaAdapter(getActivity());
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mUserMediaAdapter);
-        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-        scaleAdapter.setFirstOnly(false);
-        scaleAdapter.setInterpolator(new AnticipateInterpolator());
-        mRecyclerView.setAdapter(scaleAdapter);
 
+        mUserMediaAdapter = new UserMediaCursorAdapter(getActivity(), null, 0);
+
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
+        mMinHeaderTranslation = -mHeaderHeight;
         setupListView();
 
         AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
@@ -117,36 +112,52 @@ public class UserDetailFragment extends BaseFragment implements
 
     private void setupListView()
     {
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager)
+        mPlaceHolderView = getLayoutInflater(getArguments()).inflate(R.layout.view_header_placeholder, mStaggeredGridView, false);
+        mStaggeredGridView.addHeaderView(mPlaceHolderView);
+        mStaggeredGridView.setOnScrollListener(new AbsListView.OnScrollListener()
         {
             @Override
-            public void onScrolling(RecyclerView recyclerView, int dx, int dy)
+            public void onScrollStateChanged(AbsListView view, int scrollState)
             {
-                //                int max = mHeader.getHeight();
-                //                if (dy > 0)
-                //                {
-                //                    mHeader.setTranslationY(Math.max(-max, mHeader.getTranslationY() - dy));
-                //                }
-                //                else
-                //                {
-                //                    mHeader.setTranslationY(Math.min(0, mHeader.getTranslationY() - dy));
-                //                }
             }
 
             @Override
-            public void onLoadMore()
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
             {
-                Log.d(TAG, "onLoadMore()");
-                if (!(getLoaderManager().hasRunningLoaders()) && (mRequestUserMediaTask == null || mRequestUserMediaTask.getStatus() == AsyncTask.Status.FINISHED) && !TextUtils.isEmpty(mTimeStamp))
+                int scrollY = getScrollY();
+                //sticky actionbar
+                mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if (!mTimeStamps.isEmpty() && totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestUserMediaTask == null || mRequestUserMediaTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
+                    Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
                     mRequestUserMediaTask = new RequestUserMediaTask(getActivity());
                     mRequestUserMediaTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
-                    mRequestUserMediaTask.execute(mUserId, mTimeStamp);
+                    mRequestUserMediaTask.execute(mUserId, mTimeStamps.remove(0));
                 }
             }
         });
+        mStaggeredGridView.setAdapter(mUserMediaAdapter);
+    }
+
+    public int getScrollY()
+    {
+        View c = mStaggeredGridView.getChildAt(0);
+        if (c == null)
+        {
+            return 0;
+        }
+
+        int firstVisiblePosition = mStaggeredGridView.getFirstVisiblePosition();
+        int top = c.getTop();
+
+        int headerHeight = 0;
+        if (firstVisiblePosition >= 1)
+        {
+            headerHeight = mPlaceHolderView.getHeight();
+        }
+
+        return -top + firstVisiblePosition * c.getHeight() + headerHeight;
     }
 
     private void fetchUserInfo()
@@ -158,18 +169,21 @@ public class UserDetailFragment extends BaseFragment implements
         }
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
-        RequestUserProfileTask requestUserProfileTask = new RequestUserProfileTask(getActivity());
-        requestUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
-        requestUserProfileTask.execute(mUserId);
+        RequestUserProfileTask fetchUserProfileTask = new RequestUserProfileTask(getActivity());
+        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
+        fetchUserProfileTask.execute(mUserId);
     }
 
     private OnRequestMediaFinishWithTimeStampListener mOnFetchMediaPaginationFinishListener = new OnRequestMediaFinishWithTimeStampListener()
     {
         @Override
-        public void onFetchFinished(String paginationUrl)
+        public void onFetchFinished(String minTimestamp)
         {
-            mTimeStamp = paginationUrl;
-            Log.d(TAG, "mOnFetchMediaPaginationFinishListener: mTimeStamp is " + mTimeStamp);
+            if (!mTimeStamps.contains(minTimestamp))
+            {
+                mTimeStamps.add(minTimestamp);
+            }
+            Log.d(TAG, "UserDetailFragment -- mOnFetchMediaPaginationFinishListener: mTimeStamps size is " + mTimeStamps.size());
         }
     };
 
@@ -190,9 +204,9 @@ public class UserDetailFragment extends BaseFragment implements
                 Uri uri = MediaContract.UserEntry.buildUserWithInstagramId(mUserId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             case MEDIA_NEAR_LOADER:
-                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
+                //                String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";
                 Uri uri1 = MediaContract.MediaEntry.buildMediaWithOwnerId(mUserId);
-                return new CursorLoader(getActivity(), uri1, null, null, null, sortOrder);
+                return new CursorLoader(getActivity(), uri1, null, null, null, null);
             default:
                 return null;
         }
@@ -233,6 +247,7 @@ public class UserDetailFragment extends BaseFragment implements
                     if (!TextUtils.isEmpty(mediaCount))
                     {
                         mPostsCountTextView.setText(mediaCount);
+                        mMediaCount = new Integer(mediaCount);
                     }
 
                     int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);

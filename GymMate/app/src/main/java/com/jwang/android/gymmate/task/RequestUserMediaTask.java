@@ -78,7 +78,12 @@ public class RequestUserMediaTask extends
         }
         if (!TextUtils.isEmpty(resultWrapper.mMinTimeStamp))
         {
+            Log.d(TAG, "RequestUserMediaTask -- onPostExecute: mMinTimeStamp is " + resultWrapper.mMinTimeStamp);
             mOnRequestMediaFinishWithTimeStampListener.onFetchFinished(resultWrapper.mMinTimeStamp);
+        }
+        else
+        {
+            Log.d(TAG, "RequestUserMediaTask -- onPostExecute: mMinTimeStamp is null!");
         }
     }
 

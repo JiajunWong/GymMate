@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <com.jwang.android.gymmate.view.HeaderGridView
         android:id="@+id/list_item_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#e5e5e5"
-        android:paddingTop="@dimen/fake_header_height" />
+        android:horizontalSpacing="2dp"
+        android:numColumns="3"
+        android:scrollbars="none"
+        android:verticalSpacing="2dp" />
 
     <LinearLayout
         android:id="@+id/user_profile_root"
@@ -32,7 +35,6 @@
                 android:id="@+id/user_photo"
                 android:layout_width="@dimen/user_profile_avatar_size"
                 android:layout_height="@dimen/user_profile_avatar_size"
-                android:layout_marginEnd="@dimen/horizontal_margin"
                 android:layout_marginRight="@dimen/horizontal_margin"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
@@ -151,4 +153,4 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

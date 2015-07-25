@@ -101,6 +101,10 @@ public class MediaSyncWorker
 
     private void fetchMedias(String lat, String lng)
     {
+        if (TextUtils.isEmpty(lat) || TextUtils.isEmpty(lng))
+        {
+            return;
+        }
         RequestParams facebookRequestParams = new RequestParams();
         facebookRequestParams.put("type", "place");
         facebookRequestParams.put("center", lat + "," + lng);

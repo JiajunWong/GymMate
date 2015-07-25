@@ -6,10 +6,12 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.jwang.android.gymmate.R;
@@ -20,7 +22,8 @@ import com.jwang.android.gymmate.util.MediaSyncWorker;
  * @author Jiajun Wang on 7/1/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
+public class MediaSyncAdapter extends AbstractThreadedSyncAdapter implements
+        SharedPreferences.OnSharedPreferenceChangeListener
 {
     private static final String TAG = MediaSyncAdapter.class.getSimpleName();
     // Interval at which to sync with the weather, in seconds.
@@ -36,10 +39,25 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)
     {
-        Log.d(TAG, "onPerformSync");
+        Log.d(TAG, "MediaSyncAdapter -- onPerformSync");
 
         String[] locations = LocationUtil.getCurrentLocation(getContext());
-        MediaSyncWorker.getInstance(getContext()).startFetchGymMedia(locations);
+        if (LocationUtil.isValidLocations(locations))
+        {
+            MediaSyncWorker.getInstance(getContext()).startFetchGymMedia(locations);
+        }
+        else
+        {
+            Log.e(TAG, "MediaSyncAdapter -- onPerformSync: locations are null!");
+        }
+        PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSyncCanceled()
+    {
+        super.onSyncCanceled();
+        PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -135,5 +153,14 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter
     public static void initializeSyncAdapter(Context context)
     {
         getSyncAccount(context);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+    {
+        if (key.equals(LocationUtil.KEY_LOCATION_LAT))
+        {
+            syncImmediately(getContext());
+        }
     }
 }

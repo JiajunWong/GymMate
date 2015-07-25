@@ -148,7 +148,7 @@ public class MediaContract
         public static float getLatFromUri(Uri uri)
         {
             String lat = uri.getQueryParameter(COLUMN_LOCATION_LATITUDE);
-            if (!TextUtils.isEmpty(lat))
+            if (!TextUtils.isEmpty(lat) && !lat.equals("null"))
             {
                 return Float.valueOf(lat);
             }
@@ -161,7 +161,7 @@ public class MediaContract
         public static float getLongFromUri(Uri uri)
         {
             String lat = uri.getQueryParameter(COLUMN_LOCATION_LONGITUDE);
-            if (!TextUtils.isEmpty(lat))
+            if (!TextUtils.isEmpty(lat) && !lat.equals("null"))
             {
                 return Float.valueOf(lat);
             }

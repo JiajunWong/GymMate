@@ -3,18 +3,12 @@ package com.jwang.android.gymmate.activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
-import com.jwang.android.gymmate.util.LocationUtil;
 import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import net.londatiga.android.instagram.Instagram;
@@ -34,7 +28,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        updateGeoLocation();
         mInstagramOauth = InstagramOauth.getsInstance();
         if (getIntent().getBooleanExtra(MediaSyncWorker.KEY_START_FROM_NOTIFICATION, false))
         {
@@ -53,37 +46,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
             // Already logged in
             startMainActivity();
         }
-    }
-
-    private void updateGeoLocation()
-    {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LocationUtil.MINIMUM_TIME_BETWEEN_UPDATES, LocationUtil.MINIMUM_DISTANCE_CHANGE_FOR_UPDATES, new LocationListener()
-        {
-            @Override
-            public void onLocationChanged(Location location)
-            {
-                Log.w(TAG, "onLocationChanged: " + location.getLatitude() + " " + location.getLongitude());
-                SharedPreferences sharedPreferences = getSharedPreferences(AppConfig.LOCATION, Context.MODE_PRIVATE);
-                sharedPreferences.edit().putString(LocationUtil.KEY_LOCATION_LAT, Double.toString(location.getLatitude())).apply();
-                sharedPreferences.edit().putString(LocationUtil.KEY_LOCATION_LONG, Double.toString(location.getLongitude())).apply();
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras)
-            {
-            }
-
-            @Override
-            public void onProviderEnabled(String provider)
-            {
-            }
-
-            @Override
-            public void onProviderDisabled(String provider)
-            {
-            }
-        });
     }
 
     private void startMainActivity()

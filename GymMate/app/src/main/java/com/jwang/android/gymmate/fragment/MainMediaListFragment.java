@@ -1,10 +1,14 @@
 package com.jwang.android.gymmate.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -13,11 +17,17 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaAdapter;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
@@ -32,16 +42,23 @@ import com.jwang.android.gymmate.util.LocationUtil;
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
 public class MainMediaListFragment extends BaseFragment implements
-        LoaderManager.LoaderCallbacks<Cursor>
+        LoaderManager.LoaderCallbacks<Cursor>,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener
 {
+    private static final String TAG = MainMediaListFragment.class.getSimpleName();
+
+    private View mRootView;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeContainer;
     private MediaAdapter mMediaAdapter;
     private LinearLayoutManager mLinearLayoutManager;
 
-    private FetchGymMediaTask mFetchGymMediaTask;
-    private static final String SELECTED_KEY = "selected_position";
     private int mPosition = ListView.INVALID_POSITION;
+    private FetchGymMediaTask mFetchGymMediaTask;
+    protected GoogleApiClient mGoogleApiClient;
+
+    private static final String SELECTED_KEY = "selected_position";
     private static final int MEDIA_NEAR_LOADER = 0;
 
     public MainMediaListFragment()
@@ -53,12 +70,12 @@ public class MainMediaListFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         MediaSyncAdapter.syncImmediately(getActivity());
-        View rootView = inflater.inflate(R.layout.fragment_media_list, container, false);
-        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
+        mRootView = inflater.inflate(R.layout.fragment_media_list, container, false);
+        swipeContainer = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipeContainer);
 
         mMediaAdapter = new MediaAdapter(getActivity());
         mLinearLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.column_count));
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.lv_medias);
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.lv_medias);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(mMediaAdapter);
         mRecyclerView.setHasFixedSize(true);
@@ -104,30 +121,33 @@ public class MainMediaListFragment extends BaseFragment implements
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
-        return rootView;
-    }
 
-    SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener()
-    {
-        @Override
-        public void onRefresh()
-        {
-            refreshData();
-            swipeContainer.setRefreshing(false);
-        }
-    };
-
-    public void refreshData()
-    {
-        MediaSyncAdapter.syncImmediately(getActivity());
-        getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
+        buildGoogleApiClient();
+        return mRootView;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
+    public void onStart()
     {
-        getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if (mGoogleApiClient.isConnected())
+        {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
     }
 
     @Override
@@ -174,5 +194,96 @@ public class MainMediaListFragment extends BaseFragment implements
     public void onLoaderReset(Loader<Cursor> loader)
     {
         mMediaAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle)
+    {
+        // Provides a simple way of getting a device's location and is well suited for
+        // applications that do not require a fine-grained location and that do not need location
+        // updates. Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (lastLocation != null)
+        {
+            onLocationUpdated(lastLocation);
+        }
+        else
+        {
+            Log.e(TAG, "MainMediaListFragment -- onConnected: location error.");
+            if (LocationUtil.isLocationEmpty(getActivity()))
+            {
+                Snackbar.make(mRootView, getString(R.string.get_location_failed), Snackbar.LENGTH_LONG).setAction("Open Location Setting", new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        getActivity().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                }).show();
+            }
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, new LocationRequest(), new LocationListener()
+            {
+                @Override
+                public void onLocationChanged(Location location)
+                {
+                    if (location != null)
+                    {
+                        Log.e(TAG, "MainMediaListFragment -- requestLocationUpdates: location is " + location.getLatitude() + ", " + location.getLongitude());
+                    }
+                    onLocationUpdated(location);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i)
+    {
+        Log.e(TAG, "MainMediaListFragment -- onConnectionSuspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult)
+    {
+        Log.e(TAG, "MainMediaListFragment -- onConnectionFailed: " + connectionResult.getErrorCode());
+    }
+
+    private void onLocationUpdated(Location location)
+    {
+        if (LocationUtil.updateLocation(getActivity(), location))
+        {
+            getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
+            refreshData();
+        }
+    }
+
+    /**
+     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+     */
+    protected synchronized void buildGoogleApiClient()
+    {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addConnectionCallbacks(this).addApi(LocationServices.API).build();
+    }
+
+    SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener()
+    {
+        @Override
+        public void onRefresh()
+        {
+            refreshData();
+            swipeContainer.setRefreshing(false);
+        }
+    };
+
+    public void refreshData()
+    {
+        if (!mGoogleApiClient.isConnected())
+        {
+            mGoogleApiClient.reconnect();
+        }
+        MediaSyncAdapter.syncImmediately(getActivity());
+        getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
     }
 }

@@ -47,6 +47,7 @@ public class MediaProvider extends ContentProvider
     private static final String sGetLocationIdSQL = "SELECT " + MediaContract.LocationEntry.COLUMN_INSTAGRAM_LOCATION_ID + " FROM " + MediaContract.LocationEntry.TABLE_NAME + " WHERE " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE + " >= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LATITUDE + " <= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " >= ? AND " + MediaContract.LocationEntry.TABLE_NAME + "." + MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " <= ? ";
     private static final String sMediaTableInnerJoinUserTableSQL = MediaContract.MediaEntry.TABLE_NAME + " INNER JOIN " + MediaContract.UserEntry.TABLE_NAME + " ON " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = " + MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID;
     private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ") ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
+    private static final String sGetMediaSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL;
 
     //    private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ");";
 
@@ -56,18 +57,21 @@ public class MediaProvider extends ContentProvider
         float lng = MediaContract.MediaEntry.getLongFromUri(uri);
 
         String[] selectionArgs;
+        String selectionString;
 
         if (lat == Float.POSITIVE_INFINITY || lng == Float.POSITIVE_INFINITY)
         {
             selectionArgs = new String[] {};
+            selectionString = sGetMediaSQL;
         }
         else
         {
             selectionArgs = getArgs(lat, lng);
+            selectionString = sGetMediaByLocationSQL;
         }
 
         Log.d(TAG, "$$$getMediaByLatitudeAndLongitude: the sql is " + sGetMediaByLocationSQL);
-        return mOpenHelper.getReadableDatabase().rawQuery(sGetMediaByLocationSQL, selectionArgs);
+        return mOpenHelper.getReadableDatabase().rawQuery(selectionString, selectionArgs);
     }
 
     private static final String sInstagramIdSelection = MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?";

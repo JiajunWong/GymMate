@@ -45,6 +45,7 @@
         <activity
             android:name=".activity.MediaListActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.LocationMediaListActivity" />
         <activity
             android:name=".activity.SettingActivity"
             android:theme="@style/SettingTheme" />

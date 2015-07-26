@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.activity.BaseActivity;
+import com.jwang.android.gymmate.activity.LocationMediaListActivity;
 import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
@@ -110,6 +112,7 @@ public class MediaCursorAdapter extends CursorAdapter implements
                 if (!TextUtils.isEmpty(viewHolder.mOwnerId))
                 {
                     UserDetailActivity.startActivity(mContext, viewHolder.mOwnerProfileImage, viewHolder.mOwnerId);
+                    ((BaseActivity) mContext).overridePendingTransition(0, 0);
                 }
                 else
                 {
@@ -120,8 +123,17 @@ public class MediaCursorAdapter extends CursorAdapter implements
                 if (!TextUtils.isEmpty(viewHolder.mMediaId))
                 {
                     MediaDetailActivity.startActivity(mContext, viewHolder.mMediaImage, viewHolder.mMediaId);
+                    ((BaseActivity) mContext).overridePendingTransition(0, 0);
                 }
                 break;
+            case R.id.root_view_location:
+                if (!TextUtils.isEmpty(viewHolder.mLocationId))
+                {
+                    int[] startingLocation = new int[2];
+                    view.getLocationOnScreen(startingLocation);
+                    LocationMediaListActivity.startActivity(mContext, startingLocation[1]);
+                    ((BaseActivity) mContext).overridePendingTransition(0, 0);
+                }
         }
     }
 }

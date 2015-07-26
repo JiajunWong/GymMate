@@ -43,6 +43,8 @@ public class MediaCursorAdapter extends CursorAdapter implements
         viewHolder.mUserInfoRootView.setTag(viewHolder);
         viewHolder.mMediaImage.setOnClickListener(this);
         viewHolder.mMediaImage.setTag(viewHolder);
+        viewHolder.mLocationRootView.setOnClickListener(this);
+        viewHolder.mLocationRootView.setTag(viewHolder);
         return view;
     }
 
@@ -78,11 +80,24 @@ public class MediaCursorAdapter extends CursorAdapter implements
             viewHolder.mCaptionText.setVisibility(View.GONE);
         }
 
+        int location_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_NAME);
+        if (!TextUtils.isEmpty(cursor.getString(location_index)))
+        {
+            viewHolder.mLocationRootView.setVisibility(View.VISIBLE);
+            viewHolder.mLocationText.setText(cursor.getString(location_index));
+        }
+        else
+        {
+            viewHolder.mLocationRootView.setVisibility(View.GONE);
+        }
+
         //set media id and owner id;
         int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
         viewHolder.mMediaId = cursor.getString(media_id_index);
         int owner_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID);
         viewHolder.mOwnerId = cursor.getString(owner_id_index);
+        int location_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID);
+        viewHolder.mLocationId = cursor.getString(location_id_index);
     }
 
     @Override

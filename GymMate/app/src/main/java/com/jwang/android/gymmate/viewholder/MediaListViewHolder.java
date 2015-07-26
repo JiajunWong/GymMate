@@ -16,10 +16,13 @@ public class MediaListViewHolder extends BaseViewHolder
     public final RoundedImageView mOwnerProfileImage;
     public final TextView mOwnerUserName;
     public final TextView mCaptionText;
+    public final TextView mLocationText;
     public final ImageView mMediaImage;
     public final View mUserInfoRootView;
+    public final View mLocationRootView;
     public String mMediaId;
     public String mOwnerId;
+    public String mLocationId;
 
     public MediaListViewHolder(View view)
     {
@@ -27,6 +30,8 @@ public class MediaListViewHolder extends BaseViewHolder
         mOwnerUserName = (TextView) view.findViewById(R.id.owner_username);
         mMediaImage = (ImageView) view.findViewById(R.id.media_image);
         mCaptionText = (TextView) view.findViewById(R.id.caption_text);
+        mLocationText = (TextView) view.findViewById(R.id.gym_location_tv);
         mUserInfoRootView = view.findViewById(R.id.root_user_info);
+        mLocationRootView = view.findViewById(R.id.root_view_location);
     }
 }

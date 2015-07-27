@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.fragment.MediaListFragment;
+import com.jwang.android.gymmate.fragment.media_list_fragment.MediaListFragment;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
 import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithArrayListener;
 import com.jwang.android.gymmate.model.ModelMedia;

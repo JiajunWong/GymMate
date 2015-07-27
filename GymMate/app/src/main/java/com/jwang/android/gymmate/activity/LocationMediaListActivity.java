@@ -15,7 +15,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.fragment.LocationMediaListFragment;
+import com.jwang.android.gymmate.fragment.media_list_fragment.LocationMediaListFragment;
 import com.jwang.android.gymmate.util.AndroidUtil;
 
 /**

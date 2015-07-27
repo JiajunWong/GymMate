@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.fragment;
+package com.jwang.android.gymmate.fragment.media_list_fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaCursorAdapter;
+import com.jwang.android.gymmate.fragment.BaseFragment;
 
 /**
  * @author Jiajun Wang on 7/24/15

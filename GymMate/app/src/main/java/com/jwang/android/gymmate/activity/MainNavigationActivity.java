@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
-import com.jwang.android.gymmate.fragment.MainMediaListFragment;
+import com.jwang.android.gymmate.fragment.media_list_fragment.MainMediaListFragment;
 
 /**
  * @author Jiajun Wang on 6/24/15

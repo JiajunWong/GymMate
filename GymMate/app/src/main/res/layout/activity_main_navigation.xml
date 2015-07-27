@@ -19,10 +19,10 @@
 
             <fragment xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/fragment_media_list"
-                android:name="com.jwang.android.gymmate.fragment.MainMediaListFragment"
+                android:name="com.jwang.android.gymmate.fragment.media_list_fragment.MainMediaListFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.jwang.android.gymmate.fragment.MainMediaListFragment"
+                tools:context="com.jwang.android.gymmate.fragment.media_list_fragment.MainMediaListFragment"
                 tools:layout="@android:layout/list_content" />
 
             <ImageView

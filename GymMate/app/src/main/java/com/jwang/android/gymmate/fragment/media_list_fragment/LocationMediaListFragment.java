@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.fragment;
+package com.jwang.android.gymmate.fragment.media_list_fragment;
 
 import android.database.Cursor;
 import android.net.Uri;

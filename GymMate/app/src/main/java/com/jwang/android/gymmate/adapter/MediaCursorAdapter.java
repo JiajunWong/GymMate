@@ -66,9 +66,27 @@ public class MediaCursorAdapter extends CursorAdapter implements
         {
             Picasso.with(context).load(cursor.getString(media_high_res_index)).into(viewHolder.mMediaImage);
         }
-        else
+        else if (!TextUtils.isEmpty(cursor.getString(media_low_res_index)))
         {
             Picasso.with(context).load(cursor.getString(media_low_res_index)).into(viewHolder.mMediaImage);
+        }
+        else
+        {
+            Log.e(TAG, "MediaCursorAdapter -- bindView: image is null!!");
+        }
+
+        int mediaTypeIndex = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_TYPE);
+        String type = cursor.getString(mediaTypeIndex);
+        if (!TextUtils.isEmpty(type))
+        {
+            if (type.equals("video"))
+            {
+                viewHolder.mVideoIconImage.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                viewHolder.mVideoIconImage.setVisibility(View.GONE);
+            }
         }
 
         int caption_text_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CAPTION_TEXT);

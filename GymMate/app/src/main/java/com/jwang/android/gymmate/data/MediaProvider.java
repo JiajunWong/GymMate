@@ -49,7 +49,8 @@ public class MediaProvider extends ContentProvider
     private static final String sMediaTableInnerJoinUserTableSQL = MediaContract.MediaEntry.TABLE_NAME + " INNER JOIN " + MediaContract.UserEntry.TABLE_NAME + " ON " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = " + MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID;
     private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ") ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
     private static final String sGetMediaSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL;
-    private static final String sGetMediaSQLByLocationId = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ?";
+    private static final String sGetMediaSQLByLocationId = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ? ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
+    private static final String sGetMediaSQLByInstagramId = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ? ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
 
     //    private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ");";
 
@@ -107,15 +108,13 @@ public class MediaProvider extends ContentProvider
         return mOpenHelper.getReadableDatabase().query(MediaContract.MediaEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
-    private static final String sMediaSelection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?";
-
-    private Cursor getMediaByInstagramId(Uri uri, String[] projection, String sortOrder)
+    private Cursor getMediaByInstagramId(Uri uri)
     {
         String id = MediaContract.MediaEntry.getInstagramIdFromUri(uri);
-        String selection = sMediaSelection;
+        String selection = sGetMediaSQLByInstagramId;
         String[] selectionArgs = { id };
 
-        return mOpenHelper.getReadableDatabase().query(MediaContract.MediaEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        return mOpenHelper.getReadableDatabase().rawQuery(selection, selectionArgs);
     }
 
     private String[] getArgs(float lat, float lng)
@@ -165,7 +164,7 @@ public class MediaProvider extends ContentProvider
                 retCursor = getMediaByOwnerId(uri, projection, sortOrder);
                 break;
             case MEDIA_WITH_INSTAGRAM_ID:
-                retCursor = getMediaByInstagramId(uri, projection, sortOrder);
+                retCursor = getMediaByInstagramId(uri);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

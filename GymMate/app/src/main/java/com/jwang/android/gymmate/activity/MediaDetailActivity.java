@@ -113,7 +113,7 @@ public class MediaDetailActivity extends BaseActivity implements
         @Override
         public void onFetchFinished(ModelMedia modelMedia)
         {
-            mMediaDetailFragment.setModelMedia(modelMedia);
+            //            mMediaDetailFragment.setModelMedia(modelMedia);
         }
     };
 
@@ -191,7 +191,7 @@ public class MediaDetailActivity extends BaseActivity implements
             }
             modelMedia.setImageLowRes(data.getString(indexLowResImage));
             mMediaLink = data.getString(indexLink);
-            mMediaDetailFragment.setModelMedia(modelMedia);
+            mMediaDetailFragment.setModelMedia(data);
         }
     }
 

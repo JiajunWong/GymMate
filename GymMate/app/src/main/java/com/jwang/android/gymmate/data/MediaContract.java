@@ -44,9 +44,19 @@ public class MediaContract
         public static final String COLUMN_LOCATION_LONGITUDE = "location_longitude";
         public static final String COLUMN_LOCATION_LATITUDE = "location_latitude";
 
-        public static Uri buildUserUri(long id)
+        public static Uri buildLocationUri(long id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildLocationUriWithInstagramId(String id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(AppConfig.LOCATION).appendQueryParameter(COLUMN_INSTAGRAM_LOCATION_ID, id).build();
+        }
+
+        public static String getInstagramIdFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_INSTAGRAM_LOCATION_ID);
         }
     }
 

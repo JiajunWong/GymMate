@@ -7,12 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
+import android.text.TextUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.jwang.android.gymmate.R;
+import com.jwang.android.gymmate.fragment.LocationMediaListFragment;
 import com.jwang.android.gymmate.util.AndroidUtil;
 
 /**
@@ -22,14 +25,17 @@ import com.jwang.android.gymmate.util.AndroidUtil;
 public class LocationMediaListActivity extends BaseActivity
 {
     private static final String TAG = LocationMediaListActivity.class.getSimpleName();
-    public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
+    public static final String KEY_START_LOCATION = "arg_drawing_start_location";
+    public static final String KEY_LOCATION_ID = "key_location_id";
     private int drawingStartLocation;
     private FrameLayout contentRoot;
+    private LocationMediaListFragment mLocationMediaListFragment;
 
-    public static void startActivity(Context context, int location)
+    public static void startActivity(Context context, int location, String locationId)
     {
         Intent intent = new Intent(context, LocationMediaListActivity.class);
-        intent.putExtra(ARG_DRAWING_START_LOCATION, location);
+        intent.putExtra(KEY_START_LOCATION, location);
+        intent.putExtra(KEY_LOCATION_ID, locationId);
         context.startActivity(intent);
     }
 
@@ -41,7 +47,21 @@ public class LocationMediaListActivity extends BaseActivity
         setDisplayHomeAsUpEnabled(true);
         contentRoot = (FrameLayout) findViewById(R.id.content_root);
 
-        drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
+        String locationId = getIntent().getStringExtra(KEY_LOCATION_ID);
+        if (TextUtils.isEmpty(locationId))
+        {
+            finish();
+        }
+        else
+        {
+            mLocationMediaListFragment = new LocationMediaListFragment();
+            mLocationMediaListFragment.setLocationId(locationId);
+            FragmentTransaction transitionManager = getSupportFragmentManager().beginTransaction();
+            transitionManager.add(R.id.container, mLocationMediaListFragment, null);
+            transitionManager.commit();
+        }
+
+        drawingStartLocation = getIntent().getIntExtra(KEY_START_LOCATION, 0);
         if (savedInstanceState == null)
         {
             contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()

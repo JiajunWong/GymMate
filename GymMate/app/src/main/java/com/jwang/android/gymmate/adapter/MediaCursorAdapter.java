@@ -131,7 +131,7 @@ public class MediaCursorAdapter extends CursorAdapter implements
                 {
                     int[] startingLocation = new int[2];
                     view.getLocationOnScreen(startingLocation);
-                    LocationMediaListActivity.startActivity(mContext, startingLocation[1]);
+                    LocationMediaListActivity.startActivity(mContext, startingLocation[1], viewHolder.mLocationId);
                     ((BaseActivity) mContext).overridePendingTransition(0, 0);
                 }
         }

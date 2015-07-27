@@ -30,6 +30,7 @@ public class MediaProvider extends ContentProvider
     static final int USER = 300;
     static final int USER_WITH_INSTAGRAM_ID = 301;
     static final int LOCATION = 500;
+    static final int LOCATION_WITH_INSTAGRAM_ID = 501;
 
     private static final SQLiteQueryBuilder sWeatherByIdQueryBuilder;
 
@@ -48,6 +49,7 @@ public class MediaProvider extends ContentProvider
     private static final String sMediaTableInnerJoinUserTableSQL = MediaContract.MediaEntry.TABLE_NAME + " INNER JOIN " + MediaContract.UserEntry.TABLE_NAME + " ON " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = " + MediaContract.UserEntry.TABLE_NAME + "." + MediaContract.UserEntry.COLUMN_INSTAGRAM_ID;
     private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ") ORDER BY " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC;";
     private static final String sGetMediaSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL;
+    private static final String sGetMediaSQLByLocationId = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ?";
 
     //    private static final String sGetMediaByLocationSQL = "SELECT * FROM " + sMediaTableInnerJoinUserTableSQL + " WHERE " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " IN (" + sGetLocationIdSQL + ");";
 
@@ -71,6 +73,15 @@ public class MediaProvider extends ContentProvider
         }
 
         Log.d(TAG, "$$$getMediaByLatitudeAndLongitude: the sql is " + sGetMediaByLocationSQL);
+        return mOpenHelper.getReadableDatabase().rawQuery(selectionString, selectionArgs);
+    }
+
+    private Cursor getMediaByLocationId(Uri uri)
+    {
+        String id = MediaContract.LocationEntry.getInstagramIdFromUri(uri);
+        String[] selectionArgs = new String[] { id };
+        String selectionString = sGetMediaSQLByLocationId;
+
         return mOpenHelper.getReadableDatabase().rawQuery(selectionString, selectionArgs);
     }
 
@@ -141,6 +152,9 @@ public class MediaProvider extends ContentProvider
             case LOCATION:
                 retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.LocationEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+            case LOCATION_WITH_INSTAGRAM_ID:
+                retCursor = getMediaByLocationId(uri);
+                break;
             case MEDIA_WITH_LOCATION:
                 retCursor = getMediaByLatitudeAndLongitude(uri);
                 break;
@@ -170,6 +184,7 @@ public class MediaProvider extends ContentProvider
         {
             case MEDIA_WITH_OWNER_ID:
             case MEDIA_WITH_LOCATION:
+            case LOCATION_WITH_INSTAGRAM_ID:
                 return MediaContract.MediaEntry.CONTENT_TYPE;
             case MEDIA_WITH_INSTAGRAM_ID:
                 return MediaContract.MediaEntry.CONTENT_ITEM_TYPE;
@@ -217,7 +232,7 @@ public class MediaProvider extends ContentProvider
             {
                 long _id = db.insert(MediaContract.LocationEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    returnUri = MediaContract.LocationEntry.buildUserUri(_id);
+                    returnUri = MediaContract.LocationEntry.buildLocationUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -333,6 +348,7 @@ public class MediaProvider extends ContentProvider
         matcher.addURI(authority, MediaContract.PATH_MEDIA, MEDIA);
         matcher.addURI(authority, MediaContract.PATH_USER, USER);
         matcher.addURI(authority, MediaContract.PATH_LOCATION, LOCATION);
+        matcher.addURI(authority, MediaContract.PATH_LOCATION + "/*", LOCATION_WITH_INSTAGRAM_ID);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*", MEDIA_WITH_LOCATION);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*", MEDIA_WITH_OWNER_ID);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*/*", MEDIA_WITH_INSTAGRAM_ID);

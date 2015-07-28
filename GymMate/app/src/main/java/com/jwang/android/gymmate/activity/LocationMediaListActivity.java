@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -37,6 +38,7 @@ public class LocationMediaListActivity extends BaseActivity
         intent.putExtra(KEY_START_LOCATION, location);
         intent.putExtra(KEY_LOCATION_ID, locationId);
         context.startActivity(intent);
+        ((Activity) context).overridePendingTransition(0, 0);
     }
 
     @Override
@@ -84,20 +86,14 @@ public class LocationMediaListActivity extends BaseActivity
         contentRoot.setScaleY(0.1f);
         contentRoot.setPivotY(drawingStartLocation);
 
-        contentRoot.animate().scaleY(1).setDuration(200).setInterpolator(new AccelerateInterpolator()).setListener(new AnimatorListenerAdapter()
+        contentRoot.animate().scaleY(1).setDuration(300).setInterpolator(new AccelerateInterpolator()).setListener(new AnimatorListenerAdapter()
         {
             @Override
             public void onAnimationEnd(Animator animation)
             {
                 ViewCompat.setElevation(mToolbar, AndroidUtil.dpToPx(8));
-                //                animateContent();
             }
         }).start();
     }
 
-    //    private void animateContent()
-    //    {
-    //        commentsAdapter.updateItems();
-    //        llAddComment.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).setDuration(200).start();
-    //    }
 }

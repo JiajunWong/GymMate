@@ -72,7 +72,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|top"
+                android:padding="@dimen/horizontal_margin"
                 android:src="@drawable/ic_av_videocam"
+                android:background="@drawable/actionbar_shadow"
                 android:visibility="gone" />
         </FrameLayout>
 

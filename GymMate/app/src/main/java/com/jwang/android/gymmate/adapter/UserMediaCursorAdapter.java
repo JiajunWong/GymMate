@@ -57,6 +57,19 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
             Picasso.with(mContext).load(cursor.getString(image_index)).into(viewHolder.mImageView);
         }
 
+        int type_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_TYPE);
+        if (!TextUtils.isEmpty(cursor.getString(type_index)))
+        {
+            if (cursor.getString(type_index).equals("video"))
+            {
+                viewHolder.mVideoImageIcon.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                viewHolder.mVideoImageIcon.setVisibility(View.GONE);
+            }
+        }
+
         //set media id and owner id;
         int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
         viewHolder.mMediaId = cursor.getString(media_id_index);
@@ -80,11 +93,13 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
     public class ViewHolder
     {
         public ImageView mImageView;
+        public ImageView mVideoImageIcon;
         public String mMediaId;
 
         public ViewHolder(View v)
         {
             mImageView = (ImageView) v.findViewById(R.id.user_media);
+            mVideoImageIcon = (ImageView) v.findViewById(R.id.media_video_icon);
         }
     }
 }

@@ -21,6 +21,7 @@ public class UserDetailActivity extends BaseActivity
 {
     public static final String TAG = UserDetailActivity.class.getSimpleName();
     public static final String KEY_USER_ID = "KEY_USER_ID";
+    public static final String KEY_START_LOCATION = "KEY_START_LOCATION";
 
     private UserDetailFragment mUserDetailFragment;
 
@@ -28,6 +29,11 @@ public class UserDetailActivity extends BaseActivity
     {
         Intent intent = new Intent(context, UserDetailActivity.class);
         intent.putExtra(KEY_USER_ID, userId);
+        int[] startingLocation = new int[2];
+        view.getLocationOnScreen(startingLocation);
+        startingLocation[0] += view.getWidth() / 2;
+        intent.putExtra(KEY_START_LOCATION, startingLocation);
+
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, view, context.getString(R.string.transition_name_user));
         // Check if we're running on Android 5.0 or higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

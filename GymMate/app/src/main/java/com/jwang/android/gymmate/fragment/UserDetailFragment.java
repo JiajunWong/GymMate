@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.fragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import com.jwang.android.gymmate.task.RequestUserMediaTask;
 import com.jwang.android.gymmate.task.RequestUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
 import com.jwang.android.gymmate.view.HeaderGridView;
+import com.jwang.android.gymmate.view.RevealBackgroundView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,7 +37,8 @@ import java.util.ArrayList;
  * Created by jiajunwang on 7/2/15.
  */
 public class UserDetailFragment extends BaseFragment implements
-        LoaderManager.LoaderCallbacks<Cursor>
+        LoaderManager.LoaderCallbacks<Cursor>,
+        RevealBackgroundView.OnStateChangeListener
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
@@ -48,7 +52,10 @@ public class UserDetailFragment extends BaseFragment implements
     private TextView mFollowingCountTextView;
     private ImageView mUserAvatarImageView;
     private HeaderGridView mStaggeredGridView;
+
     private View mBgView;
+    private RevealBackgroundView mRevealBgView;
+    private View mUserDetailPageRoot;
     private UserMediaCursorAdapter mUserMediaAdapter;
 
     private int mHeaderHeight;
@@ -95,19 +102,58 @@ public class UserDetailFragment extends BaseFragment implements
         mFollowersCountTextView = (TextView) rootView.findViewById(R.id.follower_count);
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
         mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
-        mBgView = rootView.findViewById(R.id.container);
+
+        mBgView = rootView.findViewById(R.id.user_profile_layout);
+        mRevealBgView = (RevealBackgroundView) rootView.findViewById(R.id.revealBV);
+        mUserDetailPageRoot = rootView.findViewById(R.id.user_profile_layout);
         mHeader = rootView.findViewById(R.id.user_profile_root);
 
         mUserMediaAdapter = new UserMediaCursorAdapter(getActivity(), null, 0);
 
         mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
         mMinHeaderTranslation = -mHeaderHeight;
+
+        final int[] startingLocation = getActivity().getIntent().getIntArrayExtra(UserDetailActivity.KEY_START_LOCATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            //            final int[] startingLocation = new int[2];
+            //            startingLocation[0] = (mUserAvatarImageView.getLeft() + mUserAvatarImageView.getRight()) / 2;
+            //            startingLocation[1] = (mUserAvatarImageView.getTop() + mUserAvatarImageView.getBottom()) / 2;
+            AnimationUtil.activityRevealTransition(getActivity(), startingLocation, mUserDetailPageRoot);
+        }
+        else
+        {
+            setupRevealBackground(savedInstanceState, startingLocation);
+        }
+
         setupListView();
-
-        AnimationUtil.activityRevealTransition(getActivity(), mUserAvatarImageView, mBgView);
-
         fetchUserInfo();
         return rootView;
+    }
+
+    private void setupRevealBackground(Bundle savedInstanceState, final int[] startingLocation)
+    {
+        mRevealBgView.setOnStateChangeListener(this);
+        mRevealBgView.setFillPaintColor(getResources().getColor(R.color.primary_color));
+        if (savedInstanceState == null)
+        {
+            mRevealBgView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+            {
+                @Override
+                public boolean onPreDraw()
+                {
+                    mRevealBgView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    mRevealBgView.startFromLocation(startingLocation);
+                    return true;
+                }
+            });
+        }
+        else
+        {
+            mRevealBgView.setToFinishedFrame();
+            //TODO:
+            //            userPhotosAdapter.setLockedAnimations(true);
+        }
     }
 
     private void setupListView()
@@ -247,7 +293,7 @@ public class UserDetailFragment extends BaseFragment implements
                     if (!TextUtils.isEmpty(mediaCount))
                     {
                         mPostsCountTextView.setText(mediaCount);
-                        mMediaCount = new Integer(mediaCount);
+                        mMediaCount = Integer.valueOf(mediaCount);
                     }
 
                     int index_follows_count = data.getColumnIndex(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT);
@@ -279,6 +325,19 @@ public class UserDetailFragment extends BaseFragment implements
             case MEDIA_NEAR_LOADER:
                 mUserMediaAdapter.swapCursor(null);
                 break;
+        }
+    }
+
+    @Override
+    public void onStateChange(int state)
+    {
+        if (RevealBackgroundView.STATE_FINISHED == state)
+        {
+            mUserDetailPageRoot.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mUserDetailPageRoot.setVisibility(View.INVISIBLE);
         }
     }
 }

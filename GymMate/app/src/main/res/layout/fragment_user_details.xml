@@ -5,152 +5,162 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.jwang.android.gymmate.view.HeaderGridView
-        android:id="@+id/list_item_view"
+    <com.jwang.android.gymmate.view.RevealBackgroundView
+        android:id="@+id/revealBV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#e5e5e5"
-        android:horizontalSpacing="2dp"
-        android:numColumns="3"
-        android:scrollbars="none"
-        android:verticalSpacing="2dp" />
+        android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/user_profile_root"
+    <FrameLayout
+        android:id="@+id/user_profile_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fake_header_height"
-        android:background="?attr/colorPrimary"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <com.jwang.android.gymmate.view.HeaderGridView
+            android:id="@+id/list_item_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#e5e5e5"
+            android:horizontalSpacing="2dp"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:verticalSpacing="2dp" />
+
+        <LinearLayout
+            android:id="@+id/user_profile_root"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fake_header_height"
+            android:background="?attr/colorPrimary"
             android:clipChildren="false"
-            android:orientation="horizontal">
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/user_photo"
-                android:layout_width="@dimen/user_profile_avatar_size"
-                android:layout_height="@dimen/user_profile_avatar_size"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:orientation="horizontal">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/user_photo"
+                    android:layout_width="@dimen/user_profile_avatar_size"
+                    android:layout_height="@dimen/user_profile_avatar_size"
+                    android:layout_marginRight="@dimen/horizontal_margin"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="?attr/colorPrimaryDark"
+                    app:riv_border_color="@android:color/white"
+                    app:riv_border_width="2dp"
+                    app:riv_corner_radius="50dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:id="@+id/username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp"
+                        app:customFont="Roboto-Regular.ttf" />
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:id="@+id/user_real_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textColor="#bbbbbb"
+                        android:textSize="12sp"
+                        app:customFont="Roboto-Regular.ttf" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/horizontal_margin"
                 android:layout_marginRight="@dimen/horizontal_margin"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="?attr/colorPrimaryDark"
-                android:transitionName="@string/transition_name_user"
-                app:riv_border_color="@android:color/white"
-                app:riv_border_width="2dp"
-                app:riv_corner_radius="50dp" />
+                android:layout_marginTop="@dimen/vertical_margin">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:id="@+id/username"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#ffffff"
-                    android:textSize="24sp"
-                    app:customFont="Roboto-Regular.ttf" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:id="@+id/user_real_name"
-                    android:layout_width="match_parent"
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:id="@+id/post_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textColor="#ffffff"
+                        android:textSize="20sp"
+                        app:customFont="Roboto-Regular.ttf" />
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/posts"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        app:customFont="Roboto-Regular.ttf" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:textColor="#bbbbbb"
-                    android:textSize="12sp"
-                    app:customFont="Roboto-Regular.ttf" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:id="@+id/follower_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textColor="#ffffff"
+                        android:textSize="20sp"
+                        app:customFont="Roboto-Regular.ttf" />
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/followers"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        app:customFont="Roboto-Regular.ttf" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:id="@+id/following_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textColor="#ffffff"
+                        android:textSize="20sp"
+                        app:customFont="Roboto-Regular.ttf" />
+
+                    <com.jwang.android.gymmate.view.CustomizableTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/following"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        app:customFont="Roboto-Regular.ttf" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/horizontal_margin"
-            android:layout_marginRight="@dimen/horizontal_margin"
-            android:layout_marginTop="@dimen/vertical_margin">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:id="@+id/post_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp"
-                    app:customFont="Roboto-Regular.ttf" />
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/posts"
-                    android:textColor="#ffffff"
-                    android:textSize="12sp"
-                    app:customFont="Roboto-Regular.ttf" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:id="@+id/follower_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp"
-                    app:customFont="Roboto-Regular.ttf" />
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/followers"
-                    android:textColor="#ffffff"
-                    android:textSize="12sp"
-                    app:customFont="Roboto-Regular.ttf" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:id="@+id/following_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp"
-                    app:customFont="Roboto-Regular.ttf" />
-
-                <com.jwang.android.gymmate.view.CustomizableTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/following"
-                    android:textColor="#ffffff"
-                    android:textSize="12sp"
-                    app:customFont="Roboto-Regular.ttf" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

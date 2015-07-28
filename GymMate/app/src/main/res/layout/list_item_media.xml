@@ -63,7 +63,7 @@
             <VideoView
                 android:id="@+id/media_video"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="480dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />

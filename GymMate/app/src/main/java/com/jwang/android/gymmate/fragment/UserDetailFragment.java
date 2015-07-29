@@ -53,7 +53,6 @@ public class UserDetailFragment extends BaseFragment implements
     private ImageView mUserAvatarImageView;
     private HeaderGridView mStaggeredGridView;
 
-    private View mBgView;
     private RevealBackgroundView mRevealBgView;
     private View mUserDetailPageRoot;
     private UserMediaCursorAdapter mUserMediaAdapter;
@@ -103,7 +102,6 @@ public class UserDetailFragment extends BaseFragment implements
         mFollowingCountTextView = (TextView) rootView.findViewById(R.id.following_count);
         mStaggeredGridView = (HeaderGridView) rootView.findViewById(R.id.list_item_view);
 
-        mBgView = rootView.findViewById(R.id.user_profile_layout);
         mRevealBgView = (RevealBackgroundView) rootView.findViewById(R.id.revealBV);
         mUserDetailPageRoot = rootView.findViewById(R.id.user_profile_layout);
         mHeader = rootView.findViewById(R.id.user_profile_root);

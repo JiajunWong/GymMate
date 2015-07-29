@@ -77,6 +77,7 @@ public class MediaDetailActivity extends BaseActivity implements
         {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
     }
 
     private void extractUrlFromIntent()
@@ -157,16 +158,6 @@ public class MediaDetailActivity extends BaseActivity implements
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, mMediaLink + " " + getString(R.string.app_hash_tag));
         return shareIntent;
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        if (!TextUtils.isEmpty(mMediaId))
-        {
-            getLoaderManager().initLoader(MEDIA_NEAR_LOADER, null, this);
-        }
     }
 
     @Override

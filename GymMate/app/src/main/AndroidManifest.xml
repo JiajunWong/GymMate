@@ -28,19 +28,17 @@
         </activity>
         <activity android:name=".activity.MainNavigationActivity" />
         <activity android:name=".activity.UserDetailActivity" />
-        <activity
-            android:name=".activity.MediaDetailActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+        <activity android:name=".activity.MediaDetailActivity">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<category android:name="android.intent.category.BROWSABLE" />-->
 
-                <data
-                    android:host="https://instagram.com/"
-                    android:scheme="https" />
-            </intent-filter>
+            <!--<data-->
+            <!--android:host="https://instagram.com/"-->
+            <!--android:scheme="https" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".activity.MediaListActivity"

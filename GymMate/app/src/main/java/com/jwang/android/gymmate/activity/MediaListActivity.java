@@ -26,6 +26,7 @@ public class MediaListActivity extends BaseActivity implements
     public static final String KEY_URL = "url_key";
     private RequestMediaTask requestUserMediaTask;
     private MediaListFragment mMediaListFragment;
+    private ArrayList<ModelMedia> mMedias = new ArrayList<>();
     private String mUrl;
 
     public static void startActivity(Context context, String url)
@@ -45,8 +46,27 @@ public class MediaListActivity extends BaseActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container, mMediaListFragment);
         fragmentTransaction.commit();
+    }
 
-        setFetchTask();
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        ArrayList<ModelMedia> mediaArrayList = (ArrayList<ModelMedia>) getLastCustomNonConfigurationInstance();
+        if (mediaArrayList != null && !mediaArrayList.isEmpty())
+        {
+            mMediaListFragment.setModelMedias(mMedias);
+        }
+        else
+        {
+            setFetchTask();
+        }
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance()
+    {
+        return mMedias;
     }
 
     private void setFetchTask()
@@ -68,6 +88,7 @@ public class MediaListActivity extends BaseActivity implements
         {
             if (medias != null)
             {
+                mMedias = medias;
                 mMediaListFragment.setModelMedias(medias);
             }
         }

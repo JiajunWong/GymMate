@@ -40,9 +40,7 @@
             <!--android:scheme="https" />-->
             <!--</intent-filter>-->
         </activity>
-        <activity
-            android:name=".activity.MediaListActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".activity.MediaListActivity" />
         <activity
             android:name=".activity.LocationMediaListActivity"
             android:theme="@style/LocationActivity.AppThemes" />

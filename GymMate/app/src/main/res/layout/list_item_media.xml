@@ -62,7 +62,8 @@
             <VideoView
                 android:id="@+id/media_video"
                 android:layout_width="match_parent"
-                android:layout_height="480dp"
+                android:layout_height="@dimen/media_video_height"
+                android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />
@@ -72,9 +73,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|top"
+                android:background="@drawable/actionbar_shadow"
                 android:padding="@dimen/horizontal_margin"
                 android:src="@drawable/ic_av_videocam"
-                android:background="@drawable/actionbar_shadow"
                 android:visibility="gone" />
         </FrameLayout>
 

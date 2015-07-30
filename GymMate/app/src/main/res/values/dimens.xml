@@ -15,4 +15,5 @@
     <dimen name="drawer_left_width">280dp</dimen>
 
     <!-- Media Detail -->
+    <dimen name="media_video_height">480dp</dimen>
 </resources>

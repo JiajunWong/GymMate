@@ -10,6 +10,10 @@ import android.support.v4.content.Loader;
 import android.widget.ListView;
 
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
+import com.jwang.android.gymmate.task.RequestMediaByLocationId;
+
+import java.util.ArrayList;
 
 /**
  * @author Jiajun Wang on 7/26/15
@@ -20,6 +24,8 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
 {
     private String mLocationId;
     private static final int MEDIA_NEAR_LOADER = 0;
+    private RequestMediaByLocationId mRequestMediaByLocationId;
+    private ArrayList<String> mTimeStamps = new ArrayList<>();
 
     public void setLocationId(String id)
     {
@@ -29,7 +35,12 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     @Override
     protected void loadMore()
     {
-
+        mRequestMediaByLocationId = new RequestMediaByLocationId(getActivity());
+        mRequestMediaByLocationId.setOnFetchMediaPaginationFinishListener(mOnRequestMediaFinishWithTimeStampListener);
+        if (!mTimeStamps.isEmpty())
+        {
+            mRequestMediaByLocationId.execute(mTimeStamps.get(0));
+        }
     }
 
     @Override
@@ -37,6 +48,15 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     {
 
     }
+
+    private OnRequestMediaFinishWithTimeStampListener mOnRequestMediaFinishWithTimeStampListener = new OnRequestMediaFinishWithTimeStampListener()
+    {
+        @Override
+        public void onFetchFinished(String paginationUrl)
+        {
+            mTimeStamps.add(paginationUrl);
+        }
+    };
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)

@@ -4,21 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_toolbar" />
-
-    <FrameLayout
+    <fragment
+        android:id="@+id/fragment_media_detail"
+        android:name="com.jwang.android.gymmate.fragment.MediaDetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <fragment
-            android:id="@+id/fragment_media_detail"
-            android:name="com.jwang.android.gymmate.fragment.MediaDetailFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:src="@drawable/actionbar_shadow" />
-    </FrameLayout>
+        android:layout_height="match_parent" />
 </LinearLayout>

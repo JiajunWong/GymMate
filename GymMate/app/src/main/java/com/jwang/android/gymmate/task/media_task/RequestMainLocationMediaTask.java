@@ -11,9 +11,6 @@ import com.jwang.android.gymmate.util.HttpRequestUtil;
 import com.jwang.android.gymmate.util.MediaSyncWorker;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -43,10 +40,10 @@ public class RequestMainLocationMediaTask extends BaseMediaRequestTask
             Log.d(TAG, "RequestMainLocationMediaTask -- locations size is " + locations.size());
         }
 
-        for (String locationId : locations)
+        for (int i = 0; i < locations.size(); i++)
         {
             ArrayList<ModelMedia> newMedias = new ArrayList<>();
-            String paginationUrl = getPaginationUrl(locationId);
+            String paginationUrl = getPaginationUrl(locations.get(i));
 
             String endPoint = "";
             if (!TextUtils.isEmpty(paginationUrl))
@@ -57,11 +54,11 @@ public class RequestMainLocationMediaTask extends BaseMediaRequestTask
             else
             {
                 //do original request
-                endPoint = "https://api.instagram.com/v1/locations/" + locationId + "/media/recent?access_token=" + mAccessToken;
+                endPoint = "https://api.instagram.com/v1/locations/" + locations.get(i) + "/media/recent?access_token=" + mAccessToken;
             }
 
             String mediaResponse = HttpRequestUtil.startHttpRequest(endPoint, TAG);
-            HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, newMedias, mDataType, locationId);
+            HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, newMedias, mDataType, locations.get(i));
             totalMedias.addAll(newMedias);
         }
 

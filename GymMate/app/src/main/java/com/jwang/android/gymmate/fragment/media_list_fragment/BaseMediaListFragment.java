@@ -82,7 +82,7 @@ public abstract class BaseMediaListFragment extends BaseFragment
             int lastInScreen = firstVisibleItem + visibleItemCount;
             if (totalItemCount != 0 && (lastInScreen == totalItemCount))
             {
-                loadMore();
+//                loadMore();
             }
         }
     };

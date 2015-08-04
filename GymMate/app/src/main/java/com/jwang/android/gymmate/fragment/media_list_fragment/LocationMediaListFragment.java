@@ -7,11 +7,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
-import com.jwang.android.gymmate.task.RequestMediaByLocationId;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;
+import com.jwang.android.gymmate.model.ModelMedia;
+import com.jwang.android.gymmate.task.media_task.BaseMediaRequestTask;
+import com.jwang.android.gymmate.task.media_task.RequestMediaByLocationId;
 
 import java.util.ArrayList;
 
@@ -22,10 +26,9 @@ import java.util.ArrayList;
 public class LocationMediaListFragment extends BaseMediaListFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
+    private static final String TAG = LocationMediaListFragment.class.getSimpleName();
     private String mLocationId;
     private static final int MEDIA_NEAR_LOADER = 0;
-    private RequestMediaByLocationId mRequestMediaByLocationId;
-    private ArrayList<String> mTimeStamps = new ArrayList<>();
 
     public void setLocationId(String id)
     {
@@ -35,28 +38,23 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     @Override
     protected void loadMore()
     {
-        mRequestMediaByLocationId = new RequestMediaByLocationId(getActivity());
-        mRequestMediaByLocationId.setOnFetchMediaPaginationFinishListener(mOnRequestMediaFinishWithTimeStampListener);
-        if (!mTimeStamps.isEmpty())
+        RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
+        if (!TextUtils.isEmpty(mLocationId))
         {
-            mRequestMediaByLocationId.execute(mTimeStamps.get(0));
+            requestMediaByLocationId.execute(mLocationId);
+        }
+        else
+        {
+            Log.e(TAG, "LocationMediaListFragment -- loadMore: mLocationId is null.");
         }
     }
 
     @Override
     public void refreshData()
     {
-
+        RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
+        requestMediaByLocationId.execute(mLocationId, "");
     }
-
-    private OnRequestMediaFinishWithTimeStampListener mOnRequestMediaFinishWithTimeStampListener = new OnRequestMediaFinishWithTimeStampListener()
-    {
-        @Override
-        public void onFetchFinished(String paginationUrl)
-        {
-            mTimeStamps.add(paginationUrl);
-        }
-    };
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)

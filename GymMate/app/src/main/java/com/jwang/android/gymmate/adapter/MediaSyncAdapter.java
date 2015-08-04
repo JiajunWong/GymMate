@@ -160,7 +160,11 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter implements
     {
         if (key.equals(LocationUtil.KEY_LOCATION_LAT))
         {
-            syncImmediately(getContext());
+            String lng = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LONG, null);
+            String lat = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LAT, null);
+            String[] locations = { lng, lat };
+
+            MediaSyncWorker.getInstance(getContext()).requestLocationids(locations);
         }
     }
 }

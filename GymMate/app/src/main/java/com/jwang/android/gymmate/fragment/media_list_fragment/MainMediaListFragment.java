@@ -144,6 +144,7 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
         }
         else
         {
+            dismissLoadingDialog();
             Log.e(TAG, "MainMediaListFragment -- onConnected: location error.");
             if (LocationUtil.isLocationEmpty(getActivity()))
             {
@@ -164,8 +165,8 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
                     if (location != null)
                     {
                         Log.e(TAG, "MainMediaListFragment -- requestLocationUpdates: location is " + location.getLatitude() + ", " + location.getLongitude());
+                        onLocationUpdated(location);
                     }
-                    onLocationUpdated(location);
                 }
             });
         }

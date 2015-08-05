@@ -14,6 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
+            android:background="?attr/colorPrimary"
             android:orientation="vertical">
 
             <android.support.v7.widget.Toolbar
@@ -21,7 +22,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:elevation="@dimen/default_elevation"
                 tools:popupTheme="@style/ToolBarPopupStyle"
                 tools:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -40,7 +40,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"
-                    app:riv_corner_radius="30dp" />
+                    app:riv_corner_radius="20dp" />
 
                 <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/owner_username"
@@ -50,7 +50,9 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
-                    app:customFont="Roboto-Bold.ttf" />
+                    android:textColor="@android:color/white"
+                    app:customFont="Roboto-Bold.ttf"
+                    tools:text="Jim" />
             </LinearLayout>
 
             <View
@@ -72,7 +74,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_location" />
+                    android:src="@drawable/ic_communication_location_on_white" />
 
                 <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/gym_location_tv"
@@ -82,7 +84,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:textAppearance="@android:style/TextAppearance.Small"
-                    android:textColor="@color/primary_color"
+                    android:textColor="@android:color/white"
                     tools:text="San Mateo" />
             </LinearLayout>
 
@@ -96,9 +98,9 @@
                 android:layout_marginStart="@dimen/horizontal_margin"
                 android:layout_marginTop="@dimen/horizontal_margin"
                 android:textAppearance="@android:style/TextAppearance.Small"
-                android:textColor="#616161"
+                android:textColor="@android:color/white"
                 android:visibility="gone"
-                app:customFont="Roboto-Regular.ttf" />
+                app:customFont="Roboto-Light.ttf" />
         </LinearLayout>
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

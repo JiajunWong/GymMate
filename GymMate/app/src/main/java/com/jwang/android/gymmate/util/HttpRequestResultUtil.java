@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.jwang.android.gymmate.activity.BaseActivity;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.model.ModelLocation;
 import com.jwang.android.gymmate.model.ModelMedia;
@@ -31,7 +32,7 @@ public class HttpRequestResultUtil
         USER
     }
 
-    public static ArrayList<ModelLocation> parseGetGeoLocationByGoogleApiJson(String jsonString)
+    public static ArrayList<ModelLocation> parseGetGeoLocationByGoogleApiJson(Context context, String jsonString)
     {
         ArrayList<ModelLocation> locations = new ArrayList<>();
         JSONObject respondJsonObject;
@@ -74,11 +75,12 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, e.getMessage());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
         return locations;
     }
 
-    public static ModelLocation parseGetFaceBookLocationByGeoResultJson(String jsonString)
+    public static ModelLocation parseGetFaceBookLocationByGeoResultJson(Context context, String jsonString)
     {
         ModelLocation modelLocation = new ModelLocation();
         JSONObject respondJsonObject;
@@ -93,12 +95,10 @@ public class HttpRequestResultUtil
                 if (locationJsonArray.length() > 0)
                 {
                     JSONObject locationJsonObject = locationJsonArray.getJSONObject(0);
-                    if (locationJsonObject.has("name"))
-                    {
+                    if (locationJsonObject.has("name")) {
                         modelLocation.setName(locationJsonObject.getString("name"));
                     }
-                    if (locationJsonObject.has("id"))
-                    {
+                    if (locationJsonObject.has("id")) {
                         modelLocation.setId(locationJsonObject.getString("id"));
                     }
                 }
@@ -107,6 +107,7 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, e.getMessage());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
         return modelLocation;
     }
@@ -141,16 +142,13 @@ public class HttpRequestResultUtil
                 if (dataJsonObject.has("counts"))
                 {
                     JSONObject countsJsonObject = dataJsonObject.getJSONObject("counts");
-                    if (countsJsonObject.has("media"))
-                    {
+                    if (countsJsonObject.has("media")) {
                         modelUser.setMediaCount(countsJsonObject.getInt("media"));
                     }
-                    if (countsJsonObject.has("followed_by"))
-                    {
+                    if (countsJsonObject.has("followed_by")) {
                         modelUser.setFollowedByCount(countsJsonObject.getInt("followed_by"));
                     }
-                    if (countsJsonObject.has("follows"))
-                    {
+                    if (countsJsonObject.has("follows")) {
                         modelUser.setFollowsCount(countsJsonObject.getInt("follows"));
                     }
                 }
@@ -159,6 +157,7 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, "parseUserInfoJson: " + e.getMessage());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
         updateUserValues(context, modelUser);
         return modelUser;
@@ -202,6 +201,7 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, "parseGetInstagramLocationByFaceBookIdJson: " + e.getMessage());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
 
         return modelLocation;
@@ -225,6 +225,7 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, "parseMediaJson ERROR!!: " + e.toString());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
         return modelMedia;
     }
@@ -577,7 +578,7 @@ public class HttpRequestResultUtil
         return null;
     }
 
-    private static String parseMediaJsonGetPagination(String jsonString)
+    private static String parseMediaJsonGetPagination(Context context, String jsonString)
     {
         String nextUrl = "";
         JSONObject mediaJsonObject;
@@ -596,6 +597,7 @@ public class HttpRequestResultUtil
         catch (Exception e)
         {
             Log.e(TAG, "parseMediaJsonGetPagination: " + e.getMessage());
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_INVALID);
         }
         return nextUrl;
     }
@@ -840,7 +842,7 @@ public class HttpRequestResultUtil
     private static boolean addMediaValues(Context context, ModelMedia modelMedia)
     {
         boolean isNew = false;
-        Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
+        Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[]{MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID}, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
         if (!mediaCursor.moveToFirst())
         {
             ContentValues mediaContentValues = new ContentValues();

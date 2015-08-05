@@ -1,6 +1,9 @@
 package com.jwang.android.gymmate.util;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.jwang.android.gymmate.activity.BaseActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +18,7 @@ import java.net.URL;
  */
 public class HttpRequestUtil
 {
-    public static String startHttpRequest(String urlString, String tag)
+    public static String startHttpRequest(Context context, String urlString, String tag)
     {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -57,6 +60,7 @@ public class HttpRequestUtil
             if (buffer.length() == 0)
             {
                 // Stream was empty.  No point in parsing.
+                BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_DOWN);
                 return null;
             }
             jsonStr = buffer.toString();
@@ -64,6 +68,7 @@ public class HttpRequestUtil
         catch (IOException e)
         {
             Log.e(tag, "Error ", e);
+            BaseActivity.setLocationStatus(context, BaseActivity.LOCATION_STATUS_SERVER_DOWN);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return null;

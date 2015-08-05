@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">GymMate</string>
     <string name="action_settings">Settings</string>
     <string name="app_hash_tag" translatable="false">#GymMateApp</string>
@@ -52,4 +52,9 @@
 
     <!-- Errors -->
     <string name="get_location_failed">Failed to get current location. Make sure LOCATION permission is opened.</string>
+    <!-- Empty Media Database -->
+    <string name="empty_media_list">No Media Information Available</string>
+    <string name="empty_media_list_no_network">No media information available. The network is not available to fetch weather data.</string>
+    <string name="empty_media_list_server_down">No media information available. The server is not returning data.</string>
+    <string name="empty_media_list_server_error">No media information available. The server is not returning valid data.</string>
 </resources>

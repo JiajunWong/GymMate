@@ -33,6 +33,7 @@ public class RequestMediaByLocationId extends BaseMediaRequestTask
             Log.e(TAG, "RequestMediaByLocationId -- doInBackground: location id and timeStamps is null!");
             return totalMedias;
         }
+        Log.d(TAG, "RequestMediaByLocationId -- doInBackground");
         String locationId = params[0];
         String paginationUrl = getPaginationUrl(locationId);
 

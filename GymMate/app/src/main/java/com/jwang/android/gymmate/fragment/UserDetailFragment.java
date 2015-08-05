@@ -2,7 +2,6 @@ package com.jwang.android.gymmate.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,10 +20,8 @@ import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
-import com.jwang.android.gymmate.adapter.UserMediaCursorAdapter;
+import com.jwang.android.gymmate.adapter.cursor_adapter.UserMediaCursorAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;
-import com.jwang.android.gymmate.task.media_task.BaseMediaRequestTask;
 import com.jwang.android.gymmate.task.media_task.RequestMediaByUserIdTask;
 import com.jwang.android.gymmate.task.media_task.RequestUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
@@ -105,6 +102,7 @@ public class UserDetailFragment extends BaseFragment implements
         mHeader = rootView.findViewById(R.id.user_profile_root);
 
         mUserMediaAdapter = new UserMediaCursorAdapter(getActivity(), null, 0);
+        mUserMediaAdapter.setUserId(mUserId);
 
         mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
         mMinHeaderTranslation = -mHeaderHeight;
@@ -169,13 +167,13 @@ public class UserDetailFragment extends BaseFragment implements
                 int scrollY = getScrollY();
                 //sticky actionbar
                 mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
-                int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
-                {
-                    Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
-                    mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
-                    mRequestMediaByUserIdTask.execute(mUserId);
-                }
+                //                int lastInScreen = firstVisibleItem + visibleItemCount;
+                //                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
+                //                {
+                //                    Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
+                //                    mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
+                //                    mRequestMediaByUserIdTask.execute(mUserId);
+                //                }
             }
         });
         mStaggeredGridView.setAdapter(mUserMediaAdapter);

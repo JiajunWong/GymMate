@@ -3,7 +3,6 @@ package com.jwang.android.gymmate.task.media_task;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;

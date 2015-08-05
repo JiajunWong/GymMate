@@ -12,12 +12,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;
-import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.task.media_task.BaseMediaRequestTask;
 import com.jwang.android.gymmate.task.media_task.RequestMediaByLocationId;
-
-import java.util.ArrayList;
 
 /**
  * @author Jiajun Wang on 7/26/15
@@ -36,7 +31,7 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     }
 
     @Override
-    protected void loadMore()
+    public void loadMore()
     {
         RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
         if (!TextUtils.isEmpty(mLocationId))

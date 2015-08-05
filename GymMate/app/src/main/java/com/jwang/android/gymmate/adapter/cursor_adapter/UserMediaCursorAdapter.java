@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.adapter;
+package com.jwang.android.gymmate.adapter.cursor_adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.task.media_task.RequestMediaByUserIdTask;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -23,6 +24,7 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
 {
 
     private Context mContext;
+    private String mUserId;
 
     public UserMediaCursorAdapter(Context context, Cursor c, int flags)
     {
@@ -30,9 +32,19 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
         mContext = context;
     }
 
+    public void setUserId(String userid)
+    {
+        mUserId = userid;
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
+        if (cursor.isLast())
+        {
+            RequestMediaByUserIdTask mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(mContext);
+            mRequestMediaByUserIdTask.execute(mUserId);
+        }
         int layoutId = R.layout.list_item_user_media_grid;
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -40,6 +52,19 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
         viewHolder.mImageView.setOnClickListener(this);
         viewHolder.mImageView.setTag(viewHolder);
         return view;
+    }
+
+    private boolean isPaginationUrlEmpty()
+    {
+        Cursor paginationCursor = mContext.getContentResolver().query(MediaContract.PaginationEntry.CONTENT_URI, new String[] { MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION }, MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " = ? AND " + MediaContract.PaginationEntry.COLUMN_DATA_ID + " = ?", new String[] { MediaContract.PaginationEntry.TYPE_USER, mUserId }, null);
+        String paginationUrl = null;
+        if (paginationCursor.moveToFirst())
+        {
+            int index_url = paginationCursor.getColumnIndex(MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION);
+            paginationUrl = paginationCursor.getString(index_url);
+        }
+        paginationCursor.close();
+        return TextUtils.isEmpty(paginationUrl);
     }
 
     @Override

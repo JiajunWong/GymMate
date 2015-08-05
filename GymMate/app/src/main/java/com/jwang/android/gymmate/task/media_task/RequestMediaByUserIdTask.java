@@ -32,7 +32,7 @@ public class RequestMediaByUserIdTask extends BaseMediaRequestTask
             Log.e(TAG, "doInBackground: user id is null!");
             return totalMedias;
         }
-        Log.d(TAG, "FetchMediaWithStoreAndPaginationTask -- doInBackground");
+        Log.d(TAG, "RequestMediaByUserIdTask -- doInBackground");
 
         String userId = params[0];
         String paginationUrl = getPaginationUrl(userId);
@@ -42,12 +42,12 @@ public class RequestMediaByUserIdTask extends BaseMediaRequestTask
         {
             //do load more
             endPoint = paginationUrl;
-            Log.e(TAG, "FetchMediaWithStoreAndPaginationTask -- doInBackground: pagination url is " + paginationUrl);
+            Log.e(TAG, "RequestMediaByUserIdTask -- doInBackground: pagination url is " + paginationUrl);
         }
         else
         {
             //do original request
-            Log.e(TAG, "FetchMediaWithStoreAndPaginationTask -- doInBackground: pagination url is null");
+            Log.e(TAG, "RequestMediaByUserIdTask -- doInBackground: pagination url is null");
             endPoint = "https://api.instagram.com/v1/users/" + userId + "/media/recent/?access_token=" + mAccessToken + "&count=20";
         }
 

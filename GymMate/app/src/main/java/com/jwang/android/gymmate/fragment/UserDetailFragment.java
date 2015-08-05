@@ -127,26 +127,27 @@ public class UserDetailFragment extends BaseFragment implements
 
     private void setupRevealBackground(Bundle savedInstanceState, final int[] startingLocation)
     {
-        mRevealBgView.setOnStateChangeListener(this);
-        mRevealBgView.setFillPaintColor(getResources().getColor(R.color.primary_color));
-        if (savedInstanceState == null)
+        if (mRevealBgView != null)
         {
-            mRevealBgView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+            mRevealBgView.setOnStateChangeListener(this);
+            mRevealBgView.setFillPaintColor(getResources().getColor(R.color.primary_color));
+            if (savedInstanceState == null)
             {
-                @Override
-                public boolean onPreDraw()
+                mRevealBgView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
                 {
-                    mRevealBgView.getViewTreeObserver().removeOnPreDrawListener(this);
-                    mRevealBgView.startFromLocation(startingLocation);
-                    return true;
-                }
-            });
-        }
-        else
-        {
-            mRevealBgView.setToFinishedFrame();
-            //TODO:
-            //            userPhotosAdapter.setLockedAnimations(true);
+                    @Override
+                    public boolean onPreDraw()
+                    {
+                        mRevealBgView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        mRevealBgView.startFromLocation(startingLocation);
+                        return true;
+                    }
+                });
+            }
+            else
+            {
+                mRevealBgView.setToFinishedFrame();
+            }
         }
     }
 
@@ -166,7 +167,10 @@ public class UserDetailFragment extends BaseFragment implements
             {
                 int scrollY = getScrollY();
                 //sticky actionbar
-                mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                if (mHeader != null)
+                {
+                    mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                }
                 //                int lastInScreen = firstVisibleItem + visibleItemCount;
                 //                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
                 //                {

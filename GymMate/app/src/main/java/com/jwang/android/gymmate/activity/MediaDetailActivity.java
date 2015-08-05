@@ -69,10 +69,6 @@ public class MediaDetailActivity extends BaseActivity implements
 
         mMediaDetailFragment = (MediaDetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_media_detail);
 
-        if (TextUtils.isEmpty(mMediaId))
-        {
-            finish();
-        }
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -86,26 +82,21 @@ public class MediaDetailActivity extends BaseActivity implements
         final String action = intent.getAction();
         if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SENDTO.equals(action) || Intent.ACTION_VIEW.equals(action))
         {
-            mMediaLink = intent.getStringExtra(Intent.EXTRA_TEXT);
-        }
-        else if (intent.getStringExtra(KEY_MEDIA_ID) != null)
-        {
-            mMediaId = intent.getStringExtra(KEY_MEDIA_ID);
-        }
-
-        if (!TextUtils.isEmpty(mMediaLink))
-        {
             if (!InstagramOauth.getsInstance().getSession().isActive())
             {
                 Intent launchLoginIntent = new Intent(this, LoginActivity.class);
                 startActivity(launchLoginIntent);
             }
-            Uri uri = Uri.parse(mMediaLink);
-            String shortCode = uri.getLastPathSegment();
+
+            String shortCode = intent.getData().getLastPathSegment();
             Log.w(TAG, "extractUrlFromIntent: url is " + shortCode);
             FetchMediaByShortCode fetchMediaByShortCode = new FetchMediaByShortCode(this);
             fetchMediaByShortCode.setMediaObjectFinishListener(mOnFetchMediaObjectFinishListener);
             fetchMediaByShortCode.execute(shortCode);
+        }
+        else if (intent.getStringExtra(KEY_MEDIA_ID) != null)
+        {
+            mMediaId = intent.getStringExtra(KEY_MEDIA_ID);
         }
     }
 
@@ -114,7 +105,8 @@ public class MediaDetailActivity extends BaseActivity implements
         @Override
         public void onFetchFinished(ModelMedia modelMedia)
         {
-            //            mMediaDetailFragment.setModelMedia(modelMedia);
+            mMediaId = modelMedia.getInstagramId();
+            getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, MediaDetailActivity.this);
         }
     };
 

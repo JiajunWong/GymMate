@@ -207,7 +207,7 @@ public class HttpRequestResultUtil
         return modelLocation;
     }
 
-    public static ModelMedia parseSingleMedia(String jsonString)
+    public static ModelMedia parseSingleMedia(Context context, String jsonString)
     {
         JSONObject mediaJsonObject;
         ModelMedia modelMedia = new ModelMedia();
@@ -218,6 +218,8 @@ public class HttpRequestResultUtil
             {
                 JSONObject dataJsonObject = mediaJsonObject.getJSONObject("data");
                 modelMedia = parseMediaJsonObject(dataJsonObject);
+                addMediaValues(context, modelMedia);
+                addUserValues(context, modelMedia);
             }
         }
         catch (Exception e)

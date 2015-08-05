@@ -14,9 +14,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.AlertDialogWrapper;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.LoginActivity;
-import com.jwang.android.gymmate.activity.MediaListActivity;
 import com.jwang.android.gymmate.activity.SettingActivity;
-import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.InstagramOauth;
 
 import java.util.ArrayList;
@@ -117,24 +115,24 @@ public class DrawerNavigationAdapter extends
         String accessToken = InstagramOauth.getsInstance().getSession().getAccessToken();
         switch (position)
         {
+//            case 0:
+//                String popularUrl = AppConfig.INSTAGRAM_POPULAR_ENDPOINT + accessToken;
+//                MediaListActivity.startActivity(mContext, popularUrl);
+//                break;
+//            case 1:
+//                String userMediaUrl = AppConfig.INSTAGRAM_USER_FEED_MEDIA_ENDPOINT + accessToken;
+//                MediaListActivity.startActivity(mContext, userMediaUrl);
+//                break;
+//            case 2:
+//                String likedUrl = AppConfig.INSTAGRAM_LIKED_ENDPOINT + accessToken;
+//                MediaListActivity.startActivity(mContext, likedUrl);
+//                break;
             case 0:
-                String popularUrl = AppConfig.INSTAGRAM_POPULAR_ENDPOINT + accessToken;
-                MediaListActivity.startActivity(mContext, popularUrl);
-                break;
-            case 1:
-                String userMediaUrl = AppConfig.INSTAGRAM_USER_FEED_MEDIA_ENDPOINT + accessToken;
-                MediaListActivity.startActivity(mContext, userMediaUrl);
-                break;
-            case 2:
-                String likedUrl = AppConfig.INSTAGRAM_LIKED_ENDPOINT + accessToken;
-                MediaListActivity.startActivity(mContext, likedUrl);
-                break;
-            case 4:
                 //Setting
                 Intent intent = new Intent(mContext, SettingActivity.class);
                 mContext.startActivity(intent);
                 break;
-            case 5:
+            case 1:
                 //log out
                 showLogOutDialog();
                 break;
@@ -180,10 +178,10 @@ public class DrawerNavigationAdapter extends
 
     private void setupMenuItems()
     {
-        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_popular, mContext.getString(R.string.popular)));
-        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_feed, mContext.getString(R.string.my_recent)));
-        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_likes, mContext.getString(R.string.likes)));
-        menuItems.add(GlobalMenuItem.dividerMenuItem());
+//        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_popular, mContext.getString(R.string.popular)));
+//        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_feed, mContext.getString(R.string.my_recent)));
+//        menuItems.add(new GlobalMenuItem(R.drawable.ic_global_menu_likes, mContext.getString(R.string.likes)));
+//        menuItems.add(GlobalMenuItem.dividerMenuItem());
         menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.action_settings)));
         menuItems.add(new GlobalMenuItem(0, mContext.getString(R.string.log_out)));
         notifyDataSetChanged();

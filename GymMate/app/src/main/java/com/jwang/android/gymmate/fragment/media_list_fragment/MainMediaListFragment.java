@@ -54,6 +54,7 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        showLoadingDialog();
         MediaSyncAdapter.syncImmediately(getActivity());
         buildGoogleApiClient();
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -111,6 +112,10 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data)
     {
         mMediaAdapter.swapCursor(data);
+        if (data.getCount() > 0)
+        {
+            dismissLoadingDialog();
+        }
         if (mPosition != ListView.INVALID_POSITION)
         {
             // If we don't need to restart the loader, and there's a desired position to restore

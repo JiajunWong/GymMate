@@ -48,13 +48,6 @@ public class UserDetailActivity extends BaseActivity
         }
     }
 
-    public static void startActivity(Context context, String userId)
-    {
-        Intent intent = new Intent(context, UserDetailActivity.class);
-        intent.putExtra(KEY_USER_ID, userId);
-        context.startActivity(intent);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

@@ -12,6 +12,9 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
 
+    <!-- Dialog -->
+    <string name="please_wait">Loading. Please wait.</string>
+
     <!-- User Detail Page-->
     <string name="following">Following</string>
     <string name="followers">Followers</string>

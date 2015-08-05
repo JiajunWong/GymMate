@@ -74,7 +74,7 @@ public class DrawerNavigationFragment extends BaseFragment implements
             case R.id.user_photo:
             case R.id.username:
                 InstagramUser user = InstagramOauth.getsInstance().getSession().getUser();
-                UserDetailActivity.startActivity(getActivity(), user.id);
+                UserDetailActivity.startActivity(getActivity(), v, user.id);
                 break;
         }
     }

@@ -6,6 +6,9 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.firebase.client.Firebase;
+import com.jwang.android.gymmate.model.ModelUserLocation;
+
 /**
  * @author Jiajun Wang on 6/30/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
@@ -31,6 +34,9 @@ public class LocationUtil
         {
             return false;
         }
+
+        saveLocationData(location);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         String lng = sharedPreferences.getString(KEY_LOCATION_LONG, null);
@@ -47,10 +53,30 @@ public class LocationUtil
                 return false;
             }
         }
-
         sharedPreferences.edit().putString(KEY_LOCATION_LAT, Double.toString(location.getLatitude())).apply();
         sharedPreferences.edit().putString(KEY_LOCATION_LONG, Double.toString(location.getLongitude())).apply();
+
         return true;
+    }
+
+    private static void saveLocationData(Location location)
+    {
+        Firebase myFirebaseRef = new Firebase(AppConfig.FIREBASE_ENDPOINT);
+        String userid = InstagramOauth.getsInstance().getSession().getUser().id;
+        String username = InstagramOauth.getsInstance().getSession().getUser().username;
+        String userRealName = InstagramOauth.getsInstance().getSession().getUser().fullName;
+        String userProfileImage = InstagramOauth.getsInstance().getSession().getUser().profilPicture;
+
+        Firebase alanRef = myFirebaseRef.child("user_location").child(userid);
+        ModelUserLocation modelUserLocation = new ModelUserLocation();
+        modelUserLocation.setFullName(userRealName);
+        modelUserLocation.setUserName(username);
+        modelUserLocation.setProfilePicture(userProfileImage);
+        modelUserLocation.setInstagramId(userid);
+        modelUserLocation.setLatitude(Double.toString(location.getLatitude()));
+        modelUserLocation.setLongitude(Double.toString(location.getLongitude()));
+
+        alanRef.setValue(modelUserLocation);
     }
 
     public static boolean isLocationEmpty(Context context)

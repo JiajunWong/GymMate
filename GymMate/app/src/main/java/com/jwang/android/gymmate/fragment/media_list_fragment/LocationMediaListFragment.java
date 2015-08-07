@@ -31,7 +31,7 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     }
 
     @Override
-    public void loadMore()
+    protected void loadMore()
     {
         RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
         if (!TextUtils.isEmpty(mLocationId))

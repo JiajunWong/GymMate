@@ -13,14 +13,12 @@ import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.cursor_adapter.MediaCursorAdapter;
 import com.jwang.android.gymmate.fragment.BaseFragment;
-import com.jwang.android.gymmate.interfaces.OnLoadMoreMediaListener;
 
 /**
  * @author Jiajun Wang on 7/24/15
  *         Copyright (c) 2015 StumbleUpon, Inc. All rights reserved.
  */
-public abstract class BaseMediaListFragment extends BaseFragment implements
-        OnLoadMoreMediaListener
+public abstract class BaseMediaListFragment extends BaseFragment
 {
     private static final String SELECTED_KEY = "selected_position";
     protected int mPosition = ListView.INVALID_POSITION;
@@ -32,6 +30,8 @@ public abstract class BaseMediaListFragment extends BaseFragment implements
 
     public abstract void refreshData();
 
+    protected abstract void loadMore();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -40,7 +40,6 @@ public abstract class BaseMediaListFragment extends BaseFragment implements
         swipeContainer = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipeContainer);
 
         mMediaAdapter = new MediaCursorAdapter(getActivity(), null, 0);
-        mMediaAdapter.setOnLoadMoreMediaListener(this);
         mGridView = (StaggeredGridView) mRootView.findViewById(R.id.lv_medias);
         mGridView.setAdapter(mMediaAdapter);
         mGridView.setOnScrollListener(mOnScrollListener);
@@ -79,11 +78,11 @@ public abstract class BaseMediaListFragment extends BaseFragment implements
             {
                 swipeContainer.setEnabled(false);
             }
-            //            int lastInScreen = firstVisibleItem + visibleItemCount;
-            //            if (totalItemCount != 0 && (lastInScreen == totalItemCount))
-            //            {
-            //                loadMore();
-            //            }
+            int lastInScreen = firstVisibleItem + visibleItemCount;
+            if (totalItemCount != 0 && (lastInScreen == totalItemCount))
+            {
+                loadMore();
+            }
         }
     };
 

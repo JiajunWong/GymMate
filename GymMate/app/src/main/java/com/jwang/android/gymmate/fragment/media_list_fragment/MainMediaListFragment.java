@@ -77,7 +77,8 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
         }
     }
 
-    public void loadMore()
+    @Override
+    protected void loadMore()
     {
         if (!(getLoaderManager().hasRunningLoaders()) && (mRequestMainLocationMediaTask == null || mRequestMainLocationMediaTask.getStatus() == AsyncTask.Status.FINISHED))
         {

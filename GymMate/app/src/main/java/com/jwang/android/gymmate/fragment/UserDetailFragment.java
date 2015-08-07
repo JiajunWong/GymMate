@@ -2,6 +2,7 @@ package com.jwang.android.gymmate.fragment;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -171,13 +172,13 @@ public class UserDetailFragment extends BaseFragment implements
                 {
                     mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 }
-                //                int lastInScreen = firstVisibleItem + visibleItemCount;
-                //                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
-                //                {
-                //                    Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
-                //                    mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
-                //                    mRequestMediaByUserIdTask.execute(mUserId);
-                //                }
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
+                {
+                    Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
+                    mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
+                    mRequestMediaByUserIdTask.execute(mUserId);
+                }
             }
         });
         mStaggeredGridView.setAdapter(mUserMediaAdapter);

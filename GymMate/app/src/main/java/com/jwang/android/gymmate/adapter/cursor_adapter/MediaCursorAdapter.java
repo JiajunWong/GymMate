@@ -16,7 +16,6 @@ import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
 import com.jwang.android.gymmate.adapter.recycler_adapter.MediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnLoadMoreMediaListener;
 import com.jwang.android.gymmate.viewholder.MediaListViewHolder;
 import com.squareup.picasso.Picasso;
 
@@ -29,7 +28,6 @@ public class MediaCursorAdapter extends CursorAdapter implements
 {
     public static final String TAG = MediaAdapter.class.getSimpleName();
     private Context mContext;
-    private OnLoadMoreMediaListener mOnLoadMoreMediaListener = OnLoadMoreMediaListener.NO_OP;
 
     public MediaCursorAdapter(Context context, Cursor c, int flags)
     {
@@ -37,18 +35,9 @@ public class MediaCursorAdapter extends CursorAdapter implements
         mContext = context;
     }
 
-    public void setOnLoadMoreMediaListener(OnLoadMoreMediaListener listener)
-    {
-        mOnLoadMoreMediaListener = listener;
-    }
-
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
-        if (cursor.isLast())
-        {
-            mOnLoadMoreMediaListener.loadMore();
-        }
         int layoutId = R.layout.list_item_media;
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         MediaListViewHolder viewHolder = new MediaListViewHolder(view);

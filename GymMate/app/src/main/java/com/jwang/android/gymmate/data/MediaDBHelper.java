@@ -12,7 +12,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
 {
     private static final String TAG = MediaDBHelper.class.getSimpleName();
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
     private static final String DATABASE_NAME = "gymmate.db";
 
     public MediaDBHelper(Context context)
@@ -31,6 +31,13 @@ public class MediaDBHelper extends SQLiteOpenHelper
                 MediaContract.LocationEntry.COLUMN_LOCATION_LONGITUDE + " REAL, " +
                 MediaContract.LocationEntry.COLUMN_LOCATION_NAME + " TEXT " + " );";
         Log.d(TAG, "SQL Statement: "+SQL_CREATE_LOCATION_TABLE);
+
+        final String SQL_CREATE_PAGINATION_TABLE = "CREATE TABLE " + MediaContract.PaginationEntry.TABLE_NAME + " (" +
+                MediaContract.PaginationEntry._ID + " INTEGER PRIMARY KEY," +
+                MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " TEXT NOT NULL, " +
+                MediaContract.PaginationEntry.COLUMN_DATA_ID + " BIGINT UNIQUE NOT NULL, " +
+                MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION + " TEXT NOT NULL " +
+                " );";
 
         //Create user table
         final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + MediaContract.UserEntry.TABLE_NAME + " (" +
@@ -71,6 +78,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
         sqLiteDatabase.execSQL(SQL_CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MEDIA_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LOCATION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_PAGINATION_TABLE);
     }
 
     @Override
@@ -85,6 +93,7 @@ public class MediaDBHelper extends SQLiteOpenHelper
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.UserEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.MediaEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.LocationEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MediaContract.PaginationEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.adapter;
+package com.jwang.android.gymmate.adapter.cursor_adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +14,7 @@ import com.jwang.android.gymmate.activity.BaseActivity;
 import com.jwang.android.gymmate.activity.LocationMediaListActivity;
 import com.jwang.android.gymmate.activity.MediaDetailActivity;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
+import com.jwang.android.gymmate.adapter.recycler_adapter.MediaAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.viewholder.MediaListViewHolder;
 import com.squareup.picasso.Picasso;

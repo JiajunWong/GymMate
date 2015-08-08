@@ -21,17 +21,14 @@ import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.activity.UserDetailActivity;
-import com.jwang.android.gymmate.adapter.UserMediaCursorAdapter;
+import com.jwang.android.gymmate.adapter.cursor_adapter.UserMediaCursorAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithTimeStampListener;
-import com.jwang.android.gymmate.task.RequestUserMediaTask;
-import com.jwang.android.gymmate.task.RequestUserProfileTask;
+import com.jwang.android.gymmate.task.media_task.RequestMediaByUserIdTask;
+import com.jwang.android.gymmate.task.media_task.RequestUserProfileTask;
 import com.jwang.android.gymmate.util.AnimationUtil;
 import com.jwang.android.gymmate.view.HeaderGridView;
 import com.jwang.android.gymmate.view.RevealBackgroundView;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by jiajunwang on 7/2/15.
@@ -43,7 +40,6 @@ public class UserDetailFragment extends BaseFragment implements
     private static final String TAG = UserDetailFragment.class.getSimpleName();
     private String mUserId;
     private int mMediaCount;
-    private ArrayList<String> mTimeStamps = new ArrayList<>();
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -62,7 +58,7 @@ public class UserDetailFragment extends BaseFragment implements
     private View mPlaceHolderView;
     private View mHeader;
 
-    private RequestUserMediaTask mRequestUserMediaTask;
+    private RequestMediaByUserIdTask mRequestMediaByUserIdTask;
 
     private static final int USER_NEAR_LOADER = 0;
     private static final int MEDIA_NEAR_LOADER = 1;
@@ -107,6 +103,7 @@ public class UserDetailFragment extends BaseFragment implements
         mHeader = rootView.findViewById(R.id.user_profile_root);
 
         mUserMediaAdapter = new UserMediaCursorAdapter(getActivity(), null, 0);
+        mUserMediaAdapter.setUserId(mUserId);
 
         mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
         mMinHeaderTranslation = -mHeaderHeight;
@@ -131,26 +128,27 @@ public class UserDetailFragment extends BaseFragment implements
 
     private void setupRevealBackground(Bundle savedInstanceState, final int[] startingLocation)
     {
-        mRevealBgView.setOnStateChangeListener(this);
-        mRevealBgView.setFillPaintColor(getResources().getColor(R.color.primary_color));
-        if (savedInstanceState == null)
+        if (mRevealBgView != null)
         {
-            mRevealBgView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+            mRevealBgView.setOnStateChangeListener(this);
+            mRevealBgView.setFillPaintColor(getResources().getColor(R.color.primary_color));
+            if (savedInstanceState == null)
             {
-                @Override
-                public boolean onPreDraw()
+                mRevealBgView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
                 {
-                    mRevealBgView.getViewTreeObserver().removeOnPreDrawListener(this);
-                    mRevealBgView.startFromLocation(startingLocation);
-                    return true;
-                }
-            });
-        }
-        else
-        {
-            mRevealBgView.setToFinishedFrame();
-            //TODO:
-            //            userPhotosAdapter.setLockedAnimations(true);
+                    @Override
+                    public boolean onPreDraw()
+                    {
+                        mRevealBgView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        mRevealBgView.startFromLocation(startingLocation);
+                        return true;
+                    }
+                });
+            }
+            else
+            {
+                mRevealBgView.setToFinishedFrame();
+            }
         }
     }
 
@@ -170,14 +168,16 @@ public class UserDetailFragment extends BaseFragment implements
             {
                 int scrollY = getScrollY();
                 //sticky actionbar
-                mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                if (mHeader != null)
+                {
+                    mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
+                }
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (!mTimeStamps.isEmpty() && totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestUserMediaTask == null || mRequestUserMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
                     Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
-                    mRequestUserMediaTask = new RequestUserMediaTask(getActivity());
-                    mRequestUserMediaTask.setOnFetchMediaPaginationFinishListener(mOnFetchMediaPaginationFinishListener);
-                    mRequestUserMediaTask.execute(mUserId, mTimeStamps.remove(0));
+                    mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
+                    mRequestMediaByUserIdTask.execute(mUserId);
                 }
             }
         });
@@ -214,22 +214,8 @@ public class UserDetailFragment extends BaseFragment implements
         Log.d(TAG, "fetchUserInfo: User id is " + mUserId);
 
         RequestUserProfileTask fetchUserProfileTask = new RequestUserProfileTask(getActivity());
-        fetchUserProfileTask.setOnFetchUserInfoFinishedListener(mOnFetchMediaPaginationFinishListener);
         fetchUserProfileTask.execute(mUserId);
     }
-
-    private OnRequestMediaFinishWithTimeStampListener mOnFetchMediaPaginationFinishListener = new OnRequestMediaFinishWithTimeStampListener()
-    {
-        @Override
-        public void onFetchFinished(String minTimestamp)
-        {
-            if (!mTimeStamps.contains(minTimestamp))
-            {
-                mTimeStamps.add(minTimestamp);
-            }
-            Log.d(TAG, "UserDetailFragment -- mOnFetchMediaPaginationFinishListener: mTimeStamps size is " + mTimeStamps.size());
-        }
-    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)

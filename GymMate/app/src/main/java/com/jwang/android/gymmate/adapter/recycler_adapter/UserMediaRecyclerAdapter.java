@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.adapter;
+package com.jwang.android.gymmate.adapter.recycler_adapter;
 
 import android.content.Context;
 import android.database.Cursor;

@@ -10,9 +10,10 @@ import android.text.TextUtils;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.fragment.media_list_fragment.MediaListFragment;
 import com.jwang.android.gymmate.interfaces.OnRefreshListener;
-import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishWithArrayListener;
+import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;
 import com.jwang.android.gymmate.model.ModelMedia;
-import com.jwang.android.gymmate.task.RequestMediaTask;
+import com.jwang.android.gymmate.task.media_task.BaseMediaRequestTask;
+import com.jwang.android.gymmate.task.media_task.RequestMediaTask;
 
 import java.util.ArrayList;
 
@@ -77,16 +78,16 @@ public class MediaListActivity extends BaseActivity implements
             finish();
         }
         requestUserMediaTask = new RequestMediaTask(this);
-        requestUserMediaTask.setOnFetchFinishedListener(mOnRequestMediaFinishWithArrayListener);
+        requestUserMediaTask.setOnRequestMediaFinishListener(mOnRequestMediaFinishListener);
         requestUserMediaTask.execute(mUrl);
     }
 
-    private OnRequestMediaFinishWithArrayListener mOnRequestMediaFinishWithArrayListener = new OnRequestMediaFinishWithArrayListener()
+    private OnRequestMediaFinishListener mOnRequestMediaFinishListener = new OnRequestMediaFinishListener()
     {
         @Override
         public void onFetchFinished(ArrayList<ModelMedia> medias)
         {
-            if (medias != null)
+            if (medias != null && !medias.isEmpty())
             {
                 mMedias = medias;
                 mMediaListFragment.setModelMedias(medias);

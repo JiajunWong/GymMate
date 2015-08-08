@@ -7,9 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.jwang.android.gymmate.data.MediaContract;
+import com.jwang.android.gymmate.task.media_task.RequestMediaByLocationId;
 
 /**
  * @author Jiajun Wang on 7/26/15
@@ -18,6 +21,7 @@ import com.jwang.android.gymmate.data.MediaContract;
 public class LocationMediaListFragment extends BaseMediaListFragment implements
         LoaderManager.LoaderCallbacks<Cursor>
 {
+    private static final String TAG = LocationMediaListFragment.class.getSimpleName();
     private String mLocationId;
     private static final int MEDIA_NEAR_LOADER = 0;
 
@@ -29,13 +33,22 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     @Override
     protected void loadMore()
     {
-
+        RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
+        if (!TextUtils.isEmpty(mLocationId))
+        {
+            requestMediaByLocationId.execute(mLocationId);
+        }
+        else
+        {
+            Log.e(TAG, "LocationMediaListFragment -- loadMore: mLocationId is null.");
+        }
     }
 
     @Override
     public void refreshData()
     {
-
+        RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
+        requestMediaByLocationId.execute(mLocationId);
     }
 
     @Override

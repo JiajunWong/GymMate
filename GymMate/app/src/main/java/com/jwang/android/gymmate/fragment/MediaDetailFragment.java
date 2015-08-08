@@ -29,7 +29,6 @@ public class MediaDetailFragment extends BaseFragment
     private TextView mOwnerUserName;
     private TextView mCaptionText;
     private TextView mLocationText;
-    private View mUserInfoRootView;
     private View mLocationRootView;
 
     @Nullable
@@ -42,7 +41,6 @@ public class MediaDetailFragment extends BaseFragment
         mOwnerUserName = (TextView) view.findViewById(R.id.owner_username);
         mCaptionText = (TextView) view.findViewById(R.id.caption_text);
         mLocationText = (TextView) view.findViewById(R.id.gym_location_tv);
-        mUserInfoRootView = view.findViewById(R.id.root_user_info);
         mLocationRootView = view.findViewById(R.id.root_view_location);
         mOwnerProfileImage = (RoundedImageView) view.findViewById(R.id.owner_profile_image);
         return view;

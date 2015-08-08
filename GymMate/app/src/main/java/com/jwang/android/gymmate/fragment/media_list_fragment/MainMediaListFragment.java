@@ -26,7 +26,7 @@ import com.google.android.gms.location.LocationServices;
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
-import com.jwang.android.gymmate.task.FetchGymMediaTask;
+import com.jwang.android.gymmate.task.media_task.RequestMainLocationMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
 import com.jwang.android.gymmate.util.LocationUtil;
 
@@ -42,7 +42,7 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     private static final String TAG = MainMediaListFragment.class.getSimpleName();
 
     protected GoogleApiClient mGoogleApiClient;
-    private FetchGymMediaTask mFetchGymMediaTask;
+    private RequestMainLocationMediaTask mRequestMainLocationMediaTask;
 
     private static final int MEDIA_NEAR_LOADER = 0;
 
@@ -77,12 +77,13 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
         }
     }
 
+    @Override
     protected void loadMore()
     {
-        if (!(getLoaderManager().hasRunningLoaders()) && (mFetchGymMediaTask == null || mFetchGymMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+        if (!(getLoaderManager().hasRunningLoaders()) && (mRequestMainLocationMediaTask == null || mRequestMainLocationMediaTask.getStatus() == AsyncTask.Status.FINISHED))
         {
-            mFetchGymMediaTask = new FetchGymMediaTask(getActivity());
-            mFetchGymMediaTask.execute();
+            mRequestMainLocationMediaTask = new RequestMainLocationMediaTask(getActivity());
+            mRequestMainLocationMediaTask.execute();
         }
     }
 
@@ -189,7 +190,6 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     {
         if (LocationUtil.updateLocation(getActivity(), location))
         {
-            getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
             refreshData();
         }
     }

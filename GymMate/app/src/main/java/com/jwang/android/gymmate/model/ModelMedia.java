@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.jwang.android.gymmate.data.MediaContract;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * @author Jiajun Wang on 6/25/15
@@ -40,6 +41,26 @@ public class ModelMedia
     {
         mTags = new ArrayList<>();
     }
+
+    public static Comparator<ModelMedia> sComparator = new Comparator<ModelMedia>()
+    {
+        @Override
+        public int compare(ModelMedia m1, ModelMedia m2)
+        {
+            if (m1.getCreateTime() < m2.getCreateTime())
+            {
+                return 1;
+            }
+            else if (m1.getCreateTime() > m2.getCreateTime())
+            {
+                return -1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    };
 
     public String getTagString()
     {

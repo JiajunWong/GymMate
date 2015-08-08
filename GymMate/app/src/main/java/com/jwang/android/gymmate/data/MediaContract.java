@@ -27,6 +27,7 @@ public class MediaContract
     public static final String PATH_USER = "user";
     public static final String PATH_MEDIA = "media";
     public static final String PATH_LOCATION = "location";
+    public static final String PATH_PAGINATION = "pagination";
 
     public static final class LocationEntry implements BaseColumns
     {
@@ -57,6 +58,47 @@ public class MediaContract
         public static String getInstagramIdFromUri(Uri uri)
         {
             return uri.getQueryParameter(COLUMN_INSTAGRAM_LOCATION_ID);
+        }
+    }
+
+    public static final class PaginationEntry implements BaseColumns
+    {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PAGINATION).build();
+
+        // Data type
+        public static final String TYPE_USER = "type_user";
+        public static final String TYPE_LOCATION = "type_location";
+        public static final String TYPE_OTHERS = "type_others";
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PAGINATION;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PAGINATION;
+
+        // Table name
+        public static final String TABLE_NAME = "pagination";
+
+        //Schema
+        public static final String COLUMN_DATA_TYPE = "data_type";
+        public static final String COLUMN_DATA_ID = "data_id";
+        public static final String COLUMN_DATA_PAGINATION = "data_pagination";
+
+        public static Uri buildLocationUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildLocationUriWithId(String type, String id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(AppConfig.LOCATION).appendQueryParameter(COLUMN_DATA_TYPE, type).appendQueryParameter(COLUMN_DATA_ID, id).build();
+        }
+
+        public static String getDataIdFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_DATA_ID);
+        }
+
+        public static String getDataTypeFromUri(Uri uri)
+        {
+            return uri.getQueryParameter(COLUMN_DATA_TYPE);
         }
     }
 

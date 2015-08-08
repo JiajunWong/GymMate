@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.adapter;/*
+package com.jwang.android.gymmate.adapter.recycler_adapter;/*
 * Copyright (C) 2014 skyfish.jy@gmail.com
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.adapter.MediaCursorAdapter;
+import com.jwang.android.gymmate.adapter.cursor_adapter.MediaCursorAdapter;
 import com.jwang.android.gymmate.fragment.BaseFragment;
 
 /**
@@ -28,9 +28,9 @@ public abstract class BaseMediaListFragment extends BaseFragment
     protected SwipeRefreshLayout swipeContainer;
     protected MediaCursorAdapter mMediaAdapter;
 
-    protected abstract void loadMore();
-
     public abstract void refreshData();
+
+    protected abstract void loadMore();
 
     @Nullable
     @Override
@@ -78,7 +78,6 @@ public abstract class BaseMediaListFragment extends BaseFragment
             {
                 swipeContainer.setEnabled(false);
             }
-
             int lastInScreen = firstVisibleItem + visibleItemCount;
             if (totalItemCount != 0 && (lastInScreen == totalItemCount))
             {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,8 +13,17 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
+            android:background="?attr/colorPrimary"
             android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                tools:popupTheme="@style/ToolBarPopupStyle"
+                tools:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
             <LinearLayout
                 android:id="@+id/root_user_info"
@@ -31,7 +40,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"
-                    app:riv_corner_radius="30dp" />
+                    app:riv_corner_radius="20dp" />
 
                 <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/owner_username"
@@ -41,7 +50,9 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
-                    app:customFont="Roboto-Bold.ttf" />
+                    android:textColor="@android:color/white"
+                    app:customFont="Roboto-Bold.ttf"
+                    tools:text="Jim" />
             </LinearLayout>
 
             <View
@@ -63,18 +74,18 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_location" />
+                    android:src="@drawable/ic_communication_location_on_white" />
 
                 <com.jwang.android.gymmate.view.CustomizableTextView
                     android:id="@+id/gym_location_tv"
-                    tools:text="San Mateo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:textAppearance="@android:style/TextAppearance.Small"
-                    android:textColor="@color/primary_color" />
+                    android:textColor="@android:color/white"
+                    tools:text="San Mateo" />
             </LinearLayout>
 
             <com.jwang.android.gymmate.view.CustomizableTextView
@@ -87,15 +98,15 @@
                 android:layout_marginStart="@dimen/horizontal_margin"
                 android:layout_marginTop="@dimen/horizontal_margin"
                 android:textAppearance="@android:style/TextAppearance.Small"
-                android:textColor="#616161"
+                android:textColor="@android:color/white"
                 android:visibility="gone"
-                app:customFont="Roboto-Regular.ttf" />
+                app:customFont="Roboto-Light.ttf" />
         </LinearLayout>
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="6">
 
             <ImageView
                 android:id="@+id/media_image"
@@ -107,7 +118,7 @@
             <VideoView
                 android:id="@+id/media_video"
                 android:layout_width="match_parent"
-                android:layout_height="480dp"
+                android:layout_height="@dimen/media_video_height"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />

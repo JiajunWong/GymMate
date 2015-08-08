@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
+import com.firebase.client.Firebase;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -37,5 +38,6 @@ public class GymMateApp extends Application
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         mContext = getApplicationContext();
+        Firebase.setAndroidContext(this);
     }
 }

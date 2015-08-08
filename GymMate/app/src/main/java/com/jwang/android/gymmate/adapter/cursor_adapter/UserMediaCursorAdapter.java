@@ -1,4 +1,4 @@
-package com.jwang.android.gymmate.adapter;
+package com.jwang.android.gymmate.adapter.cursor_adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -23,11 +23,17 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
 {
 
     private Context mContext;
+    private String mUserId;
 
     public UserMediaCursorAdapter(Context context, Cursor c, int flags)
     {
         super(context, c, flags);
         mContext = context;
+    }
+
+    public void setUserId(String userid)
+    {
+        mUserId = userid;
     }
 
     @Override
@@ -73,6 +79,19 @@ public class UserMediaCursorAdapter extends CursorAdapter implements
         //set media id and owner id;
         int media_id_index = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID);
         viewHolder.mMediaId = cursor.getString(media_id_index);
+    }
+
+    private boolean isPaginationUrlEmpty()
+    {
+        Cursor paginationCursor = mContext.getContentResolver().query(MediaContract.PaginationEntry.CONTENT_URI, new String[] { MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION }, MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " = ? AND " + MediaContract.PaginationEntry.COLUMN_DATA_ID + " = ?", new String[] { MediaContract.PaginationEntry.TYPE_USER, mUserId }, null);
+        String paginationUrl = null;
+        if (paginationCursor.moveToFirst())
+        {
+            int index_url = paginationCursor.getColumnIndex(MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION);
+            paginationUrl = paginationCursor.getString(index_url);
+        }
+        paginationCursor.close();
+        return TextUtils.isEmpty(paginationUrl);
     }
 
     @Override

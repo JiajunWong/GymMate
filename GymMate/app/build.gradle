@@ -50,7 +50,7 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile 'com.etsy.android.grid:library:1.0.5'
     compile 'com.afollestad:material-dialogs:0.7.6.0' //material dialog
-    compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar' //recycler view animation
+//    compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar' //recycler view animation
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }

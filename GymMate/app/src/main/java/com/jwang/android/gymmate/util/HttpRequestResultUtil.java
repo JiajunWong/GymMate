@@ -25,7 +25,7 @@ public class HttpRequestResultUtil
 {
     private static final String TAG = HttpRequestResultUtil.class.getSimpleName();
 
-    public static enum RequestMediaType
+    public enum RequestMediaType
     {
         LOCATION,
         USER
@@ -207,7 +207,7 @@ public class HttpRequestResultUtil
         return modelLocation;
     }
 
-    public static ModelMedia parseSingleMedia(String jsonString)
+    public static ModelMedia parseSingleMedia(Context context, String jsonString)
     {
         JSONObject mediaJsonObject;
         ModelMedia modelMedia = new ModelMedia();
@@ -218,6 +218,8 @@ public class HttpRequestResultUtil
             {
                 JSONObject dataJsonObject = mediaJsonObject.getJSONObject("data");
                 modelMedia = parseMediaJsonObject(dataJsonObject);
+                addMediaValues(context, modelMedia);
+                addUserValues(context, modelMedia);
             }
         }
         catch (Exception e)
@@ -227,95 +229,311 @@ public class HttpRequestResultUtil
         return modelMedia;
     }
 
-    /**
-     * @param context
-     * @param jsonString
-     * @param shouldStore
-     * @param medias
-     * @param minTimeStamps
-     * @return
-     */
-    public static boolean addMediaToDB(Context context, String jsonString, RequestMediaType type, String id, boolean shouldStore, ArrayList<ModelMedia> medias, ArrayList<String> minTimeStamps)
+    public static void addMediaToDatabase(Context context, String jsonString, ArrayList<ModelMedia> medias, String mediaDataType, String instagramId)
     {
         if (TextUtils.isEmpty(jsonString))
         {
             Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: jsonString is null!");
-            return false;
+            return;
         }
 
-        Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: id is " + id);
+        // Begin to parse json to model media array.
         ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
         parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
-
-        boolean isAddNew = false;
-        if (shouldStore)
-        {
-            for (ModelMedia modelMedia : newAddInMedias)
-            {
-                boolean b = addMediaValues(context, modelMedia);
-                addUserValues(context, modelMedia);
-                isAddNew = isAddNew || b;
-            }
-
-            if (isAddNew) // there is a gap, return min from medias array
-            {
-                long minCreateTime = Long.MAX_VALUE;
-                for (ModelMedia modelMedia : newAddInMedias)
-                {
-                    if (minCreateTime > modelMedia.getCreateTime())
-                    {
-                        minCreateTime = modelMedia.getCreateTime();
-                    }
-                }
-                if (minTimeStamps != null && minCreateTime != Long.MAX_VALUE)
-                {
-                    minTimeStamps.add(Long.toString(minCreateTime));
-                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is " + minCreateTime);
-                }
-                else
-                {
-                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is null!!!!!");
-                }
-            }
-            else
-            // all medias has already in the db, return min from db
-            {
-                String minCreateTime = null;
-                switch (type)
-                {
-                    case LOCATION:
-                    {
-                        minCreateTime = minTimeStampByLocationId(context, id);
-                        break;
-                    }
-                    case USER:
-                    {
-                        minCreateTime = minTimeStampByUserId(context, id);
-                        break;
-                    }
-                }
-                if (!TextUtils.isEmpty(minCreateTime))
-                {
-                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is " + minCreateTime);
-                    minTimeStamps.add(minCreateTime);
-                }
-                else
-                {
-                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is null!!!!");
-                }
-            }
-        }
 
         if (medias != null)
         {
             medias.addAll(newAddInMedias);
         }
 
-        return isAddNew;
+        for (ModelMedia modelMedia : newAddInMedias)
+        {
+            addMediaValues(context, modelMedia);
+            addUserValues(context, modelMedia);
+        }
+
+        String paginationUrl = parseMediaJsonGetPagination(jsonString);
+        if (!TextUtils.isEmpty(paginationUrl) && !TextUtils.isEmpty(instagramId))
+        {
+            Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: paginationUrl is " + paginationUrl);
+            addPaginationValues(context, paginationUrl, mediaDataType, instagramId);
+        }
+        else
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: paginationUrl or instagramId is null!");
+        }
     }
 
+    //    /**
+    //     * @param context
+    //     * @param jsonString
+    //     * @param medias
+    //     * @param minTimeStamps
+    //     * @param listener
+    //     * @param id
+    //     * @param type
+    //     * @return
+    //     */
+    //    public static boolean addMediaToDB(Context context, String jsonString, RequestMediaType type, String id, OnNewMediasAddInListener listener, ArrayList<ModelMedia> medias, String[] minTimeStamps)
+    //    {
+    //        if (TextUtils.isEmpty(jsonString))
+    //        {
+    //            Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: jsonString is null!");
+    //            return false;
+    //        }
+    //
+    //        Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: id is " + id);
+    //
+    //        // Begin to parse json to model media array.
+    //        ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
+    //        parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
+    //
+    //        boolean shouldNotify = false;
+    //        //1. get the newest media from newAddInMedias. And get the newest media from db.
+    //        String maximumTimeStampFromMediaArray = getMaximumTimeStampFromMediaArray(newAddInMedias);
+    //        if (!TextUtils.isEmpty(maximumTimeStampFromMediaArray))
+    //        {
+    //            String maximumTimeStampFromDB = "";
+    //            switch (type)
+    //            {
+    //                case LOCATION:
+    //                    maximumTimeStampFromDB = getMaximumTimeStampFromDatabaseByLocationId(context, id);
+    //                    break;
+    //                case USER:
+    //                    maximumTimeStampFromDB = getMaximumTimeStampFromDatabaseByUserId(context, id);
+    //                    break;
+    //            }
+    //            if (!TextUtils.isEmpty(maximumTimeStampFromDB)) //DB timestamp isn't empty.
+    //            {
+    //                if (Long.valueOf(maximumTimeStampFromMediaArray) > Long.valueOf(maximumTimeStampFromDB))
+    //                {
+    //                    //TODO: notify listener.
+    //                    //new add in media is large. notify user new medias added in.
+    //                    listener.onNewMediasAddIn();
+    //                    shouldNotify = true;
+    //                }
+    //                else
+    //                {
+    //                    //It's old. Do nothing here.
+    //                }
+    //            }
+    //            else
+    //            {
+    //                // DB timestamp is null. Do nothing here. Why? Because first time load media, no need to scroll back to the top.
+    //            }
+    //        }
+    //        else
+    //        {
+    //            //media array timestamp is null.
+    //        }
+    //
+    //        String minimumTimeStampFromArray = getMinimumTimeStampFromMediaArray(newAddInMedias);
+    //        if (!TextUtils.isEmpty(minimumTimeStampFromArray))
+    //        {
+    //            minTimeStamps[0] = minimumTimeStampFromArray;
+    //        }
+    //
+    //        if (medias != null)
+    //        {
+    //            medias.addAll(newAddInMedias);
+    //        }
+    //
+    //        return shouldNotify;
+    //    }
+    //
+    //    public static void notifyAfterDataChanged(Context context, ArrayList<ModelMedia> medias)
+    //    {
+    //        for (ModelMedia modelMedia : medias)
+    //        {
+    //            addMediaValues(context, modelMedia);
+    //            addUserValues(context, modelMedia);
+    //        }
+    //    }
+    //
+    //    public static void notifyAfterDataChanged(Context context, ArrayList<ModelMedia> newAddInMedias, String minimumTimeStampFromArray, RequestMediaType type, String id)
+    //    {
+    //        //Deal with pagination.
+    //        // At this point. only when user agree to add to database after notifying. we do add media to db. else do nothing here.
+    //        boolean isAddNew = false;
+    //        for (ModelMedia modelMedia : newAddInMedias)
+    //        {
+    //            boolean b = addMediaValues(context, modelMedia);
+    //            addUserValues(context, modelMedia);
+    //            isAddNew = isAddNew || b;
+    //        }
+    //
+    //        if (isAddNew) // This means we have new media added in. return minimum timestamp from array is fine.
+    //        {
+    //            //                long minCreateTime = Long.MAX_VALUE;
+    //            //                for (ModelMedia modelMedia : newAddInMedias)
+    //            //                {
+    //            //                    if (minCreateTime > modelMedia.getCreateTime())
+    //            //                    {
+    //            //                        minCreateTime = modelMedia.getCreateTime();
+    //            //                    }
+    //            //                }
+    //            //                if (minTimeStamps != null && minCreateTime != Long.MAX_VALUE)
+    //            //                {
+    //            //                    minTimeStamps.add(Long.toString(minCreateTime));
+    //            //                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is " + minCreateTime);
+    //            //                }
+    //            //                else
+    //            //                {
+    //            //                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from medias array, and min time is null!!!!!");
+    //            //                }
+    //
+    //        }
+    //        else
+    //        // all medias has already in the db, delete medias after this timestamp. maybe not a good idea. but better than missing some media doesn't load.
+    //        // TODO: in the future. there is maybe a better way to implement this.
+    //        {
+    //            //                String minCreateTime = null;
+    //            //                switch (type)
+    //            //                {
+    //            //                    case LOCATION:
+    //            //                    {
+    //            //                        minCreateTime = getMinimumTimeStampFromDatabaseByLocationId(context, id);
+    //            //                        break;
+    //            //                    }
+    //            //                    case USER:
+    //            //                    {
+    //            //                        minCreateTime = getMinimumTimeStampFromDatabaseByUserId(context, id);
+    //            //                        break;
+    //            //                    }
+    //            //                }
+    //            //                if (!TextUtils.isEmpty(minCreateTime))
+    //            //                {
+    //            //                    Log.d(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is " + minCreateTime);
+    //            //                    minTimeStamps.add(minCreateTime);
+    //            //                }
+    //            //                else
+    //            //                {
+    //            //                    Log.e(TAG, "HttpRequestResultUtil -- addMediaToDB: return min time from db, and min time is null!!!!");
+    //            //                }
+    //            if (!TextUtils.isEmpty(minimumTimeStampFromArray))
+    //            {
+    //                Uri uri = MediaContract.MediaEntry.CONTENT_URI;
+    //                String selection = "";
+    //                switch (type)
+    //                {
+    //                    case LOCATION:
+    //                        selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ? AND " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " < ?";
+    //                        break;
+    //                    case USER:
+    //                        selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ? AND " + MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_CREATE_TIME + " < ?";
+    //                        break;
+    //                }
+    //
+    //                String[] selectionArgs = { id, minimumTimeStampFromArray };
+    //                if (!TextUtils.isEmpty(selection))
+    //                {
+    //                    context.getContentResolver().delete(uri, selection, selectionArgs);
+    //                }
+    //            }
+    //        }
+    //    }
+
     // -------------------------------------------------------------------------------------------------
-    private static String minTimeStampByUserId(Context context, String id)
+    private static String getMaximumTimeStampFromMediaArray(ArrayList<ModelMedia> medias)
+    {
+        if (medias == null || medias.isEmpty())
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMaximumTimeStampFromMediaArray: medias is empty.");
+            return null;
+        }
+
+        long maximumTimeStamp = Long.MIN_VALUE;
+        for (ModelMedia modelMedia : medias)
+        {
+            if (maximumTimeStamp < modelMedia.getCreateTime())
+            {
+                maximumTimeStamp = modelMedia.getCreateTime();
+            }
+        }
+        if (maximumTimeStamp != Long.MIN_VALUE)
+        {
+            return Long.toString(maximumTimeStamp);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static String getMinimumTimeStampFromMediaArray(ArrayList<ModelMedia> medias)
+    {
+        if (medias == null || medias.isEmpty())
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMinimumTimeStampFromMediaArray: medias is empty.");
+            return null;
+        }
+
+        long minimumTimeStamp = Long.MAX_VALUE;
+        for (ModelMedia modelMedia : medias)
+        {
+            if (minimumTimeStamp > modelMedia.getCreateTime())
+            {
+                minimumTimeStamp = modelMedia.getCreateTime();
+            }
+        }
+        if (minimumTimeStamp != Long.MAX_VALUE)
+        {
+            return Long.toString(minimumTimeStamp);
+        }
+        else
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMinimumTimeStampFromMediaArray: minimumTimeStamp is empty.");
+            return null;
+        }
+    }
+
+    private static String getMaximumTimeStampFromDatabaseByLocationId(Context context, String locationId)
+    {
+        Uri uri = MediaContract.MediaEntry.CONTENT_URI;
+        String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
+        String selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ?";
+        String[] selectionArgs = { locationId };
+        String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC LIMIT 1";
+        Cursor cursor = context.getContentResolver().query(uri, PROJECTION, selection, selectionArgs, sortOrder);
+        if (cursor != null && cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
+            String date = cursor.getString(index_create_time);
+            cursor.close();
+            return date;
+        }
+        else
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMaximumTimeStampFromDatabaseByLocationId: cursor is empty");
+            return null;
+        }
+    }
+
+    private static String getMaximumTimeStampFromDatabaseByUserId(Context context, String userId)
+    {
+        Uri uri = MediaContract.MediaEntry.CONTENT_URI;
+        String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
+        String selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_MEDIA_OWNER_ID + " = ?";
+        String[] selectionArgs = { userId };
+        String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC LIMIT 1";
+        Cursor cursor = context.getContentResolver().query(uri, PROJECTION, selection, selectionArgs, sortOrder);
+        if (cursor != null && cursor.getCount() > 0)
+        {
+            cursor.moveToFirst();
+            int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
+            String date = cursor.getString(index_create_time);
+            cursor.close();
+            return date;
+        }
+        else
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMaximumTimeStampFromDatabaseByUserId: cursor is empty");
+            return null;
+        }
+    }
+
+    private static String getMinimumTimeStampFromDatabaseByUserId(Context context, String id)
     {
         Uri uri = MediaContract.MediaEntry.CONTENT_URI;
         String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
@@ -328,16 +546,15 @@ public class HttpRequestResultUtil
             cursor.moveToFirst();
             int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
             String date = cursor.getString(index_create_time);
-            if (!TextUtils.isEmpty(date))
-                Log.w(TAG, date);
             cursor.close();
             return date;
         }
         return null;
     }
 
-    private static String minTimeStampByLocationId(Context context, String id)
+    public static String getMinimumTimeStampFromDatabaseByLocationId(Context context, String id)
     {
+        Log.d(TAG, "HttpRequestResultUtil -- getMinimumTimeStampFromDatabaseByLocationId: id is " + id);
         Uri uri = MediaContract.MediaEntry.CONTENT_URI;
         String[] PROJECTION = { MediaContract.MediaEntry.COLUMN_CREATE_TIME };
         String selection = MediaContract.MediaEntry.TABLE_NAME + "." + MediaContract.MediaEntry.COLUMN_LOCATION_INSTAGRAM_ID + " = ?";
@@ -350,7 +567,12 @@ public class HttpRequestResultUtil
             int index_create_time = cursor.getColumnIndex(MediaContract.MediaEntry.COLUMN_CREATE_TIME);
             String date = cursor.getString(index_create_time);
             cursor.close();
+            Log.d(TAG, "HttpRequestResultUtil -- getMinimumTimeStampFromDatabaseByLocationId: the timestamp is " + date);
             return date;
+        }
+        else
+        {
+            Log.e(TAG, "HttpRequestResultUtil -- getMinimumTimeStampFromDatabaseByLocationId: cursor is empty");
         }
         return null;
     }
@@ -535,6 +757,30 @@ public class HttpRequestResultUtil
         return modelMedia;
     }
 
+    private static void addPaginationValues(Context context, String paginationUrl, String dataType, String id)
+    {
+        Cursor paginationCursor = context.getContentResolver().query(MediaContract.PaginationEntry.CONTENT_URI, new String[] { MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION }, MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " = ? AND " + MediaContract.PaginationEntry.COLUMN_DATA_ID + " = ?", new String[] { dataType, id }, null);
+        if (!paginationCursor.moveToFirst())
+        {
+            ContentValues paginationContentValues = new ContentValues();
+            paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_TYPE, dataType);
+            paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_ID, id);
+            paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION, paginationUrl);
+
+            context.getContentResolver().insert(MediaContract.PaginationEntry.CONTENT_URI, paginationContentValues);
+        }
+        else
+        {
+            int index_url = paginationCursor.getColumnIndex(MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION);
+            String oldPaginationUrl = paginationCursor.getString(index_url);
+            if (!oldPaginationUrl.equals(paginationUrl))
+            {
+                updatePaginationValues(context, paginationUrl, dataType, id);
+            }
+        }
+        paginationCursor.close();
+    }
+
     private static void addUserValues(Context context, ModelMedia modelMedia)
     {
 
@@ -579,6 +825,16 @@ public class HttpRequestResultUtil
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT, modelUser.getFollowsCount());
 
         context.getContentResolver().update(MediaContract.UserEntry.CONTENT_URI, userInfoContentValues, MediaContract.UserEntry.COLUMN_INSTAGRAM_ID + " = ?", new String[] { Long.toString(modelUser.getInstagramId()) });
+    }
+
+    private static void updatePaginationValues(Context context, String paginationUrl, String dataType, String id)
+    {
+        ContentValues paginationContentValues = new ContentValues();
+        paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_TYPE, dataType);
+        paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_ID, id);
+        paginationContentValues.put(MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION, paginationUrl);
+
+        context.getContentResolver().update(MediaContract.PaginationEntry.CONTENT_URI, paginationContentValues, MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " = ? AND " + MediaContract.PaginationEntry.COLUMN_DATA_ID + " = ?", new String[] { dataType, id });
     }
 
     private static boolean addMediaValues(Context context, ModelMedia modelMedia)

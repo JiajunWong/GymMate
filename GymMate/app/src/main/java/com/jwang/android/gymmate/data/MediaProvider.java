@@ -31,6 +31,7 @@ public class MediaProvider extends ContentProvider
     static final int USER_WITH_INSTAGRAM_ID = 301;
     static final int LOCATION = 500;
     static final int LOCATION_WITH_INSTAGRAM_ID = 501;
+    static final int PAGINATION = 600;
 
     private static final SQLiteQueryBuilder sWeatherByIdQueryBuilder;
 
@@ -151,6 +152,9 @@ public class MediaProvider extends ContentProvider
             case LOCATION:
                 retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.LocationEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+            case PAGINATION:
+                retCursor = mOpenHelper.getReadableDatabase().query(MediaContract.PaginationEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
             case LOCATION_WITH_INSTAGRAM_ID:
                 retCursor = getMediaByLocationId(uri);
                 break;
@@ -193,6 +197,8 @@ public class MediaProvider extends ContentProvider
                 return MediaContract.UserEntry.CONTENT_TYPE;
             case LOCATION:
                 return MediaContract.LocationEntry.CONTENT_TYPE;
+            case PAGINATION:
+                return MediaContract.PaginationEntry.CONTENT_ITEM_TYPE;
             case USER_WITH_INSTAGRAM_ID:
                 return MediaContract.UserEntry.CONTENT_ITEM_TYPE;
             default:
@@ -236,6 +242,15 @@ public class MediaProvider extends ContentProvider
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case PAGINATION:
+            {
+                long _id = db.insert(MediaContract.PaginationEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = MediaContract.PaginationEntry.buildLocationUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -265,6 +280,9 @@ public class MediaProvider extends ContentProvider
             case LOCATION:
                 rowsDeleted = db.delete(MediaContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+            case PAGINATION:
+                rowsDeleted = db.delete(MediaContract.PaginationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -292,6 +310,9 @@ public class MediaProvider extends ContentProvider
                 break;
             case LOCATION:
                 rowsUpdated = db.update(MediaContract.LocationEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case PAGINATION:
+                rowsUpdated = db.update(MediaContract.PaginationEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -347,6 +368,7 @@ public class MediaProvider extends ContentProvider
         matcher.addURI(authority, MediaContract.PATH_MEDIA, MEDIA);
         matcher.addURI(authority, MediaContract.PATH_USER, USER);
         matcher.addURI(authority, MediaContract.PATH_LOCATION, LOCATION);
+        matcher.addURI(authority, MediaContract.PATH_PAGINATION, PAGINATION);
         matcher.addURI(authority, MediaContract.PATH_LOCATION + "/*", LOCATION_WITH_INSTAGRAM_ID);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*", MEDIA_WITH_LOCATION);
         matcher.addURI(authority, MediaContract.PATH_MEDIA + "/*/*", MEDIA_WITH_OWNER_ID);

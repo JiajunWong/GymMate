@@ -48,7 +48,7 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     public void refreshData()
     {
         RequestMediaByLocationId requestMediaByLocationId = new RequestMediaByLocationId(getActivity());
-        requestMediaByLocationId.execute(mLocationId, "");
+        requestMediaByLocationId.execute(mLocationId);
     }
 
     @Override

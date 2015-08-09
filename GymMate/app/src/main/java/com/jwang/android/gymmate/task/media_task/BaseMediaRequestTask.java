@@ -3,6 +3,7 @@ package com.jwang.android.gymmate.task.media_task;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.interfaces.OnRequestMediaFinishListener;
@@ -51,6 +52,10 @@ public abstract class BaseMediaRequestTask extends
 
     protected String getPaginationUrl(String instagramId)
     {
+        if (TextUtils.isEmpty(instagramId))
+        {
+            return null;
+        }
         Cursor paginationCursor = mContext.getContentResolver().query(MediaContract.PaginationEntry.CONTENT_URI, new String[] { MediaContract.PaginationEntry.COLUMN_DATA_PAGINATION }, MediaContract.PaginationEntry.COLUMN_DATA_TYPE + " = ? AND " + MediaContract.PaginationEntry.COLUMN_DATA_ID + " = ?", new String[] { mDataType, instagramId }, null);
         String paginationUrl = null;
         if (paginationCursor.moveToFirst())

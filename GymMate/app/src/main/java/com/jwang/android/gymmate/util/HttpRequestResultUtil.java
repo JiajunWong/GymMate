@@ -817,9 +817,6 @@ public class HttpRequestResultUtil
     private static void updateUserValues(Context context, ModelUser modelUser)
     {
         ContentValues userInfoContentValues = new ContentValues();
-        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_USERNAME, modelUser.getUserName());
-        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FULL_NAME, modelUser.getFullName());
-        userInfoContentValues.put(MediaContract.UserEntry.COLUMN_PROFILE_PICTURE, modelUser.getProfilePicture());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_MEDIA_COUNT, modelUser.getMediaCount());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOWED_BY_COUNT, modelUser.getFollowedByCount());
         userInfoContentValues.put(MediaContract.UserEntry.COLUMN_FOLLOW_COUNT, modelUser.getFollowsCount());

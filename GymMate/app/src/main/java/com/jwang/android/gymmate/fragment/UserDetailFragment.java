@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jwang.android.gymmate.R;
@@ -38,8 +39,11 @@ public class UserDetailFragment extends BaseFragment implements
         RevealBackgroundView.OnStateChangeListener
 {
     private static final String TAG = UserDetailFragment.class.getSimpleName();
+    private static final String SELECTED_KEY = "selected_position";
+
     private String mUserId;
     private int mMediaCount;
+    protected int mPosition = ListView.INVALID_POSITION;
 
     private TextView mUserNameTextView;
     private TextView mUserRealNameTextView;
@@ -108,6 +112,9 @@ public class UserDetailFragment extends BaseFragment implements
         mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.fake_header_height);
         mMinHeaderTranslation = -mHeaderHeight;
 
+        setupListView();
+        fetchUserInfo();
+
         final int[] startingLocation = getActivity().getIntent().getIntArrayExtra(UserDetailActivity.KEY_START_LOCATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
@@ -120,9 +127,6 @@ public class UserDetailFragment extends BaseFragment implements
         {
             setupRevealBackground(savedInstanceState, startingLocation);
         }
-
-        setupListView();
-        fetchUserInfo();
         return rootView;
     }
 
@@ -215,6 +219,9 @@ public class UserDetailFragment extends BaseFragment implements
 
         RequestUserProfileTask fetchUserProfileTask = new RequestUserProfileTask(getActivity());
         fetchUserProfileTask.execute(mUserId);
+
+        mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
+        mRequestMediaByUserIdTask.execute(mUserId);
     }
 
     @Override
@@ -239,6 +246,31 @@ public class UserDetailFragment extends BaseFragment implements
                 return new CursorLoader(getActivity(), uri1, null, null, null, null);
             default:
                 return null;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        if (mPosition != ListView.INVALID_POSITION)
+        {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (mPosition != ListView.INVALID_POSITION)
+        {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mStaggeredGridView.smoothScrollToPosition(mPosition);
         }
     }
 
@@ -297,6 +329,12 @@ public class UserDetailFragment extends BaseFragment implements
                 break;
             case MEDIA_NEAR_LOADER:
                 mUserMediaAdapter.swapCursor(data);
+                if (mPosition != ListView.INVALID_POSITION)
+                {
+                    // If we don't need to restart the loader, and there's a desired position to restore
+                    // to, do so now.
+                    mStaggeredGridView.smoothScrollToPosition(mPosition);
+                }
                 break;
         }
     }

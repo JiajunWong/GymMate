@@ -95,6 +95,18 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (mPosition != ListView.INVALID_POSITION)
+        {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mGridView.smoothScrollToPosition(mPosition);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
         // This is called when a new Loader needs to be created.  This

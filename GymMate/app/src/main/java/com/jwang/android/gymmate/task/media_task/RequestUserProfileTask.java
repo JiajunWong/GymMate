@@ -34,14 +34,10 @@ public class RequestUserProfileTask extends BaseMediaRequestTask
         }
         String instagramId = params[0];
         Log.d(TAG, "RequestUserProfileTask - doInBackground: user id is " + instagramId);
-        String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + mAccessToken + "&count=20";
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + mAccessToken;
 
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
         HttpRequestResultUtil.parseUserInfoJson(mContext, infoResponse);
-
-        String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
-        HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, totalMedias, mDataType, instagramId);
 
         return totalMedias;
     }

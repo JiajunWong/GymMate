@@ -59,6 +59,18 @@ public class LocationMediaListFragment extends BaseMediaListFragment implements
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (mPosition != ListView.INVALID_POSITION)
+        {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mGridView.smoothScrollToPosition(mPosition);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
         String sortOrder = MediaContract.MediaEntry.COLUMN_CREATE_TIME + " DESC";

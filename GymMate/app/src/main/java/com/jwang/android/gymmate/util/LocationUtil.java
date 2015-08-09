@@ -8,6 +8,8 @@ import android.text.TextUtils;
 
 import com.firebase.client.Firebase;
 import com.jwang.android.gymmate.model.ModelUserLocation;
+import com.jwang.android.gymmate.parse_object.ParseUserLocation;
+import com.parse.ParseGeoPoint;
 
 /**
  * @author Jiajun Wang on 6/30/15
@@ -67,7 +69,6 @@ public class LocationUtil
         String userRealName = InstagramOauth.getsInstance().getSession().getUser().fullName;
         String userProfileImage = InstagramOauth.getsInstance().getSession().getUser().profilPicture;
 
-        Firebase alanRef = myFirebaseRef.child("user_location").child(userid);
         ModelUserLocation modelUserLocation = new ModelUserLocation();
         modelUserLocation.setFullName(userRealName);
         modelUserLocation.setUserName(username);
@@ -76,6 +77,15 @@ public class LocationUtil
         modelUserLocation.setLatitude(Double.toString(location.getLatitude()));
         modelUserLocation.setLongitude(Double.toString(location.getLongitude()));
 
+        ParseUserLocation parseUserLocation = new ParseUserLocation();
+        parseUserLocation.setFullName(modelUserLocation.getFullName());
+        parseUserLocation.setInstagramId(modelUserLocation.getInstagramId());
+        parseUserLocation.setUserName(modelUserLocation.getUserName());
+        parseUserLocation.setProfilePicture(modelUserLocation.getProfilePicture());
+        parseUserLocation.setParseGeoPoint(new ParseGeoPoint(Double.valueOf(modelUserLocation.getLatitude()), Double.valueOf(modelUserLocation.getLongitude())));
+        parseUserLocation.saveInBackground();
+
+        Firebase alanRef = myFirebaseRef.child("user_location").child(userid);
         alanRef.setValue(modelUserLocation);
     }
 

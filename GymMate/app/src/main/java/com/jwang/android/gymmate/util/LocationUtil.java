@@ -9,7 +9,13 @@ import android.text.TextUtils;
 import com.firebase.client.Firebase;
 import com.jwang.android.gymmate.model.ModelUserLocation;
 import com.jwang.android.gymmate.parse_object.ParseUserLocation;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 /**
  * @author Jiajun Wang on 6/30/15
@@ -64,12 +70,12 @@ public class LocationUtil
     private static void saveLocationData(Location location)
     {
         Firebase myFirebaseRef = new Firebase(AppConfig.FIREBASE_ENDPOINT);
-        String userid = InstagramOauth.getsInstance().getSession().getUser().id;
+        final String userid = InstagramOauth.getsInstance().getSession().getUser().id;
         String username = InstagramOauth.getsInstance().getSession().getUser().username;
         String userRealName = InstagramOauth.getsInstance().getSession().getUser().fullName;
         String userProfileImage = InstagramOauth.getsInstance().getSession().getUser().profilPicture;
 
-        ModelUserLocation modelUserLocation = new ModelUserLocation();
+        final ModelUserLocation modelUserLocation = new ModelUserLocation();
         modelUserLocation.setFullName(userRealName);
         modelUserLocation.setUserName(username);
         modelUserLocation.setProfilePicture(userProfileImage);
@@ -77,16 +83,33 @@ public class LocationUtil
         modelUserLocation.setLatitude(Double.toString(location.getLatitude()));
         modelUserLocation.setLongitude(Double.toString(location.getLongitude()));
 
-        ParseUserLocation parseUserLocation = new ParseUserLocation();
-        parseUserLocation.setFullName(modelUserLocation.getFullName());
-        parseUserLocation.setInstagramId(modelUserLocation.getInstagramId());
-        parseUserLocation.setUserName(modelUserLocation.getUserName());
-        parseUserLocation.setProfilePicture(modelUserLocation.getProfilePicture());
-        parseUserLocation.setParseGeoPoint(new ParseGeoPoint(Double.valueOf(modelUserLocation.getLatitude()), Double.valueOf(modelUserLocation.getLongitude())));
-        parseUserLocation.saveInBackground();
-
         Firebase alanRef = myFirebaseRef.child("user_location").child(userid);
         alanRef.setValue(modelUserLocation);
+
+        ParseQuery<ParseUserLocation> query = ParseQuery.getQuery(ParseUserLocation.class);
+        query.whereEqualTo(ParseUserLocation.INSTAGRAM_ID, userid);
+        query.findInBackground(new FindCallback<ParseUserLocation>()
+        {
+            @Override
+            public void done(List<ParseUserLocation> list, ParseException e)
+            {
+                ParseUserLocation parseUserLocation;
+                if (list != null && !list.isEmpty())
+                {
+                    parseUserLocation = list.get(0);
+                }
+                else
+                {
+                    parseUserLocation = new ParseUserLocation();
+                }
+                parseUserLocation.setFullName(modelUserLocation.getFullName());
+                parseUserLocation.setInstagramId(modelUserLocation.getInstagramId());
+                parseUserLocation.setUserName(modelUserLocation.getUserName());
+                parseUserLocation.setProfilePicture(modelUserLocation.getProfilePicture());
+                parseUserLocation.setParseGeoPoint(new ParseGeoPoint(Double.valueOf(modelUserLocation.getLatitude()), Double.valueOf(modelUserLocation.getLongitude())));
+                parseUserLocation.saveInBackground();
+            }
+        });
     }
 
     public static boolean isLocationEmpty(Context context)

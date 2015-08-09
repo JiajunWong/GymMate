@@ -11,11 +11,11 @@ import com.parse.ParseObject;
 @ParseClassName("UserLocation")
 public class ParseUserLocation extends ParseObject
 {
-    private static final String INSTAGRAM_ID = "instagram_id";
-    private static final String USER_NAME = "user_name";
-    private static final String PROFILE_PICTURE = "profile_picture";
-    private static final String FULL_NAME = "full_name";
-    private static final String PARSE_GEO_POINT = "parse_geo_point";
+    public static final String INSTAGRAM_ID = "instagram_id";
+    public static final String USER_NAME = "user_name";
+    public static final String PROFILE_PICTURE = "profile_picture";
+    public static final String FULL_NAME = "full_name";
+    public static final String PARSE_GEO_POINT = "parse_geo_point";
 
     public ParseUserLocation()
     {

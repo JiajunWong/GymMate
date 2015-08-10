@@ -27,5 +27,7 @@ public class AppConfig
     public static final String INSTAGRAM_USER_FEED_MEDIA_ENDPOINT = "https://api.instagram.com/v1/users/self/feed?access_token=";
     public static final String INSTAGRAM_MEDIA_SHORT_CODE_ENDPOINT = "https://api.instagram.com/v1/media/shortcode/";
 
-    public static final String FIREBASE_ENDPOINT = "https://blazing-torch-989.firebaseio.com/";
+//    public static final String FIREBASE_ENDPOINT = "https://blazing-torch-989.firebaseio.com/";
+    //production
+    public static final String FIREBASE_ENDPOINT = "https://gymmate.firebaseio.com/";
 }

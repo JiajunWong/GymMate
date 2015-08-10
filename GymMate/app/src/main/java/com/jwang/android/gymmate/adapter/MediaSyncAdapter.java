@@ -158,13 +158,13 @@ public class MediaSyncAdapter extends AbstractThreadedSyncAdapter implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        if (key.equals(LocationUtil.KEY_LOCATION_LAT))
+        if (key.equals(LocationUtil.KEY_LOCATION_LONG))
         {
             String lng = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LONG, null);
             String lat = sharedPreferences.getString(LocationUtil.KEY_LOCATION_LAT, null);
             String[] locations = { lng, lat };
 
-            MediaSyncWorker.getInstance(getContext()).requestLocationids(locations);
+            MediaSyncWorker.getInstance(getContext()).startFetchGymMedia(locations);
         }
     }
 }

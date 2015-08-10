@@ -2,7 +2,6 @@ package com.jwang.android.gymmate.util;
 
 import android.content.Context;
 
-import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.task.RequestInstagramLocationTask;
 import com.jwang.android.gymmate.task.media_task.RequestMainLocationMediaTask;
 
@@ -41,14 +40,7 @@ public class MediaSyncWorker
     {
         if (InstagramOauth.getsInstance().getSession().isActive())
         {
-            if (mInstagramLocationIds != null && !mInstagramLocationIds.isEmpty())
-            {
-                requestMedias();
-            }
-            else
-            {
-                requestLocationids(location);
-            }
+            requestLocationids(location);
         }
     }
 
@@ -57,7 +49,7 @@ public class MediaSyncWorker
         return mInstagramLocationIds;
     }
 
-    public void requestLocationids(String[] location)
+    private void requestLocationids(String[] location)
     {
         RequestInstagramLocationTask requestInstagramLocationTask = new RequestInstagramLocationTask(mContext);
         requestInstagramLocationTask.setOnRequestLocationIdFinishedListener(mOnRequestLocationIdFinishedListener);

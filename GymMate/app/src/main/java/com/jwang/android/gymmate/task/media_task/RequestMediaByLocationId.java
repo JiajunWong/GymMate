@@ -33,7 +33,6 @@ public class RequestMediaByLocationId extends BaseMediaRequestTask
             Log.e(TAG, "RequestMediaByLocationId -- doInBackground: location id and timeStamps is null!");
             return totalMedias;
         }
-        Log.d(TAG, "RequestMediaByLocationId -- doInBackground");
         String locationId = params[0];
         String paginationUrl = getPaginationUrl(locationId);
 
@@ -48,6 +47,8 @@ public class RequestMediaByLocationId extends BaseMediaRequestTask
             //do original request
             endPoint = "https://api.instagram.com/v1/locations/" + locationId + "/media/recent?access_token=" + mAccessToken;
         }
+
+        Log.d(TAG, "RequestMediaByLocationId -- doInBackground: " + endPoint);
 
         String mediaResponse = HttpRequestUtil.startHttpRequest(endPoint, TAG);
         HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, totalMedias, mDataType, locationId);

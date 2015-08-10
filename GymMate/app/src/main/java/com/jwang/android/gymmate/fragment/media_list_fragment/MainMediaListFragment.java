@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.jwang.android.gymmate.R;
-import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
 import com.jwang.android.gymmate.data.MediaContract;
 import com.jwang.android.gymmate.task.media_task.RequestMainLocationMediaTask;
 import com.jwang.android.gymmate.util.AppConfig;
@@ -221,7 +220,6 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
         {
             mGoogleApiClient.reconnect();
         }
-        MediaSyncAdapter.syncImmediately(getActivity());
         getLoaderManager().restartLoader(MEDIA_NEAR_LOADER, null, this);
     }
 }

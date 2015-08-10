@@ -177,7 +177,7 @@ public class UserDetailFragment extends BaseFragment implements
                     mHeader.setTranslationY(Math.max(-scrollY, mMinHeaderTranslation));
                 }
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if (totalItemCount != 0 && (lastInScreen == totalItemCount) && !(getLoaderManager().hasRunningLoaders()) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
+                if (totalItemCount > 10 && (lastInScreen == totalItemCount) && totalItemCount != mMediaCount && (mRequestMediaByUserIdTask == null || mRequestMediaByUserIdTask.getStatus() == AsyncTask.Status.FINISHED))
                 {
                     Log.d(TAG, "UserDetailFragment -- onScroll: Load more.");
                     mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
@@ -219,9 +219,6 @@ public class UserDetailFragment extends BaseFragment implements
 
         RequestUserProfileTask fetchUserProfileTask = new RequestUserProfileTask(getActivity());
         fetchUserProfileTask.execute(mUserId);
-
-        mRequestMediaByUserIdTask = new RequestMediaByUserIdTask(getActivity());
-        mRequestMediaByUserIdTask.execute(mUserId);
     }
 
     @Override

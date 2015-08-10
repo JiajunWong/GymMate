@@ -217,7 +217,7 @@ public class HttpRequestResultUtil
             if (mediaJsonObject.has("data"))
             {
                 JSONObject dataJsonObject = mediaJsonObject.getJSONObject("data");
-                modelMedia = parseMediaJsonObject(dataJsonObject);
+                modelMedia = parseMediaJsonObject(context, dataJsonObject);
                 addMediaValues(context, modelMedia);
                 addUserValues(context, modelMedia);
             }
@@ -239,17 +239,11 @@ public class HttpRequestResultUtil
 
         // Begin to parse json to model media array.
         ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
-        parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
+        parseMediaJson(context, jsonString, newAddInMedias);
 
         if (medias != null)
         {
             medias.addAll(newAddInMedias);
-        }
-
-        for (ModelMedia modelMedia : newAddInMedias)
-        {
-            addMediaValues(context, modelMedia);
-            addUserValues(context, modelMedia);
         }
 
         String paginationUrl = parseMediaJsonGetPagination(jsonString);
@@ -286,7 +280,7 @@ public class HttpRequestResultUtil
     //
     //        // Begin to parse json to model media array.
     //        ArrayList<ModelMedia> newAddInMedias = new ArrayList<>();
-    //        parseMediaJsonWithoutStoreMedia(jsonString, newAddInMedias);
+    //        parseMediaJson(jsonString, newAddInMedias);
     //
     //        boolean shouldNotify = false;
     //        //1. get the newest media from newAddInMedias. And get the newest media from db.
@@ -601,7 +595,7 @@ public class HttpRequestResultUtil
     }
 
     // Just parse json without store.
-    private static ArrayList<ModelMedia> parseMediaJsonWithoutStoreMedia(String jsonString, ArrayList<ModelMedia> medias)
+    private static ArrayList<ModelMedia> parseMediaJson(Context context, String jsonString, ArrayList<ModelMedia> medias)
     {
         JSONObject mediaJsonObject;
         try
@@ -615,7 +609,7 @@ public class HttpRequestResultUtil
                 for (int i = 0; i < mediaDataArray.length(); i++)
                 {
                     JSONObject mediaObject = (JSONObject) mediaDataArray.get(i);
-                    modelMedia = parseMediaJsonObject(mediaObject);
+                    modelMedia = parseMediaJsonObject(context, mediaObject);
                     medias.add(modelMedia);
                 }
             }
@@ -627,7 +621,7 @@ public class HttpRequestResultUtil
         return medias;
     }
 
-    private static ModelMedia parseMediaJsonObject(JSONObject mediaObject)
+    private static ModelMedia parseMediaJsonObject(Context context, JSONObject mediaObject)
     {
         ModelMedia modelMedia = new ModelMedia();
         try
@@ -749,6 +743,9 @@ public class HttpRequestResultUtil
 
                 modelMedia.setOwner(owner);
             }
+
+            addMediaValues(context, modelMedia);
+            addUserValues(context, modelMedia);
         }
         catch (Exception e)
         {
@@ -837,7 +834,7 @@ public class HttpRequestResultUtil
     private static boolean addMediaValues(Context context, ModelMedia modelMedia)
     {
         boolean isNew = false;
-        Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[] { MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID }, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[] { modelMedia.getInstagramId() }, null);
+        Cursor mediaCursor = context.getContentResolver().query(MediaContract.MediaEntry.CONTENT_URI, new String[]{MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID}, MediaContract.MediaEntry.COLUMN_MEDIA_INSTAGRAM_ID + " = ?", new String[]{modelMedia.getInstagramId()}, null);
         if (!mediaCursor.moveToFirst())
         {
             ContentValues mediaContentValues = new ContentValues();

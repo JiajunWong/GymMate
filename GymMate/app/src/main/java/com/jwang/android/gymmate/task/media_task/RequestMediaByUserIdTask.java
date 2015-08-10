@@ -34,6 +34,8 @@ public class RequestMediaByUserIdTask extends BaseMediaRequestTask
         }
         Log.d(TAG, "RequestMediaByUserIdTask -- doInBackground");
 
+        long startTime = System.currentTimeMillis();
+
         String userId = params[0];
         String paginationUrl = getPaginationUrl(userId);
 
@@ -42,7 +44,7 @@ public class RequestMediaByUserIdTask extends BaseMediaRequestTask
         {
             //do load more
             endPoint = paginationUrl;
-            Log.e(TAG, "RequestMediaByUserIdTask -- doInBackground: pagination url is " + paginationUrl);
+            Log.d(TAG, "RequestMediaByUserIdTask -- doInBackground: pagination url is " + paginationUrl);
         }
         else
         {
@@ -54,6 +56,7 @@ public class RequestMediaByUserIdTask extends BaseMediaRequestTask
         String mediaResponse = HttpRequestUtil.startHttpRequest(endPoint, TAG);
         HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, totalMedias, mDataType, userId);
 
+        Log.d(TAG, "RequestMediaByUserIdTask -- doInBackground: Time is " + (System.currentTimeMillis() - startTime));
         return totalMedias;
     }
 }

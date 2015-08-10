@@ -55,7 +55,6 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         showLoadingDialog();
-        MediaSyncAdapter.syncImmediately(getActivity());
         buildGoogleApiClient();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -80,7 +79,7 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
     @Override
     protected void loadMore()
     {
-        if (!(getLoaderManager().hasRunningLoaders()) && (mRequestMainLocationMediaTask == null || mRequestMainLocationMediaTask.getStatus() == AsyncTask.Status.FINISHED))
+        if (mRequestMainLocationMediaTask == null || mRequestMainLocationMediaTask.getStatus() == AsyncTask.Status.FINISHED)
         {
             mRequestMainLocationMediaTask = new RequestMainLocationMediaTask(getActivity());
             mRequestMainLocationMediaTask.execute();
@@ -151,6 +150,7 @@ public class MainMediaListFragment extends BaseMediaListFragment implements
         // updates. Gets the best and most recent location currently available, which may be null
         // in rare cases when a location is not available.
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.d(TAG, "MainMediaListFragment -- onConnected.");
         if (lastLocation != null)
         {
             onLocationUpdated(lastLocation);

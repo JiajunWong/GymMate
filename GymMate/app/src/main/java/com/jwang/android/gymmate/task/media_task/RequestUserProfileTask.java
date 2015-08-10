@@ -29,16 +29,23 @@ public class RequestUserProfileTask extends BaseMediaRequestTask
         ArrayList<ModelMedia> totalMedias = new ArrayList<>();
         if (params.length < 0 || TextUtils.isEmpty(params[0]))
         {
-            Log.e(TAG, "doInBackground: user id is null!");
+            Log.e(TAG, "RequestUserProfileTask -- doInBackground: user id is null!");
             return totalMedias;
         }
         String instagramId = params[0];
-        Log.d(TAG, "RequestUserProfileTask - doInBackground: user id is " + instagramId);
+        Log.d(TAG, "RequestUserProfileTask -- doInBackground: user id is " + instagramId);
+        long startTime = System.currentTimeMillis();
+
+        String mediaEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/media/recent/?access_token=" + mAccessToken + "&count=20";
         String infoEndPoint = "https://api.instagram.com/v1/users/" + instagramId + "/?access_token=" + mAccessToken;
 
         String infoResponse = HttpRequestUtil.startHttpRequest(infoEndPoint, TAG);
         HttpRequestResultUtil.parseUserInfoJson(mContext, infoResponse);
 
+        String mediaResponse = HttpRequestUtil.startHttpRequest(mediaEndPoint, TAG);
+        HttpRequestResultUtil.addMediaToDatabase(mContext, mediaResponse, totalMedias, mDataType, instagramId);
+
+        Log.d(TAG, "RequestUserProfileTask -- doInBackground: Time is " + (System.currentTimeMillis() - startTime));
         return totalMedias;
     }
 }

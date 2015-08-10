@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.jwang.android.gymmate.R;
 import com.jwang.android.gymmate.adapter.MediaSyncAdapter;
-import com.jwang.android.gymmate.fragment.media_list_fragment.MainMediaListFragment;
 
 /**
  * @author Jiajun Wang on 6/24/15
@@ -27,14 +26,6 @@ public class MainNavigationActivity extends BaseActivity
         mDrawerRootLeft = findViewById(R.id.drawer_layout_left);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         MediaSyncAdapter.initializeSyncAdapter(this);
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        MainMediaListFragment mediaListFragment = (MainMediaListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_media_list);
-        mediaListFragment.refreshData();
     }
 
     @Override
